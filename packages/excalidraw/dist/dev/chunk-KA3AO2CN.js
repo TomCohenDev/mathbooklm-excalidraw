@@ -240,6 +240,13 @@ var COLOR_CHARCOAL_BLACK = "#1e1e1e";
 var COLOR_VOICE_CALL = "#a2f1a6";
 var DEFAULT_GRID_SIZE = 20;
 var DEFAULT_GRID_STEP = 5;
+var GRID_TYPES = [
+  "square",
+  "dots",
+  "lines",
+  "isometric"
+];
+var DEFAULT_GRID_TYPE = "square";
 var IMAGE_MIME_TYPES = {
   svg: "image/svg+xml",
   png: "image/png",
@@ -478,6 +485,7 @@ var getDefaultAppState = () => {
     fileHandle: null,
     gridSize: DEFAULT_GRID_SIZE,
     gridStep: DEFAULT_GRID_STEP,
+    gridType: DEFAULT_GRID_TYPE,
     gridModeEnabled: false,
     isBindingEnabled: true,
     defaultSidebarDockedPreference: false,
@@ -582,6 +590,7 @@ var APP_STATE_STORAGE_CONF = /* @__PURE__ */ ((config) => config)({
   fileHandle: { browser: false, export: false, server: false },
   gridSize: { browser: true, export: true, server: true },
   gridStep: { browser: true, export: true, server: true },
+  gridType: { browser: true, export: true, server: true },
   gridModeEnabled: { browser: true, export: true, server: true },
   height: { browser: false, export: false, server: false },
   isBindingEnabled: { browser: false, export: false, server: false },
@@ -12134,6 +12143,12 @@ var getNormalizedGridSize = (gridStep) => {
 var getNormalizedGridStep = (gridStep) => {
   return clamp(Math.round(gridStep), 1, 100);
 };
+var getNormalizedGridType = (gridType) => {
+  if (typeof gridType === "string" && GRID_TYPES.includes(gridType)) {
+    return gridType;
+  }
+  return DEFAULT_GRID_TYPE;
+};
 
 // groups.ts
 var selectGroup = (groupId, appState, elements) => {
@@ -18269,15 +18284,34 @@ var GridLineColor = {
   Bold: "#dddddd",
   Regular: "#e5e5e5"
 };
-var strokeGrid = (context, gridSize, gridStep, scrollX, scrollY, zoom, width, height) => {
+var applyGridPixelOffset = (context, scrollX, scrollY, gridSize, zoom) => {
   const offsetX = scrollX % gridSize - gridSize;
   const offsetY = scrollY % gridSize - gridSize;
-  const actualGridSize = gridSize * zoom.value;
-  const spaceWidth = 1 / zoom.value;
   context.save();
   if (zoom.value === 1) {
     context.translate(offsetX % 1 ? 0 : 0.5, offsetY % 1 ? 0 : 0.5);
   }
+  return { offsetX, offsetY };
+};
+var strokeGridSquare = ({
+  context,
+  gridSize,
+  gridStep,
+  scrollX,
+  scrollY,
+  zoom,
+  width,
+  height
+}) => {
+  const actualGridSize = gridSize * zoom.value;
+  const spaceWidth = 1 / zoom.value;
+  const { offsetX, offsetY } = applyGridPixelOffset(
+    context,
+    scrollX,
+    scrollY,
+    gridSize,
+    zoom
+  );
   for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
     const isBold = gridStep > 1 && Math.round(x - scrollX) % (gridStep * gridSize) === 0;
     if (!isBold && actualGridSize < 10) {
@@ -18309,6 +18343,141 @@ var strokeGrid = (context, gridSize, gridStep, scrollX, scrollY, zoom, width, he
     context.stroke();
   }
   context.restore();
+};
+var strokeGridLines = ({
+  context,
+  gridSize,
+  scrollX,
+  scrollY,
+  zoom,
+  width,
+  height
+}) => {
+  const actualGridSize = gridSize * zoom.value;
+  if (actualGridSize < 10) {
+    return;
+  }
+  const lineWidth = Math.min(1 / zoom.value, 1);
+  const { offsetX, offsetY } = applyGridPixelOffset(
+    context,
+    scrollX,
+    scrollY,
+    gridSize,
+    zoom
+  );
+  context.lineWidth = lineWidth;
+  context.setLineDash([]);
+  context.strokeStyle = GridLineColor.Regular;
+  for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
+    context.beginPath();
+    context.moveTo(x, offsetY - gridSize);
+    context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
+    context.stroke();
+  }
+  for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
+    context.beginPath();
+    context.moveTo(offsetX - gridSize, y);
+    context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
+    context.stroke();
+  }
+  context.restore();
+};
+var strokeGridDots = ({
+  context,
+  gridSize,
+  scrollX,
+  scrollY,
+  zoom,
+  width,
+  height
+}) => {
+  const actualGridSize = gridSize * zoom.value;
+  if (actualGridSize < 10) {
+    return;
+  }
+  const dotRadius = Math.min(1 / zoom.value, 1.25);
+  const { offsetX, offsetY } = applyGridPixelOffset(
+    context,
+    scrollX,
+    scrollY,
+    gridSize,
+    zoom
+  );
+  context.fillStyle = GridLineColor.Regular;
+  for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
+    for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
+      context.beginPath();
+      context.arc(x, y, dotRadius, 0, Math.PI * 2);
+      context.fill();
+    }
+  }
+  context.restore();
+};
+var strokeGridIsometric = ({
+  context,
+  gridSize,
+  scrollX,
+  scrollY,
+  zoom,
+  width,
+  height
+}) => {
+  const actualGridSize = gridSize * zoom.value;
+  if (actualGridSize < 10) {
+    return;
+  }
+  const lineWidth = Math.min(1 / zoom.value, 1);
+  const { offsetX, offsetY } = applyGridPixelOffset(
+    context,
+    scrollX,
+    scrollY,
+    gridSize,
+    zoom
+  );
+  const span = width + height + gridSize * 4;
+  const slope = 1 / Math.sqrt(3);
+  context.lineWidth = lineWidth;
+  context.setLineDash([]);
+  context.strokeStyle = GridLineColor.Regular;
+  for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
+    context.beginPath();
+    context.moveTo(offsetX - gridSize, y);
+    context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
+    context.stroke();
+  }
+  for (let i = -span; i < span; i += gridSize) {
+    const xStart = offsetX - gridSize;
+    const yStart = offsetY + i;
+    context.beginPath();
+    context.moveTo(xStart, yStart);
+    context.lineTo(xStart + span, yStart + span * slope);
+    context.stroke();
+  }
+  for (let i = -span; i < span; i += gridSize) {
+    const xStart = offsetX - gridSize;
+    const yStart = offsetY + i;
+    context.beginPath();
+    context.moveTo(xStart, yStart);
+    context.lineTo(xStart + span, yStart - span * slope);
+    context.stroke();
+  }
+  context.restore();
+};
+var strokeGridByType = (gridType, params) => {
+  switch (gridType) {
+    case "dots":
+      strokeGridDots({ ...params, gridSize: params.gridSize * 2.5 });
+      break;
+    case "lines":
+      strokeGridLines({ ...params, gridSize: params.gridSize * 2.5 });
+      break;
+    case "isometric":
+      strokeGridIsometric({ ...params, gridSize: params.gridSize * 2.5 });
+      break;
+    case "square":
+    default:
+      strokeGridSquare(params);
+  }
 };
 var frameClip = (frame, context, renderConfig, appState) => {
   context.translate(frame.x + appState.scrollX, frame.y + appState.scrollY);
@@ -18409,16 +18578,16 @@ var _renderStaticScene = ({
   });
   context.scale(appState.zoom.value, appState.zoom.value);
   if (renderGrid) {
-    strokeGrid(
+    strokeGridByType(appState.gridType ?? "square", {
       context,
-      appState.gridSize,
-      appState.gridStep,
-      appState.scrollX,
-      appState.scrollY,
-      appState.zoom,
-      normalizedWidth / appState.zoom.value,
-      normalizedHeight / appState.zoom.value
-    );
+      gridSize: appState.gridSize,
+      gridStep: appState.gridStep,
+      scrollX: appState.scrollX,
+      scrollY: appState.scrollY,
+      zoom: appState.zoom,
+      width: normalizedWidth / appState.zoom.value,
+      height: normalizedHeight / appState.zoom.value
+    });
   }
   const groupsToBeAddedToFrame = /* @__PURE__ */ new Set();
   visibleElements.forEach((element) => {
@@ -20839,6 +21008,7 @@ var restoreAppState = (appState, localAppState) => {
     gridStep: getNormalizedGridStep(
       isFiniteNumber(appState.gridStep) ? appState.gridStep : DEFAULT_GRID_STEP
     ),
+    gridType: getNormalizedGridType(appState.gridType),
     editingFrame: null
   };
 };
@@ -24618,7 +24788,7 @@ var parseFileContents = async (blob) => {
   let contents;
   if (blob.type === MIME_TYPES.png) {
     try {
-      return await (await import("./data/image-YKVTEDFW.js")).decodePngMetadata(blob);
+      return await (await import("./data/image-LV6TNWT3.js")).decodePngMetadata(blob);
     } catch (error) {
       if (error.message === "INVALID") {
         throw new ImageSceneDataError(
@@ -25692,4 +25862,4 @@ export {
   getNormalizedZoom,
   getNormalizedGridStep
 };
-//# sourceMappingURL=chunk-4FTI6OG3.js.map
+//# sourceMappingURL=chunk-KA3AO2CN.js.map

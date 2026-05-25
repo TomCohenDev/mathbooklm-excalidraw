@@ -112,6 +112,7 @@ export declare const actionToggleCanvasMenu: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -298,6 +299,7 @@ export declare const actionToggleEditMenu: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -479,6 +481,7 @@ export declare const actionShortcuts: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {

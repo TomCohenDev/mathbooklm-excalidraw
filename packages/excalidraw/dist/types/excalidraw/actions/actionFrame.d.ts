@@ -113,6 +113,7 @@ export declare const actionSelectAllElementsInFrame: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -304,6 +305,7 @@ export declare const actionRemoveAllElementsFromFrame: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -496,6 +498,7 @@ export declare const actionupdateFrameRendering: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -685,6 +688,7 @@ export declare const actionSetFrameAsActiveTool: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {

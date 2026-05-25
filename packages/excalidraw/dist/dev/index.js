@@ -618,7 +618,7 @@ import {
   wrapText,
   youtubeIcon,
   zoomAreaIcon
-} from "./chunk-4FTI6OG3.js";
+} from "./chunk-KA3AO2CN.js";
 import {
   define_import_meta_env_default
 } from "./chunk-AWQI2HM3.js";
@@ -5807,6 +5807,7 @@ var actionClearCanvas = register({
         exportEmbedScene: appState.exportEmbedScene,
         gridSize: appState.gridSize,
         gridStep: appState.gridStep,
+        gridType: appState.gridType,
         gridModeEnabled: appState.gridModeEnabled,
         stats: appState.stats,
         pasteDialog: appState.pasteDialog,
@@ -6478,7 +6479,7 @@ var exportCanvas = async (type, elements, appState, files, {
     let blob = canvasToBlob(tempCanvas);
     if (appState.exportEmbedScene) {
       blob = blob.then(
-        (blob2) => import("./data/image-YKVTEDFW.js").then(
+        (blob2) => import("./data/image-LV6TNWT3.js").then(
           ({ encodePngMetadata }) => encodePngMetadata({
             blob: blob2,
             metadata: serializeAsJSON(elements, appState, files, "local")
@@ -23489,6 +23490,7 @@ var getRelevantAppStateProps2 = (appState) => ({
   selectedElementsAreBeingDragged: appState.selectedElementsAreBeingDragged,
   gridSize: appState.gridSize,
   gridStep: appState.gridStep,
+  gridType: appState.gridType,
   frameRendering: appState.frameRendering,
   selectedElementIds: appState.selectedElementIds,
   frameToHighlight: appState.frameToHighlight,
