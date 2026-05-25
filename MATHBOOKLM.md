@@ -1,6 +1,6 @@
 # MathbookLM Excalidraw fork
 
-This directory is a git clone of upstream [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw) with MathbookLM-specific changes on branch `mathbooklm`.
+This directory is a git clone of upstream [excalidraw/excalidraw](https://github.com/excalidraw/excalidraw) with MathbookLM-specific changes on branch `dev`.
 
 ## Remotes
 
@@ -9,10 +9,14 @@ This directory is a git clone of upstream [excalidraw/excalidraw](https://github
 | `upstream` | `https://github.com/excalidraw/excalidraw.git` | Upstream releases |
 | `origin` | `https://github.com/TomCohenDev/mathbooklm-excalidraw.git` | MathbookLM fork |
 
-## Branches on `origin`
+## Branches on `origin` (only these two)
 
-- **`main`** — publishable `@excalidraw/excalidraw` package (subtree of `packages/excalidraw`, including committed `dist/`). Consumed by `mathbooklm-website` via `github:TomCohenDev/mathbooklm-excalidraw#main`.
-- **`monorepo`** — full fork tree for development and upstream merges.
+| Branch | Contents | Use |
+|--------|----------|-----|
+| **`dev`** | Full Excalidraw monorepo (default for editing) | Day-to-day fork work; merge upstream here |
+| **`main`** | `packages/excalidraw` subtree with committed `dist/` | Consumed via `github:TomCohenDev/mathbooklm-excalidraw#main`; updated with `make excalidraw-publish` |
+
+Work locally on **`dev`**. Do not commit directly to **`main`** — it is produced by subtree split from `dev`.
 
 ## Build & publish
 
