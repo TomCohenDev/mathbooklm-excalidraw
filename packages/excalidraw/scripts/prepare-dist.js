@@ -18,7 +18,7 @@ const buildScript = path.join(monorepoRoot, "scripts", "buildPackage.js");
 
 if (!fs.existsSync(buildScript)) {
   console.error(
-    "@excalidraw/excalidraw: dist/ is missing. Install from TomCohenDev/mathbookml-excalidraw (committed dist) or build from the mathbooklm excalidraw monorepo.",
+    "@excalidraw/excalidraw: dist/ is missing. Install from TomCohenDev/mathbooklm-excalidraw (committed dist) or build from the mathbooklm excalidraw monorepo.",
   );
   process.exit(1);
 }

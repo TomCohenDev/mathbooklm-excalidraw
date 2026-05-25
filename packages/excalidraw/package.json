@@ -113,9 +113,9 @@
     "jest-diff": "29.7.0",
     "typescript": "4.9.4"
   },
-  "repository": "https://github.com/TomCohenDev/mathbookml-excalidraw",
-  "bugs": "https://github.com/TomCohenDev/mathbookml-excalidraw/issues",
-  "homepage": "https://github.com/TomCohenDev/mathbookml-excalidraw",
+  "repository": "https://github.com/TomCohenDev/mathbooklm-excalidraw",
+  "bugs": "https://github.com/TomCohenDev/mathbooklm-excalidraw/issues",
+  "homepage": "https://github.com/TomCohenDev/mathbooklm-excalidraw",
   "scripts": {
     "prepare": "node ./scripts/prepare-dist.js",
     "gen:types": "rm -rf types && tsc",
