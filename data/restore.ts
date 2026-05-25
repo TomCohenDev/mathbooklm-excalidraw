@@ -56,6 +56,7 @@ import { normalizeFixedPoint } from "../element/binding";
 import {
   getNormalizedGridSize,
   getNormalizedGridStep,
+  getNormalizedGridType,
   getNormalizedZoom,
 } from "../scene";
 import type { LocalPoint, Radians } from "@excalidraw/math";
@@ -745,6 +746,7 @@ export const restoreAppState = (
     gridStep: getNormalizedGridStep(
       isFiniteNumber(appState.gridStep) ? appState.gridStep : DEFAULT_GRID_STEP,
     ),
+    gridType: getNormalizedGridType(appState.gridType),
     editingFrame: null,
   };
 };

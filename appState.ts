@@ -10,6 +10,7 @@ import {
   STATS_PANELS,
   THEME,
   DEFAULT_GRID_STEP,
+  DEFAULT_GRID_TYPE,
 } from "./constants";
 import type { AppState, NormalizedZoomValue } from "./types";
 
@@ -63,6 +64,7 @@ export const getDefaultAppState = (): Omit<
     fileHandle: null,
     gridSize: DEFAULT_GRID_SIZE,
     gridStep: DEFAULT_GRID_STEP,
+    gridType: DEFAULT_GRID_TYPE,
     gridModeEnabled: false,
     isBindingEnabled: true,
     defaultSidebarDockedPreference: false,
@@ -183,6 +185,7 @@ const APP_STATE_STORAGE_CONF = (<
   fileHandle: { browser: false, export: false, server: false },
   gridSize: { browser: true, export: true, server: true },
   gridStep: { browser: true, export: true, server: true },
+  gridType: { browser: true, export: true, server: true },
   gridModeEnabled: { browser: true, export: true, server: true },
   height: { browser: false, export: false, server: false },
   isBindingEnabled: { browser: false, export: false, server: false },

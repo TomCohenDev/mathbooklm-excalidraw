@@ -123,6 +123,7 @@ export declare const actionGroup: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             width: number;
@@ -317,6 +318,7 @@ export declare const actionUngroup: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             width: number;

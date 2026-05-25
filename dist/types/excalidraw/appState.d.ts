@@ -55,6 +55,7 @@ export declare const clearAppStateForLocalStorage: (appState: Partial<AppState>)
     shouldCacheIgnoreZoom?: boolean | undefined;
     gridSize?: number | undefined;
     gridStep?: number | undefined;
+    gridType?: import("./constants").GridType | undefined;
     selectedGroupIds?: {
         [groupId: string]: boolean;
     } | undefined;
@@ -71,12 +72,14 @@ export declare const cleanAppStateForExport: (appState: Partial<AppState>) => {
     viewBackgroundColor?: string | undefined;
     gridSize?: number | undefined;
     gridStep?: number | undefined;
+    gridType?: import("./constants").GridType | undefined;
 };
 export declare const clearAppStateForDatabase: (appState: Partial<AppState>) => {
     gridModeEnabled?: boolean | undefined;
     viewBackgroundColor?: string | undefined;
     gridSize?: number | undefined;
     gridStep?: number | undefined;
+    gridType?: import("./constants").GridType | undefined;
 };
 export declare const isEraserActive: ({ activeTool, }: {
     activeTool: AppState["activeTool"];

@@ -117,6 +117,7 @@ export declare const actionToggleViewMode: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;

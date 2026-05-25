@@ -28,6 +28,7 @@ import type { Action } from "./actions/types";
 import type { LinearElementEditor } from "./element/linearElementEditor";
 import type { SuggestedBinding } from "./element/binding";
 import type { ImportedDataState } from "./data/types";
+import type { GridType } from "./constants";
 import type App from "./components/App";
 import type { throttleRAF } from "./utils";
 import type { Spreadsheet } from "./charts";
@@ -182,6 +183,7 @@ export type StaticCanvasAppState = Readonly<
     selectedElementsAreBeingDragged: AppState["selectedElementsAreBeingDragged"];
     gridSize: AppState["gridSize"];
     gridStep: AppState["gridStep"];
+    gridType: AppState["gridType"];
     frameRendering: AppState["frameRendering"];
     currentHoveredFontFamily: AppState["currentHoveredFontFamily"];
     hoveredElementIds: AppState["hoveredElementIds"];
@@ -360,6 +362,8 @@ export interface AppState {
   /** grid cell px size */
   gridSize: number;
   gridStep: number;
+  /** background grid style when grid is enabled */
+  gridType: GridType;
   gridModeEnabled: boolean;
   viewModeEnabled: boolean;
 

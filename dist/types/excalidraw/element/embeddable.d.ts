@@ -121,6 +121,7 @@ export declare const actionSetEmbeddableAsActiveTool: {
             theme: import("./types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {

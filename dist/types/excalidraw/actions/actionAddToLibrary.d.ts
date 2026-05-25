@@ -110,6 +110,7 @@ export declare const actionAddToLibrary: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -285,6 +286,7 @@ export declare const actionAddToLibrary: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -460,6 +462,7 @@ export declare const actionAddToLibrary: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {

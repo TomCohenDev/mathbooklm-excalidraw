@@ -36,6 +36,7 @@ export declare const actionClearCanvas: {
             exportEmbedScene: boolean;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             stats: {
                 open: boolean;
@@ -318,6 +319,7 @@ export declare const actionZoomIn: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -507,6 +509,7 @@ export declare const actionZoomOut: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -696,6 +699,7 @@ export declare const actionResetZoom: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -891,6 +895,7 @@ export declare const zoomToFitBounds: ({ bounds, appState, canvasOffsets, fitToV
         theme: import("../element/types").Theme;
         gridSize: number;
         gridStep: number;
+        gridType: import("../constants").GridType;
         gridModeEnabled: boolean;
         viewModeEnabled: boolean;
         selectedGroupIds: {
@@ -1082,6 +1087,7 @@ export declare const zoomToFit: ({ canvasOffsets, targetElements, appState, fitT
         theme: import("../element/types").Theme;
         gridSize: number;
         gridStep: number;
+        gridType: import("../constants").GridType;
         gridModeEnabled: boolean;
         viewModeEnabled: boolean;
         selectedGroupIds: {
@@ -1265,6 +1271,7 @@ export declare const actionZoomToFitSelectionInViewport: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -1452,6 +1459,7 @@ export declare const actionZoomToFitSelection: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -1640,6 +1648,7 @@ export declare const actionZoomToFit: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -1829,6 +1838,7 @@ export declare const actionToggleTheme: {
             zenModeEnabled: boolean;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             selectedGroupIds: {
@@ -2012,6 +2022,7 @@ export declare const actionToggleEraserTool: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             editingGroupId: string | null;
@@ -2194,6 +2205,7 @@ export declare const actionToggleHandTool: {
             theme: import("../element/types").Theme;
             gridSize: number;
             gridStep: number;
+            gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
             viewModeEnabled: boolean;
             editingGroupId: string | null;
