@@ -551,7 +551,11 @@
   },
   "colorPicker": {
     "mostUsedCustomColors": "Most used custom colors",
-    "colors": "Colors",
+    "colorWheel": "My colors",
+    "colorWheelEmpty": "Double-click a color below to add it here.",
+    "colorWheelAddHint": "Double-click to add to My colors",
+    "colorWheelRemoveHint": "Double-click to remove",
+    "colors": "All colors",
     "shades": "Shades",
     "hexCode": "Hex code",
     "noShades": "No shades available for this color"

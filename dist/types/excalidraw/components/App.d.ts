@@ -82,6 +82,8 @@ declare class App extends React.Component<AppProps, AppState> {
     private elementsPendingErasure;
     flowChartCreator: FlowChartCreator;
     private flowChartNavigator;
+    /** When true, shape properties strip stays collapsed until tool change or expand. */
+    shapeActionsUserDismissed: boolean;
     hitLinkElement?: NonDeletedExcalidrawElement;
     lastPointerDownEvent: React.PointerEvent<HTMLElement> | null;
     lastPointerUpEvent: React.PointerEvent<HTMLElement> | PointerEvent | null;
@@ -366,6 +368,8 @@ declare class App extends React.Component<AppProps, AppState> {
      * NOTE if file already exists in editor state, the file data is not updated
      * */
     addFiles: ExcalidrawImperativeAPI["addFiles"];
+    /** Replace existing file payloads (e.g. theme-dependent PNG reprocessing). */
+    updateFiles: ExcalidrawImperativeAPI["updateFiles"];
     private addMissingFiles;
     updateScene: <K extends keyof AppState>(sceneData: {
         elements?: SceneData["elements"];
@@ -398,6 +402,9 @@ declare class App extends React.Component<AppProps, AppState> {
     private onKeyDown;
     private onKeyUp;
     private isToolSupported;
+    dismissShapeActionsPanel: () => void;
+    expandShapeActionsPanel: () => void;
+    toggleShapeActionsPanel: () => void;
     setActiveTool: (tool: (({
         type: Exclude<ToolType, "image">;
     } | {
@@ -513,6 +520,12 @@ declare class App extends React.Component<AppProps, AppState> {
     private handleInteractiveCanvasRef;
     private handleAppOnDrop;
     loadFileToCanvas: (file: File, fileHandle: FileSystemHandle | null) => Promise<void>;
+    /**
+     * Start a box-selection interaction from an existing pointer-down (used when
+     * right-drag switches to the selection tool mid-gesture).
+     */
+    private beginBoxSelectionInteraction;
+    private handleSecondaryButtonDragSelection;
     private handleCanvasContextMenu;
     private maybeDragNewGenericElement;
     private maybeHandleCrop;

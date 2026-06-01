@@ -44,6 +44,10 @@ type ToolButtonProps = (ToolButtonBaseProps & {
     onPointerDown?(data: {
         pointerType: PointerType;
     }): void;
+    /** Fired on pointer down when the radio is already selected (re-click). */
+    onSelectedClick?(data: {
+        pointerType: PointerType | null;
+    }): void;
 });
 export declare const ToolButton: React.ForwardRefExoticComponent<ToolButtonProps & React.RefAttributes<unknown>>;
 export {};

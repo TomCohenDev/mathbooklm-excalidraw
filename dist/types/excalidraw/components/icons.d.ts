@@ -41,6 +41,7 @@ export declare const HamburgerMenuIcon: import("react/jsx-runtime").JSX.Element;
 export declare const ExportIcon: import("react/jsx-runtime").JSX.Element;
 export declare const HelpIcon: import("react/jsx-runtime").JSX.Element;
 export declare const HelpIconThin: import("react/jsx-runtime").JSX.Element;
+export declare const CalculatorIcon: import("react/jsx-runtime").JSX.Element;
 export declare const ExternalLinkIcon: import("react/jsx-runtime").JSX.Element;
 export declare const GithubIcon: import("react/jsx-runtime").JSX.Element;
 export declare const DiscordIcon: import("react/jsx-runtime").JSX.Element;

@@ -1,14 +1,12 @@
-import clsx from "clsx";
 import { useAtom } from "../../editor-jotai";
 import { useEffect, useRef } from "react";
 import {
   activeColorPickerSectionAtom,
-  colorPickerHotkeyBindings,
   getColorNameAndShadeFromColor,
 } from "./colorPickerUtils";
-import HotkeyLabel from "./HotkeyLabel";
 import type { ColorPaletteCustom } from "../../colors";
-import type { TranslationKeys } from "../../i18n";
+import { ColorSwatchGrid } from "./ColorSwatchGrid";
+import { flattenPaletteColors, normalizeWheelColor } from "./colorWheelStorage";
 import { t } from "../../i18n";
 
 interface PickerColorListProps {
@@ -16,15 +14,14 @@ interface PickerColorListProps {
   color: string;
   onChange: (color: string) => void;
   label: string;
-  activeShade: number;
+  onAddToWheel: (color: string) => void;
 }
 
 const PickerColorList = ({
   palette,
   color,
   onChange,
-  label,
-  activeShade,
+  onAddToWheel,
 }: PickerColorListProps) => {
   const colorObj = getColorNameAndShadeFromColor({
     color: color || "transparent",
@@ -34,56 +31,27 @@ const PickerColorList = ({
     activeColorPickerSectionAtom,
   );
 
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLDivElement>(null);
+  const swatches = flattenPaletteColors(palette);
 
   useEffect(() => {
     if (btnRef.current && activeColorPickerSection === "baseColors") {
-      btnRef.current.focus();
+      btnRef.current.querySelector<HTMLButtonElement>("button")?.focus();
     }
   }, [colorObj?.colorName, activeColorPickerSection]);
 
   return (
-    <div className="color-picker-content--default">
-      {Object.entries(palette).map(([key, value], index) => {
-        const color =
-          (Array.isArray(value) ? value[activeShade] : value) || "transparent";
-
-        const keybinding = colorPickerHotkeyBindings[index];
-        const label = t(
-          `colors.${key.replace(/\d+/, "")}` as unknown as TranslationKeys,
-          null,
-          "",
-        );
-
-        return (
-          <button
-            ref={colorObj?.colorName === key ? btnRef : undefined}
-            tabIndex={-1}
-            type="button"
-            className={clsx(
-              "color-picker__button color-picker__button--large",
-              {
-                active: colorObj?.colorName === key,
-                "is-transparent": color === "transparent" || !color,
-              },
-            )}
-            onClick={() => {
-              onChange(color);
-              setActiveColorPickerSection("baseColors");
-            }}
-            title={`${label}${
-              color.startsWith("#") ? ` ${color}` : ""
-            } — ${keybinding}`}
-            aria-label={`${label} — ${keybinding}`}
-            style={color ? { "--swatch-color": color } : undefined}
-            data-testid={`color-${key}`}
-            key={key}
-          >
-            <div className="color-picker__button-outline" />
-            <HotkeyLabel color={color} keyLabel={keybinding} />
-          </button>
-        );
-      })}
+    <div ref={btnRef}>
+      <ColorSwatchGrid
+        colors={swatches}
+        activeColor={color}
+        onSelect={(swatch) => {
+          onChange(swatch);
+          setActiveColorPickerSection("baseColors");
+        }}
+        onDoubleClick={(swatch) => onAddToWheel(normalizeWheelColor(swatch))}
+        doubleClickHint={t("colorPicker.colorWheelAddHint")}
+      />
     </div>
   );
 };

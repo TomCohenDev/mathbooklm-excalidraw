@@ -115,6 +115,8 @@ export declare const actionSelectAllElementsInFrame: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -307,6 +309,8 @@ export declare const actionRemoveAllElementsFromFrame: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -500,6 +504,8 @@ export declare const actionupdateFrameRendering: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -690,6 +696,8 @@ export declare const actionSetFrameAsActiveTool: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;

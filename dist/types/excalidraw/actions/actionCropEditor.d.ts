@@ -119,6 +119,8 @@ export declare const actionToggleCropEditor: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;

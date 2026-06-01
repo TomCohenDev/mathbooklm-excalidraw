@@ -161,34 +161,4 @@ const getHints = ({
   return null;
 };
 
-export const HintViewer = ({
-  appState,
-  isMobile,
-  device,
-  app,
-}: HintViewerProps) => {
-  const hints = getHints({
-    appState,
-    isMobile,
-    device,
-    app,
-  });
-
-  if (!hints) {
-    return null;
-  }
-
-  const hint = Array.isArray(hints)
-    ? hints
-        .map((hint) => {
-          return getShortcutKey(hint).replace(/\. ?$/, "");
-        })
-        .join(". ")
-    : getShortcutKey(hints);
-
-  return (
-    <div className="HintViewer">
-      <span>{hint}</span>
-    </div>
-  );
-};
+export const HintViewer = (_props: HintViewerProps) => null;

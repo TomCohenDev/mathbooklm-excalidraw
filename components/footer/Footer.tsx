@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { actionShortcuts } from "../../actions";
 import type { ActionManager } from "../../actions/manager";
 import {
   ExitZenModeAction,
@@ -9,7 +8,7 @@ import {
 } from "../Actions";
 import { useDevice } from "../App";
 import { useTunnels } from "../../context/tunnels";
-import { HelpButton } from "../HelpButton";
+import { CalculatorButton } from "../CalculatorButton";
 import { Section } from "../Section";
 import Stack from "../Stack";
 import type { UIAppState } from "../../types";
@@ -78,9 +77,7 @@ const Footer = ({
       >
         <div style={{ position: "relative" }}>
           {renderWelcomeScreen && <WelcomeScreenHelpHintTunnel.Out />}
-          <HelpButton
-            onClick={() => actionManager.executeAction(actionShortcuts)}
-          />
+          <CalculatorButton />
         </div>
       </div>
       <ExitZenModeAction

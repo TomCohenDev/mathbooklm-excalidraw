@@ -118,6 +118,8 @@ export declare const actionToggleObjectsSnapMode: {
             gridSize: number;
             gridStep: number;
             gridType: import("../constants").GridType;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;

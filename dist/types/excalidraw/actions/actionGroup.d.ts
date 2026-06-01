@@ -125,6 +125,8 @@ export declare const actionGroup: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             width: number;
             height: number;
@@ -320,6 +322,8 @@ export declare const actionUngroup: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             width: number;
             height: number;

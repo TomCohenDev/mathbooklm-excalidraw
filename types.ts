@@ -184,6 +184,8 @@ export type StaticCanvasAppState = Readonly<
     gridSize: AppState["gridSize"];
     gridStep: AppState["gridStep"];
     gridType: AppState["gridType"];
+    gridColor: AppState["gridColor"];
+    gridOpacity: AppState["gridOpacity"];
     frameRendering: AppState["frameRendering"];
     currentHoveredFontFamily: AppState["currentHoveredFontFamily"];
     hoveredElementIds: AppState["hoveredElementIds"];
@@ -365,6 +367,9 @@ export interface AppState {
   /** background grid style when grid is enabled */
   gridType: GridType;
   gridModeEnabled: boolean;
+  gridColor: string;
+  /** 0–100 */
+  gridOpacity: number;
   viewModeEnabled: boolean;
 
   /** top-most selected groups (i.e. does not include nested groups) */
@@ -685,6 +690,10 @@ export type AppClassProperties = {
   togglePenMode: App["togglePenMode"];
   toggleLock: App["toggleLock"];
   setActiveTool: App["setActiveTool"];
+  shapeActionsUserDismissed: App["shapeActionsUserDismissed"];
+  dismissShapeActionsPanel: App["dismissShapeActionsPanel"];
+  expandShapeActionsPanel: App["expandShapeActionsPanel"];
+  toggleShapeActionsPanel: App["toggleShapeActionsPanel"];
   setOpenDialog: App["setOpenDialog"];
   insertEmbeddableElement: App["insertEmbeddableElement"];
   onMagicframeToolSelect: App["onMagicframeToolSelect"];
@@ -782,8 +791,10 @@ export interface ExcalidrawImperativeAPI {
   refresh: InstanceType<typeof App>["refresh"];
   setToast: InstanceType<typeof App>["setToast"];
   addFiles: (data: BinaryFileData[]) => void;
+  updateFiles: (data: BinaryFileData[]) => void;
   id: string;
   setActiveTool: InstanceType<typeof App>["setActiveTool"];
+  toggleShapeActionsPanel: InstanceType<typeof App>["toggleShapeActionsPanel"];
   setCursor: InstanceType<typeof App>["setCursor"];
   resetCursor: InstanceType<typeof App>["resetCursor"];
   toggleSidebar: InstanceType<typeof App>["toggleSidebar"];

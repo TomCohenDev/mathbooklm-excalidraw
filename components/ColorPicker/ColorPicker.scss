@@ -14,10 +14,11 @@
   }
 
   .color-picker-container {
-    display: grid;
-    grid-template-columns: 1fr 20px 1.625rem;
-    padding: 0.25rem 0px;
+    display: flex;
     align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    padding: 0.25rem 0;
 
     @include isMobile {
       max-width: 11rem;
@@ -119,6 +120,27 @@
       width: 1.625rem;
       height: 1.625rem;
     }
+
+    &.color-picker__wheel-inline {
+      width: 1.35rem;
+      height: 1.35rem;
+    }
+  }
+
+  .color-picker-wheel-hint {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 0.15rem 0 0.35rem;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    color: var(--text-primary-color);
+    opacity: 0.72;
+  }
+
+  .color-picker-content.properties-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
   }
 
   .color-picker__button__hotkey-label {
@@ -211,8 +233,10 @@
     padding: 0.5rem;
     display: grid;
     grid-template-columns: repeat(5, 1.875rem);
+    grid-template-rows: repeat(5, 1.875rem);
     grid-gap: 0.25rem;
     border-radius: 4px;
+    overflow: visible;
 
     &:focus {
       outline: none;

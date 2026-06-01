@@ -56,6 +56,8 @@ export declare const clearAppStateForLocalStorage: (appState: Partial<AppState>)
     gridSize?: number | undefined;
     gridStep?: number | undefined;
     gridType?: import("./constants").GridType | undefined;
+    gridColor?: string | undefined;
+    gridOpacity?: number | undefined;
     selectedGroupIds?: {
         [groupId: string]: boolean;
     } | undefined;
@@ -73,6 +75,8 @@ export declare const cleanAppStateForExport: (appState: Partial<AppState>) => {
     gridSize?: number | undefined;
     gridStep?: number | undefined;
     gridType?: import("./constants").GridType | undefined;
+    gridColor?: string | undefined;
+    gridOpacity?: number | undefined;
 };
 export declare const clearAppStateForDatabase: (appState: Partial<AppState>) => {
     gridModeEnabled?: boolean | undefined;
@@ -80,6 +84,8 @@ export declare const clearAppStateForDatabase: (appState: Partial<AppState>) => 
     gridSize?: number | undefined;
     gridStep?: number | undefined;
     gridType?: import("./constants").GridType | undefined;
+    gridColor?: string | undefined;
+    gridOpacity?: number | undefined;
 };
 export declare const isEraserActive: ({ activeTool, }: {
     activeTool: AppState["activeTool"];

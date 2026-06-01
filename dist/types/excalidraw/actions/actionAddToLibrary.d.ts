@@ -112,6 +112,8 @@ export declare const actionAddToLibrary: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -288,6 +290,8 @@ export declare const actionAddToLibrary: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -464,6 +468,8 @@ export declare const actionAddToLibrary: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;

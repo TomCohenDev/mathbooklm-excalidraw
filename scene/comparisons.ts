@@ -9,6 +9,15 @@ export const hasBackground = (type: ElementOrToolType) =>
   type === "line" ||
   type === "freedraw";
 
+/** Fillable shapes only (excludes pen / freedraw). */
+export const isFillableShape = (type: ElementOrToolType) =>
+  type === "rectangle" ||
+  type === "iframe" ||
+  type === "embeddable" ||
+  type === "ellipse" ||
+  type === "diamond" ||
+  type === "line";
+
 export const hasStrokeColor = (type: ElementOrToolType) =>
   type !== "image" && type !== "frame" && type !== "magicframe";
 

@@ -151,8 +151,10 @@ export declare const COLOR_VOICE_CALL = "#a2f1a6";
 export declare const CANVAS_ONLY_ACTIONS: string[];
 export declare const DEFAULT_GRID_SIZE = 20;
 export declare const DEFAULT_GRID_STEP = 5;
+export declare const DEFAULT_GRID_COLOR = "#e5e5e5";
+export declare const DEFAULT_GRID_OPACITY = 100;
 /** Canvas background grid style when `gridModeEnabled` is true. */
-export type GridType = "square" | "dots" | "lines" | "isometric";
+export type GridType = "square" | "dots" | "boxes" | "verticalLines" | "horizontalLines" | "isometric";
 export declare const GRID_TYPES: readonly GridType[];
 export declare const DEFAULT_GRID_TYPE: GridType;
 export declare const IMAGE_MIME_TYPES: {

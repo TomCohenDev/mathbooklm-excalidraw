@@ -12,9 +12,9 @@ import {
   canChangeRoundness,
   canHaveArrowheads,
   getTargetElements,
-  hasBackground,
   hasStrokeStyle,
   hasStrokeWidth,
+  isFillableShape,
 } from "../scene";
 import { SHAPES } from "../shapes";
 import type { AppClassProperties, AppProps, UIAppState, Zoom } from "../types";
@@ -82,9 +82,29 @@ export const canChangeBackgroundColor = (
   targetElements: ExcalidrawElement[],
 ) => {
   return (
-    hasBackground(appState.activeTool.type) ||
-    targetElements.some((element) => hasBackground(element.type))
+    isFillableShape(appState.activeTool.type) ||
+    targetElements.some((element) => isFillableShape(element.type))
   );
+};
+
+const shouldShowOpacity = (
+  appState: UIAppState,
+  targetElements: ExcalidrawElement[],
+) => {
+  const { type: activeType } = appState.activeTool;
+  if (activeType === "freedraw" || isFillableShape(activeType)) {
+    return false;
+  }
+  if (
+    targetElements.length > 0 &&
+    targetElements.every(
+      (element) =>
+        element.type === "freedraw" || isFillableShape(element.type),
+    )
+  ) {
+    return false;
+  }
+  return true;
 };
 
 export const SelectedShapeActions = ({
@@ -115,11 +135,12 @@ export const SelectedShapeActions = ({
   const isRTL = document.documentElement.getAttribute("dir") === "rtl";
 
   const showFillIcons =
-    (hasBackground(appState.activeTool.type) &&
+    (isFillableShape(appState.activeTool.type) &&
       !isTransparent(appState.currentItemBackgroundColor)) ||
     targetElements.some(
       (element) =>
-        hasBackground(element.type) && !isTransparent(element.backgroundColor),
+        isFillableShape(element.type) &&
+        !isTransparent(element.backgroundColor),
     );
 
   const showLinkIcon =
@@ -194,7 +215,8 @@ export const SelectedShapeActions = ({
         <>{renderAction("changeArrowhead")}</>
       )}
 
-      {renderAction("changeOpacity")}
+      {shouldShowOpacity(appState, targetElements) &&
+        renderAction("changeOpacity")}
 
       <fieldset>
         <legend>{t("labels.layers")}</legend>
@@ -319,6 +341,9 @@ export const ShapesSwitcher = ({
               if (!appState.penDetected && pointerType === "pen") {
                 app.togglePenMode(true);
               }
+            }}
+            onSelectedClick={() => {
+              app.toggleShapeActionsPanel();
             }}
             onChange={({ pointerType }) => {
               if (appState.activeTool.type !== value) {

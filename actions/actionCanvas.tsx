@@ -34,11 +34,11 @@ import {
   isEraserActive,
   isHandToolActive,
 } from "../appState";
-import { DEFAULT_CANVAS_BACKGROUND_PICKS } from "../colors";
 import type { SceneBounds } from "../element/bounds";
 import { setCursor } from "../cursor";
 import { CaptureUpdateAction } from "../store";
 import { clamp, roundToStep } from "@excalidraw/math";
+import { DEFAULT_CANVAS_BACKGROUND_COLOR_PALETTE } from "../colors";
 
 export const actionChangeViewBackgroundColor = register({
   name: "changeViewBackgroundColor",
@@ -63,8 +63,7 @@ export const actionChangeViewBackgroundColor = register({
     // FIXME move me to src/components/mainMenu/DefaultItems.tsx
     return (
       <ColorPicker
-        palette={null}
-        topPicks={DEFAULT_CANVAS_BACKGROUND_PICKS}
+        palette={DEFAULT_CANVAS_BACKGROUND_COLOR_PALETTE}
         label={t("labels.canvasBackground")}
         type="canvasBackground"
         color={appState.viewBackgroundColor}
@@ -109,6 +108,8 @@ export const actionClearCanvas = register({
         gridStep: appState.gridStep,
         gridType: appState.gridType,
         gridModeEnabled: appState.gridModeEnabled,
+        gridColor: appState.gridColor,
+        gridOpacity: appState.gridOpacity,
         stats: appState.stats,
         pasteDialog: appState.pasteDialog,
         activeTool:
