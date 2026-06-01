@@ -404,6 +404,8 @@ declare class App extends React.Component<AppProps, AppState> {
     private isToolSupported;
     dismissShapeActionsPanel: () => void;
     expandShapeActionsPanel: () => void;
+    /** Open stroke/background/size panel after the user selects something on canvas. */
+    private maybeOpenShapeActionsPanelOnSelection;
     toggleShapeActionsPanel: () => void;
     setActiveTool: (tool: (({
         type: Exclude<ToolType, "image">;
@@ -526,6 +528,7 @@ declare class App extends React.Component<AppProps, AppState> {
      */
     private beginBoxSelectionInteraction;
     private handleSecondaryButtonDragSelection;
+    openContextMenuAt: (clientX: number, clientY: number) => void;
     private handleCanvasContextMenu;
     private maybeDragNewGenericElement;
     private maybeHandleCrop;

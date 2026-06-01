@@ -746,6 +746,7 @@ class App extends React.Component<AppProps, AppState> {
         resetCursor: this.resetCursor,
         updateFrameRendering: this.updateFrameRendering,
         toggleSidebar: this.toggleSidebar,
+        openContextMenuAt: this.openContextMenuAt,
         onChange: (cb) => this.onChangeEmitter.on(cb),
         onPointerDown: (cb) => this.onPointerDownEmitter.on(cb),
         onPointerUp: (cb) => this.onPointerUpEmitter.on(cb),
@@ -4721,6 +4722,42 @@ class App extends React.Component<AppProps, AppState> {
     this.setState({ openMenu: "shape" });
   };
 
+  /** Open stroke/background/size panel after the user selects something on canvas. */
+  private maybeOpenShapeActionsPanelOnSelection = (
+    pointerDownState: PointerDownState,
+  ) => {
+    const elements = this.scene.getNonDeletedElements();
+
+    if (
+      !showSelectedShapeActions(this.state, elements) ||
+      !isSomeElementSelected(elements, this.state)
+    ) {
+      return;
+    }
+
+    // Transform handles — user is resizing/rotating, not picking properties.
+    if (pointerDownState.resize.isResizing) {
+      return;
+    }
+
+    // Dragging an already-selected element (move), not a new selection.
+    if (
+      pointerDownState.drag.hasOccurred &&
+      !pointerDownState.boxSelection.hasOccurred &&
+      pointerDownState.hit.element &&
+      this.state.previousSelectedElementIds?.[
+        pointerDownState.hit.element.id
+      ]
+    ) {
+      return;
+    }
+
+    this.shapeActionsUserDismissed = false;
+    if (this.state.openMenu !== "shape") {
+      this.setState({ openMenu: "shape" });
+    }
+  };
+
   toggleShapeActionsPanel = () => {
     if (
       !showSelectedShapeActions(
@@ -6840,6 +6877,10 @@ class App extends React.Component<AppProps, AppState> {
   private maybeOpenContextMenuAfterPointerDownOnTouchDevices = (
     event: React.PointerEvent<HTMLElement>,
   ): void => {
+    if (this.props.UIOptions.canvasActions.contextMenu === false) {
+      return;
+    }
+
     // deal with opening context menu on touch devices
     if (event.pointerType === "touch") {
       invalidateContextMenu = false;
@@ -9121,6 +9162,7 @@ class App extends React.Component<AppProps, AppState> {
             },
             () => {
               this.actionManager.executeAction(actionFinalize);
+              this.maybeOpenShapeActionsPanelOnSelection(pointerDownState);
             },
           );
         } catch (error: any) {
@@ -9196,6 +9238,7 @@ class App extends React.Component<AppProps, AppState> {
           // so that the scene gets rendered again to display the newly drawn linear as well
           this.scene.triggerUpdate();
         }
+        this.maybeOpenShapeActionsPanelOnSelection(pointerDownState);
         return;
       }
 
@@ -9788,6 +9831,8 @@ class App extends React.Component<AppProps, AppState> {
       ) {
         this.handleEmbeddableCenterClick(hitElement);
       }
+
+      this.maybeOpenShapeActionsPanelOnSelection(pointerDownState);
     });
   }
 
@@ -10668,29 +10713,16 @@ class App extends React.Component<AppProps, AppState> {
     window.addEventListener(EVENT.POINTER_UP, onPointerUp, { capture: true });
   };
 
-  private handleCanvasContextMenu = (
-    event: React.MouseEvent<HTMLElement | HTMLCanvasElement>,
-  ) => {
-    event.preventDefault();
-
-    if (invalidateContextMenu) {
-      invalidateContextMenu = false;
+  public openContextMenuAt = (clientX: number, clientY: number) => {
+    const container = this.excalidrawContainerRef.current;
+    if (!container) {
       return;
     }
 
-    if (
-      (("pointerType" in event.nativeEvent &&
-        event.nativeEvent.pointerType === "touch") ||
-        ("pointerType" in event.nativeEvent &&
-          event.nativeEvent.pointerType === "pen" &&
-          // always allow if user uses a pen secondary button
-          event.button !== POINTER_BUTTON.SECONDARY)) &&
-      this.state.activeTool.type !== "selection"
-    ) {
-      return;
-    }
-
-    const { x, y } = viewportCoordsToSceneCoords(event, this.state);
+    const { x, y } = viewportCoordsToSceneCoords(
+      { clientX, clientY },
+      this.state,
+    );
     const element = this.getElementAtPosition(x, y, {
       preferSelected: true,
       includeLockedElements: true,
@@ -10703,13 +10735,17 @@ class App extends React.Component<AppProps, AppState> {
         selectedElements,
       );
 
-    const type = element || isHittingCommonBoundBox ? "element" : "canvas";
+    const type =
+      selectedElements.length > 0 ||
+      element ||
+      isHittingCommonBoundBox
+        ? "element"
+        : "canvas";
 
-    const container = this.excalidrawContainerRef.current!;
     const { top: offsetTop, left: offsetLeft } =
       container.getBoundingClientRect();
-    const left = event.clientX - offsetLeft;
-    const top = event.clientY - offsetTop;
+    const left = clientX - offsetLeft;
+    const top = clientY - offsetTop;
 
     trackEvent("contextMenu", "openContextMenu", type);
 
@@ -10740,6 +10776,35 @@ class App extends React.Component<AppProps, AppState> {
         });
       },
     );
+  };
+
+  private handleCanvasContextMenu = (
+    event: React.MouseEvent<HTMLElement | HTMLCanvasElement>,
+  ) => {
+    event.preventDefault();
+
+    if (this.props.UIOptions.canvasActions.contextMenu === false) {
+      return;
+    }
+
+    if (invalidateContextMenu) {
+      invalidateContextMenu = false;
+      return;
+    }
+
+    if (
+      (("pointerType" in event.nativeEvent &&
+        event.nativeEvent.pointerType === "touch") ||
+        ("pointerType" in event.nativeEvent &&
+          event.nativeEvent.pointerType === "pen" &&
+          // always allow if user uses a pen secondary button
+          event.button !== POINTER_BUTTON.SECONDARY)) &&
+      this.state.activeTool.type !== "selection"
+    ) {
+      return;
+    }
+
+    this.openContextMenuAt(event.clientX, event.clientY);
   };
 
   private maybeDragNewGenericElement = (

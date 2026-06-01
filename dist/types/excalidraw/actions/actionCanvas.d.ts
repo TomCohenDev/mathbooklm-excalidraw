@@ -59,12 +59,12 @@ export declare const actionClearCanvas: {
             zenModeEnabled: boolean;
             objectsSnapModeEnabled: boolean;
             name: string | null;
-            currentItemArrowType: "round" | "sharp" | "elbow";
             contextMenu: {
                 items: import("../components/ContextMenu").ContextMenuItems;
                 top: number;
                 left: number;
             } | null;
+            currentItemArrowType: "round" | "sharp" | "elbow";
             showWelcomeScreen: boolean;
             isLoading: boolean;
             errorMessage: import("react").ReactNode;

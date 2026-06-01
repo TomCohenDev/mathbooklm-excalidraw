@@ -273,7 +273,16 @@ export { Sidebar } from "./components/Sidebar/Sidebar";
 export { Button } from "./components/Button";
 export { Footer };
 export { MainMenu };
-export { useDevice } from "./components/App";
+export {
+  useDevice,
+  useExcalidrawAppState,
+  useExcalidrawSetAppState,
+} from "./components/App";
+export {
+  getNormalizedGridColor,
+  getNormalizedGridOpacity,
+  getNormalizedGridType,
+} from "./scene";
 export { WelcomeScreen };
 export { LiveCollaborationTrigger };
 export { Stats } from "./components/Stats";
