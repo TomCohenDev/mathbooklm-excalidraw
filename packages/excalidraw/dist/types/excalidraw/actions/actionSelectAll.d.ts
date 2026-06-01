@@ -123,6 +123,8 @@ export declare const actionSelectAll: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             width: number;
             height: number;

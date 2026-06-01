@@ -33,18 +33,15 @@ import {
   COLOR_VOICE_CALL,
   COLOR_WHITE,
   CURSOR_TYPE,
+  CalculatorIcon,
   CaptureUpdateAction,
   CenterHorizontallyIcon,
   CenterVerticallyIcon,
   CloseIcon,
-  DEFAULT_CANVAS_BACKGROUND_PICKS,
+  DEFAULT_CANVAS_BACKGROUND_COLOR_PALETTE,
   DEFAULT_COLLISION_THRESHOLD,
-  DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX,
   DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE,
-  DEFAULT_ELEMENT_BACKGROUND_PICKS,
-  DEFAULT_ELEMENT_STROKE_COLOR_INDEX,
   DEFAULT_ELEMENT_STROKE_COLOR_PALETTE,
-  DEFAULT_ELEMENT_STROKE_PICKS,
   DEFAULT_EXPORT_PADDING,
   DEFAULT_FILENAME,
   DEFAULT_FONT_FAMILY,
@@ -118,7 +115,6 @@ import {
   LoadIcon,
   LockedIcon,
   MAX_ALLOWED_FILE_BYTES,
-  MAX_CUSTOM_COLORS_USED_IN_CANVAS,
   MAX_ZOOM,
   MIME_TYPES,
   MINIMAL_CROP_SIZE,
@@ -155,8 +151,6 @@ import {
   StrokeStyleDashedIcon,
   StrokeStyleDottedIcon,
   StrokeWidthBaseIcon,
-  StrokeWidthBoldIcon,
-  StrokeWidthExtraBoldIcon,
   SunIcon,
   TAP_TWICE_TIMEOUT,
   TEXT_ALIGN,
@@ -279,7 +273,6 @@ import {
   exportToSvg2,
   extraToolsIcon,
   eyeClosedIcon,
-  eyeDropperIcon,
   eyeIcon,
   fileOpen,
   fileSave,
@@ -354,6 +347,8 @@ import {
   getNonDeletedElements,
   getNormalizedCanvasDimensions,
   getNormalizedDimensions,
+  getNormalizedGridColor,
+  getNormalizedGridOpacity,
   getNormalizedGridStep,
   getNormalizedZoom,
   getOmitSidesForDevice,
@@ -424,6 +419,7 @@ import {
   isEmbeddableElement,
   isEraserActive,
   isExcalidrawElement,
+  isFillableShape,
   isFiniteNumber,
   isFirefox,
   isFlowchartNodeElement,
@@ -618,13 +614,13 @@ import {
   wrapText,
   youtubeIcon,
   zoomAreaIcon
-} from "./chunk-KA3AO2CN.js";
+} from "./chunk-VFW5ME2J.js";
 import {
   define_import_meta_env_default
 } from "./chunk-AWQI2HM3.js";
 import {
   en_default
-} from "./chunk-LMHBUWQS.js";
+} from "./chunk-CC7MWZFU.js";
 import {
   percentages_default
 } from "./chunk-MFAYKRVR.js";
@@ -635,7 +631,7 @@ import {
 } from "./chunk-XDFCUUT6.js";
 
 // index.tsx
-import React44, { useEffect as useEffect45 } from "react";
+import React44, { useEffect as useEffect42 } from "react";
 
 // components/InitializeApp.tsx
 import { useEffect as useEffect2, useState as useState2 } from "react";
@@ -659,7 +655,7 @@ var globImport_locales_json = __glob({
   "./locales/da-DK.json": () => import("./locales/da-DK-N76F4QAJ.js"),
   "./locales/de-DE.json": () => import("./locales/de-DE-DMRXZ2SZ.js"),
   "./locales/el-GR.json": () => import("./locales/el-GR-HIKPLEXI.js"),
-  "./locales/en.json": () => import("./locales/en-OZCJJ2HN.js"),
+  "./locales/en.json": () => import("./locales/en-QRE7P6G4.js"),
   "./locales/es-ES.json": () => import("./locales/es-ES-AQYVXC32.js"),
   "./locales/eu-ES.json": () => import("./locales/eu-ES-3TOEU5DE.js"),
   "./locales/fa-IR.json": () => import("./locales/fa-IR-527GAKUP.js"),
@@ -925,7 +921,7 @@ var InitializeApp = (props) => {
 import React43, { useContext as useContext3 } from "react";
 import { flushSync as flushSync2 } from "react-dom";
 import rough from "roughjs/bin/rough";
-import clsx55 from "clsx";
+import clsx51 from "clsx";
 import { nanoid } from "nanoid";
 
 // components/ToolButton.tsx
@@ -1028,6 +1024,11 @@ var ToolButton = React3.forwardRef(
         onPointerDown: (event) => {
           lastPointerTypeRef.current = event.pointerType || null;
           props.onPointerDown?.({ pointerType: event.pointerType || null });
+          if (props.checked) {
+            props.onSelectedClick?.({
+              pointerType: event.pointerType || null
+            });
+          }
         },
         onPointerUp: () => {
           requestAnimationFrame(() => {
@@ -2083,7 +2084,7 @@ var duplicateElements2 = (elements, appState) => {
 };
 
 // actions/actionProperties.tsx
-import { useEffect as useEffect15, useMemo as useMemo4, useRef as useRef11, useState as useState8 } from "react";
+import { useEffect as useEffect11, useMemo as useMemo4, useRef as useRef7, useState as useState6 } from "react";
 
 // analytics.ts
 var ALLOWED_CATEGORIES_TO_TRACK = /* @__PURE__ */ new Set(["command_palette", "export"]);
@@ -2175,69 +2176,10 @@ var ButtonIconSelect = (props) => /* @__PURE__ */ jsx9("div", { className: "butt
   )
 ) });
 
-// components/ColorPicker/TopPicks.tsx
-import clsx5 from "clsx";
-import { jsx as jsx10 } from "react/jsx-runtime";
-var TopPicks = ({
-  onChange,
-  type,
-  activeColor,
-  topPicks
-}) => {
-  let colors;
-  if (type === "elementStroke") {
-    colors = DEFAULT_ELEMENT_STROKE_PICKS;
-  }
-  if (type === "elementBackground") {
-    colors = DEFAULT_ELEMENT_BACKGROUND_PICKS;
-  }
-  if (type === "canvasBackground") {
-    colors = DEFAULT_CANVAS_BACKGROUND_PICKS;
-  }
-  if (topPicks) {
-    colors = topPicks;
-  }
-  if (!colors) {
-    console.error("Invalid type for TopPicks");
-    return null;
-  }
-  return /* @__PURE__ */ jsx10("div", { className: "color-picker__top-picks", children: colors.map((color) => /* @__PURE__ */ jsx10(
-    "button",
-    {
-      className: clsx5("color-picker__button", {
-        active: color === activeColor,
-        "is-transparent": color === "transparent" || !color
-      }),
-      style: { "--swatch-color": color },
-      type: "button",
-      title: color,
-      onClick: () => onChange(color),
-      "data-testid": `color-top-pick-${color}`,
-      children: /* @__PURE__ */ jsx10("div", { className: "color-picker__button-outline" })
-    },
-    color
-  )) });
-};
-
-// components/ButtonSeparator.tsx
-import { jsx as jsx11 } from "react/jsx-runtime";
-var ButtonSeparator = () => /* @__PURE__ */ jsx11(
-  "div",
-  {
-    style: {
-      width: 1,
-      height: "1rem",
-      backgroundColor: "var(--default-border-color)",
-      margin: "0 auto"
-    }
-  }
-);
-
 // components/ColorPicker/Picker.tsx
-import React4, { useEffect as useEffect7, useState as useState4 } from "react";
+import React4 from "react";
 
-// components/ColorPicker/ShadeList.tsx
-import clsx6 from "clsx";
+// components/ColorPicker/PickerColorList.tsx
 import { useEffect as useEffect4, useRef as useRef2 } from "react";
 
 // components/ColorPicker/colorPickerUtils.ts
@@ -2262,181 +2204,162 @@ var colorPickerHotkeyBindings = [
   ["a", "s", "d", "f", "g"],
   ["z", "x", "c", "v", "b"]
 ].flat();
-var isCustomColor = ({
-  color,
-  palette: palette2
-}) => {
-  const paletteValues = Object.values(palette2).flat();
-  return !paletteValues.includes(color);
-};
-var getMostUsedCustomColors = (elements, type, palette2) => {
-  const elementColorTypeMap = {
-    elementBackground: "backgroundColor",
-    elementStroke: "strokeColor"
-  };
-  const colors = elements.filter((element) => {
-    if (element.isDeleted) {
-      return false;
-    }
-    const color = element[elementColorTypeMap[type]];
-    return isCustomColor({ color, palette: palette2 });
-  });
-  const colorCountMap = /* @__PURE__ */ new Map();
-  colors.forEach((element) => {
-    const color = element[elementColorTypeMap[type]];
-    if (colorCountMap.has(color)) {
-      colorCountMap.set(color, colorCountMap.get(color) + 1);
-    } else {
-      colorCountMap.set(color, 1);
-    }
-  });
-  return [...colorCountMap.entries()].sort((a, b) => b[1] - a[1]).map((c) => c[0]).slice(0, MAX_CUSTOM_COLORS_USED_IN_CANVAS);
-};
 var activeColorPickerSectionAtom = atom(null);
-var calculateContrast = (r, g, b) => {
-  const yiq = (r * 299 + g * 587 + b * 114) / 1e3;
-  return yiq >= 160 ? "black" : "white";
-};
-var getContrastYIQ = (bgHex, isCustomColor2) => {
-  if (isCustomColor2) {
-    const style = new Option().style;
-    style.color = bgHex;
-    if (style.color) {
-      const rgb = style.color.replace(/^(rgb|rgba)\(/, "").replace(/\)$/, "").replace(/\s/g, "").split(",");
-      const r2 = parseInt(rgb[0]);
-      const g2 = parseInt(rgb[1]);
-      const b2 = parseInt(rgb[2]);
-      return calculateContrast(r2, g2, b2);
-    }
-  }
-  if (bgHex === "transparent") {
-    return "black";
-  }
-  const r = parseInt(bgHex.substring(1, 3), 16);
-  const g = parseInt(bgHex.substring(3, 5), 16);
-  const b = parseInt(bgHex.substring(5, 7), 16);
-  return calculateContrast(r, g, b);
-};
 
-// components/ColorPicker/HotkeyLabel.tsx
-import { jsxs as jsxs4 } from "react/jsx-runtime";
-var HotkeyLabel = ({
-  color,
-  keyLabel,
-  isCustomColor: isCustomColor2 = false,
-  isShade = false
-}) => {
-  return /* @__PURE__ */ jsxs4(
-    "div",
-    {
-      className: "color-picker__button__hotkey-label",
-      style: {
-        color: getContrastYIQ(color, isCustomColor2)
-      },
-      children: [
-        isShade && "\u21E7",
-        keyLabel
-      ]
-    }
-  );
-};
-var HotkeyLabel_default = HotkeyLabel;
+// components/ColorPicker/ColorSwatchGrid.tsx
+import clsx5 from "clsx";
 
-// components/ColorPicker/ShadeList.tsx
-import { jsx as jsx12, jsxs as jsxs5 } from "react/jsx-runtime";
-var ShadeList = ({ hex, onChange, palette: palette2 }) => {
-  const colorObj = getColorNameAndShadeFromColor({
-    color: hex || "transparent",
-    palette: palette2
-  });
-  const [activeColorPickerSection, setActiveColorPickerSection] = useAtom(
-    activeColorPickerSectionAtom
-  );
-  const btnRef = useRef2(null);
-  useEffect4(() => {
-    if (btnRef.current && activeColorPickerSection === "shades") {
-      btnRef.current.focus();
+// components/ColorPicker/colorWheelStorage.ts
+var COLOR_WHEEL_STORAGE_KEY = "mathbooklm:colorWheel";
+var MAX_WHEEL_COLORS = 20;
+function normalizeWheelColor(color) {
+  const trimmed = color.trim();
+  if (!trimmed || trimmed === "transparent") {
+    return "transparent";
+  }
+  if (/^#[0-9a-fA-F]{6}$/.test(trimmed)) {
+    return trimmed.toLowerCase();
+  }
+  if (/^[0-9a-fA-F]{6}$/.test(trimmed)) {
+    return `#${trimmed.toLowerCase()}`;
+  }
+  return trimmed;
+}
+function readStore() {
+  if (typeof window === "undefined") {
+    return {};
+  }
+  try {
+    const raw = window.localStorage.getItem(COLOR_WHEEL_STORAGE_KEY);
+    if (!raw) {
+      return {};
     }
-  }, [colorObj, activeColorPickerSection]);
-  if (colorObj) {
-    const { colorName, shade } = colorObj;
-    const shades = palette2[colorName];
-    if (Array.isArray(shades)) {
-      return /* @__PURE__ */ jsx12("div", { className: "color-picker-content--default shades", children: shades.map((color, i) => /* @__PURE__ */ jsxs5(
-        "button",
-        {
-          ref: i === shade && activeColorPickerSection === "shades" ? btnRef : void 0,
-          tabIndex: -1,
-          type: "button",
-          className: clsx6(
-            "color-picker__button color-picker__button--large",
-            { active: i === shade }
-          ),
-          "aria-label": "Shade",
-          title: `${colorName} - ${i + 1}`,
-          style: color ? { "--swatch-color": color } : void 0,
-          onClick: () => {
-            onChange(color);
-            setActiveColorPickerSection("shades");
-          },
-          children: [
-            /* @__PURE__ */ jsx12("div", { className: "color-picker__button-outline" }),
-            /* @__PURE__ */ jsx12(HotkeyLabel_default, { color, keyLabel: i + 1, isShade: true })
-          ]
-        },
-        i
-      )) });
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+function writeStore(store) {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.localStorage.setItem(COLOR_WHEEL_STORAGE_KEY, JSON.stringify(store));
+}
+function loadColorWheel(type) {
+  const list = readStore()[type];
+  if (!Array.isArray(list)) {
+    return [];
+  }
+  const seen = /* @__PURE__ */ new Set();
+  const out = [];
+  for (const c of list) {
+    if (typeof c !== "string") {
+      continue;
+    }
+    const normalized = normalizeWheelColor(c);
+    if (seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    out.push(normalized);
+    if (out.length >= MAX_WHEEL_COLORS) {
+      break;
     }
   }
-  return /* @__PURE__ */ jsxs5(
-    "div",
-    {
-      className: "color-picker-content--default",
-      style: { position: "relative" },
-      tabIndex: -1,
-      children: [
-        /* @__PURE__ */ jsx12(
-          "button",
+  return out;
+}
+function saveColorWheel(type, colors) {
+  const normalized = colors.map(normalizeWheelColor).filter((c, i, arr) => arr.indexOf(c) === i).slice(0, MAX_WHEEL_COLORS);
+  const store = readStore();
+  store[type] = normalized;
+  writeStore(store);
+  return normalized;
+}
+function addToColorWheel(type, color) {
+  const normalized = normalizeWheelColor(color);
+  const current = loadColorWheel(type);
+  if (current.includes(normalized)) {
+    return current;
+  }
+  return saveColorWheel(type, [...current, normalized]);
+}
+function removeFromColorWheel(type, color) {
+  const normalized = normalizeWheelColor(color);
+  return saveColorWheel(
+    type,
+    loadColorWheel(type).filter((c) => c !== normalized)
+  );
+}
+function flattenPaletteColors(palette2) {
+  const seen = /* @__PURE__ */ new Set();
+  const out = [];
+  for (const value of Object.values(palette2)) {
+    const swatch = (Array.isArray(value) ? value[0] : value) || "transparent";
+    const normalized = normalizeWheelColor(swatch);
+    if (seen.has(normalized)) {
+      continue;
+    }
+    seen.add(normalized);
+    out.push(normalized);
+  }
+  return out;
+}
+
+// components/ColorPicker/ColorSwatchGrid.tsx
+import { jsx as jsx10 } from "react/jsx-runtime";
+function ColorSwatchGrid({
+  colors,
+  activeColor,
+  onSelect,
+  onDoubleClick,
+  emptyHint,
+  doubleClickHint
+}) {
+  const activeNorm = normalizeWheelColor(activeColor || "transparent");
+  if (colors.length === 0 && emptyHint) {
+    return /* @__PURE__ */ jsx10("p", { className: "color-picker-wheel-hint", children: emptyHint });
+  }
+  return /* @__PURE__ */ jsx10("div", { className: "color-picker-content--default", children: colors.map((swatch, index) => {
+    const normalized = normalizeWheelColor(swatch);
+    const titleParts = [
+      swatch.startsWith("#") ? swatch : normalized,
+      doubleClickHint
+    ].filter(Boolean);
+    return /* @__PURE__ */ jsx10(
+      "button",
+      {
+        tabIndex: -1,
+        type: "button",
+        className: clsx5(
+          "color-picker__button color-picker__button--large",
           {
-            type: "button",
-            tabIndex: -1,
-            className: "color-picker__button color-picker__button--large color-picker__button--no-focus-visible"
+            active: activeNorm === normalized,
+            "is-transparent": normalized === "transparent" || !normalized
           }
         ),
-        /* @__PURE__ */ jsx12(
-          "div",
-          {
-            tabIndex: -1,
-            style: {
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              fontSize: "0.75rem"
-            },
-            children: t("colorPicker.noShades")
-          }
-        )
-      ]
-    }
-  );
-};
+        onClick: () => onSelect(normalized),
+        onDoubleClick: onDoubleClick ? (e) => {
+          e.preventDefault();
+          onDoubleClick(normalized);
+        } : void 0,
+        title: titleParts.join(" "),
+        "aria-label": titleParts.join(" "),
+        style: normalized && normalized !== "transparent" ? { "--swatch-color": normalized } : void 0,
+        children: /* @__PURE__ */ jsx10("div", { className: "color-picker__button-outline" })
+      },
+      `${normalized}-${index}`
+    );
+  }) });
+}
 
 // components/ColorPicker/PickerColorList.tsx
-import clsx7 from "clsx";
-import { useEffect as useEffect5, useRef as useRef3 } from "react";
-import { jsx as jsx13, jsxs as jsxs6 } from "react/jsx-runtime";
+import { jsx as jsx11 } from "react/jsx-runtime";
 var PickerColorList = ({
   palette: palette2,
   color,
   onChange,
-  label,
-  activeShade
+  onAddToWheel
 }) => {
   const colorObj = getColorNameAndShadeFromColor({
     color: color || "transparent",
@@ -2445,101 +2368,28 @@ var PickerColorList = ({
   const [activeColorPickerSection, setActiveColorPickerSection] = useAtom(
     activeColorPickerSectionAtom
   );
-  const btnRef = useRef3(null);
-  useEffect5(() => {
+  const btnRef = useRef2(null);
+  const swatches = flattenPaletteColors(palette2);
+  useEffect4(() => {
     if (btnRef.current && activeColorPickerSection === "baseColors") {
-      btnRef.current.focus();
+      btnRef.current.querySelector("button")?.focus();
     }
   }, [colorObj?.colorName, activeColorPickerSection]);
-  return /* @__PURE__ */ jsx13("div", { className: "color-picker-content--default", children: Object.entries(palette2).map(([key, value], index) => {
-    const color2 = (Array.isArray(value) ? value[activeShade] : value) || "transparent";
-    const keybinding = colorPickerHotkeyBindings[index];
-    const label2 = t(
-      `colors.${key.replace(/\d+/, "")}`,
-      null,
-      ""
-    );
-    return /* @__PURE__ */ jsxs6(
-      "button",
-      {
-        ref: colorObj?.colorName === key ? btnRef : void 0,
-        tabIndex: -1,
-        type: "button",
-        className: clsx7(
-          "color-picker__button color-picker__button--large",
-          {
-            active: colorObj?.colorName === key,
-            "is-transparent": color2 === "transparent" || !color2
-          }
-        ),
-        onClick: () => {
-          onChange(color2);
-          setActiveColorPickerSection("baseColors");
-        },
-        title: `${label2}${color2.startsWith("#") ? ` ${color2}` : ""} \u2014 ${keybinding}`,
-        "aria-label": `${label2} \u2014 ${keybinding}`,
-        style: color2 ? { "--swatch-color": color2 } : void 0,
-        "data-testid": `color-${key}`,
-        children: [
-          /* @__PURE__ */ jsx13("div", { className: "color-picker__button-outline" }),
-          /* @__PURE__ */ jsx13(HotkeyLabel_default, { color: color2, keyLabel: keybinding })
-        ]
+  return /* @__PURE__ */ jsx11("div", { ref: btnRef, children: /* @__PURE__ */ jsx11(
+    ColorSwatchGrid,
+    {
+      colors: swatches,
+      activeColor: color,
+      onSelect: (swatch) => {
+        onChange(swatch);
+        setActiveColorPickerSection("baseColors");
       },
-      key
-    );
-  }) });
+      onDoubleClick: (swatch) => onAddToWheel(normalizeWheelColor(swatch)),
+      doubleClickHint: t("colorPicker.colorWheelAddHint")
+    }
+  ) });
 };
 var PickerColorList_default = PickerColorList;
-
-// components/ColorPicker/CustomColorList.tsx
-import clsx8 from "clsx";
-import { useEffect as useEffect6, useRef as useRef4 } from "react";
-import { jsx as jsx14, jsxs as jsxs7 } from "react/jsx-runtime";
-var CustomColorList = ({
-  colors,
-  color,
-  onChange,
-  label
-}) => {
-  const [activeColorPickerSection, setActiveColorPickerSection] = useAtom(
-    activeColorPickerSectionAtom
-  );
-  const btnRef = useRef4(null);
-  useEffect6(() => {
-    if (btnRef.current) {
-      btnRef.current.focus();
-    }
-  }, [color, activeColorPickerSection]);
-  return /* @__PURE__ */ jsx14("div", { className: "color-picker-content--default", children: colors.map((c, i) => {
-    return /* @__PURE__ */ jsxs7(
-      "button",
-      {
-        ref: color === c ? btnRef : void 0,
-        tabIndex: -1,
-        type: "button",
-        className: clsx8(
-          "color-picker__button color-picker__button--large",
-          {
-            active: color === c,
-            "is-transparent": c === "transparent" || !c
-          }
-        ),
-        onClick: () => {
-          onChange(c);
-          setActiveColorPickerSection("custom");
-        },
-        title: c,
-        "aria-label": label,
-        style: { "--swatch-color": c },
-        children: [
-          /* @__PURE__ */ jsx14("div", { className: "color-picker__button-outline" }),
-          /* @__PURE__ */ jsx14(HotkeyLabel_default, { color: c, keyLabel: i + 1, isCustomColor: true })
-        ]
-      },
-      i
-    );
-  }) });
-};
 
 // components/ColorPicker/keyboardNavHandlers.ts
 var arrowHandler = (eventKey, currentIndex, length) => {
@@ -2564,27 +2414,21 @@ var arrowHandler = (eventKey, currentIndex, length) => {
     }
   }
 };
+var paletteColorAt = (palette2, key) => {
+  const value = palette2[key];
+  return (Array.isArray(value) ? value[0] : value) || "transparent";
+};
 var hotkeyHandler = ({
   e,
-  colorObj,
   onChange,
   palette: palette2,
   customColors,
-  setActiveColorPickerSection,
-  activeShade
+  setActiveColorPickerSection
 }) => {
-  if (colorObj?.shade != null) {
-    if (["Digit1", "Digit2", "Digit3", "Digit4", "Digit5"].includes(e.code) && e.shiftKey) {
-      const newShade = Number(e.code.slice(-1)) - 1;
-      onChange(palette2[colorObj.colorName][newShade]);
-      setActiveColorPickerSection("shades");
-      return true;
-    }
-  }
   if (["1", "2", "3", "4", "5"].includes(e.key)) {
     const c = customColors[Number(e.key) - 1];
     if (c) {
-      onChange(customColors[Number(e.key) - 1]);
+      onChange(c);
       setActiveColorPickerSection("custom");
       return true;
     }
@@ -2592,11 +2436,11 @@ var hotkeyHandler = ({
   if (colorPickerHotkeyBindings.includes(e.key)) {
     const index = colorPickerHotkeyBindings.indexOf(e.key);
     const paletteKey = Object.keys(palette2)[index];
-    const paletteValue = palette2[paletteKey];
-    const r = Array.isArray(paletteValue) ? paletteValue[activeShade] : paletteValue;
-    onChange(r);
-    setActiveColorPickerSection("baseColors");
-    return true;
+    if (paletteKey) {
+      onChange(paletteColorAt(palette2, paletteKey));
+      setActiveColorPickerSection("baseColors");
+      return true;
+    }
   }
   return false;
 };
@@ -2609,7 +2453,6 @@ var colorPickerKeyNavHandler = ({
   customColors,
   setActiveColorPickerSection,
   updateData,
-  activeShade,
   onEyeDropperToggle,
   onEscape
 }) => {
@@ -2630,40 +2473,6 @@ var colorPickerKeyNavHandler = ({
   }
   const colorObj = getColorNameAndShadeFromColor({ color, palette: palette2 });
   if (event.key === KEYS.TAB) {
-    const sectionsMap = {
-      custom: !!customColors.length,
-      baseColors: true,
-      shades: colorObj?.shade != null,
-      hex: true
-    };
-    const sections = Object.entries(sectionsMap).reduce((acc, [key, value]) => {
-      if (value) {
-        acc.push(key);
-      }
-      return acc;
-    }, []);
-    const activeSectionIndex = sections.indexOf(activeColorPickerSection);
-    const indexOffset = event.shiftKey ? -1 : 1;
-    const nextSectionIndex = activeSectionIndex + indexOffset > sections.length - 1 ? 0 : activeSectionIndex + indexOffset < 0 ? sections.length - 1 : activeSectionIndex + indexOffset;
-    const nextSection = sections[nextSectionIndex];
-    if (nextSection) {
-      setActiveColorPickerSection(nextSection);
-    }
-    if (nextSection === "custom") {
-      onChange(customColors[0]);
-    } else if (nextSection === "baseColors") {
-      const baseColorName = Object.entries(palette2).find(([name, shades]) => {
-        if (Array.isArray(shades)) {
-          return shades.includes(color);
-        } else if (shades === color) {
-          return name;
-        }
-        return null;
-      });
-      if (!baseColorName) {
-        onChange(COLOR_PALETTE.black);
-      }
-    }
     event.preventDefault();
     event.stopPropagation();
     return true;
@@ -2674,20 +2483,9 @@ var colorPickerKeyNavHandler = ({
     onChange,
     palette: palette2,
     customColors,
-    setActiveColorPickerSection,
-    activeShade
+    setActiveColorPickerSection
   })) {
     return true;
-  }
-  if (activeColorPickerSection === "shades") {
-    if (colorObj) {
-      const { shade } = colorObj;
-      const newShade = arrowHandler(event.key, shade, COLORS_PER_ROW);
-      if (newShade !== void 0) {
-        onChange(palette2[colorObj.colorName][newShade]);
-        return true;
-      }
-    }
   }
   if (activeColorPickerSection === "baseColors") {
     if (colorObj) {
@@ -2701,10 +2499,7 @@ var colorPickerKeyNavHandler = ({
       );
       if (newColorIndex !== void 0) {
         const newColorName = colorNames[newColorIndex];
-        const newColorNameValue = palette2[newColorName];
-        onChange(
-          Array.isArray(newColorNameValue) ? newColorNameValue[activeShade] : newColorNameValue
-        );
+        onChange(paletteColorAt(palette2, newColorName));
         return true;
       }
     }
@@ -2725,61 +2520,25 @@ var colorPickerKeyNavHandler = ({
   return false;
 };
 
-// components/ColorPicker/PickerHeading.tsx
-import { jsx as jsx15 } from "react/jsx-runtime";
-var PickerHeading = ({ children }) => /* @__PURE__ */ jsx15("div", { className: "color-picker__heading", children });
-var PickerHeading_default = PickerHeading;
-
 // components/ColorPicker/Picker.tsx
-import { jsx as jsx16, jsxs as jsxs8 } from "react/jsx-runtime";
+import { jsx as jsx12 } from "react/jsx-runtime";
 var Picker = ({
   color,
   onChange,
   label,
   type,
-  elements,
   palette: palette2,
   updateData,
-  children,
   onEyeDropperToggle,
-  onEscape
+  onEscape,
+  customColors,
+  onAddToWheel
 }) => {
-  const [customColors] = React4.useState(() => {
-    if (type === "canvasBackground") {
-      return [];
-    }
-    return getMostUsedCustomColors(elements, type, palette2);
-  });
-  const [activeColorPickerSection, setActiveColorPickerSection] = useAtom(
-    activeColorPickerSectionAtom
-  );
-  const colorObj = getColorNameAndShadeFromColor({
-    color,
-    palette: palette2
-  });
-  useEffect7(() => {
-    if (!activeColorPickerSection) {
-      const isCustom = isCustomColor({ color, palette: palette2 });
-      const isCustomButNotInList = isCustom && !customColors.includes(color);
-      setActiveColorPickerSection(
-        isCustomButNotInList ? "hex" : isCustom ? "custom" : colorObj?.shade != null ? "shades" : "baseColors"
-      );
-    }
-  }, [
-    activeColorPickerSection,
-    color,
-    palette2,
-    setActiveColorPickerSection,
-    colorObj,
-    customColors
-  ]);
-  const [activeShade, setActiveShade] = useState4(
-    colorObj?.shade ?? (type === "elementBackground" ? DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX : DEFAULT_ELEMENT_STROKE_COLOR_INDEX)
-  );
-  useEffect7(() => {
-    if (colorObj?.shade != null) {
-      setActiveShade(colorObj.shade);
-    }
+  const [, setActiveColorPickerSection] = useAtom(activeColorPickerSectionAtom);
+  React4.useEffect(() => {
+    setActiveColorPickerSection("baseColors");
+  }, [setActiveColorPickerSection]);
+  React4.useEffect(() => {
     const keyup = (event) => {
       if (event.key === KEYS.ALT) {
         onEyeDropperToggle(false);
@@ -2789,16 +2548,16 @@ var Picker = ({
     return () => {
       document.removeEventListener("keyup" /* KEYUP */, keyup, { capture: true });
     };
-  }, [colorObj, onEyeDropperToggle]);
+  }, [onEyeDropperToggle]);
   const pickerRef = React4.useRef(null);
-  return /* @__PURE__ */ jsx16("div", { role: "dialog", "aria-modal": "true", "aria-label": t("labels.colorPicker"), children: /* @__PURE__ */ jsxs8(
+  return /* @__PURE__ */ jsx12("div", { role: "dialog", "aria-modal": "true", "aria-label": t("labels.colorPicker"), children: /* @__PURE__ */ jsx12(
     "div",
     {
       ref: pickerRef,
       onKeyDown: (event) => {
         const handled = colorPickerKeyNavHandler({
           event,
-          activeColorPickerSection,
+          activeColorPickerSection: "baseColors",
           palette: palette2,
           color,
           onChange,
@@ -2806,7 +2565,6 @@ var Picker = ({
           customColors,
           setActiveColorPickerSection,
           updateData,
-          activeShade,
           onEscape
         });
         if (handled) {
@@ -2816,52 +2574,39 @@ var Picker = ({
       },
       className: "color-picker-content properties-content",
       tabIndex: -1,
-      children: [
-        !!customColors.length && /* @__PURE__ */ jsxs8("div", { children: [
-          /* @__PURE__ */ jsx16(PickerHeading_default, { children: t("colorPicker.mostUsedCustomColors") }),
-          /* @__PURE__ */ jsx16(
-            CustomColorList,
-            {
-              colors: customColors,
-              color,
-              label: t("colorPicker.mostUsedCustomColors"),
-              onChange
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxs8("div", { children: [
-          /* @__PURE__ */ jsx16(PickerHeading_default, { children: t("colorPicker.colors") }),
-          /* @__PURE__ */ jsx16(
-            PickerColorList_default,
-            {
-              color,
-              label,
-              palette: palette2,
-              onChange,
-              activeShade
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxs8("div", { children: [
-          /* @__PURE__ */ jsx16(PickerHeading_default, { children: t("colorPicker.shades") }),
-          /* @__PURE__ */ jsx16(ShadeList, { hex: color, onChange, palette: palette2 })
-        ] }),
-        children
-      ]
+      children: /* @__PURE__ */ jsx12(
+        PickerColorList_default,
+        {
+          color,
+          label,
+          palette: palette2,
+          onChange,
+          onAddToWheel
+        }
+      )
     }
   ) });
 };
+function useColorWheel(type) {
+  const [wheel, setWheel] = React4.useState(() => loadColorWheel(type));
+  React4.useEffect(() => {
+    setWheel(loadColorWheel(type));
+  }, [type]);
+  const persist = React4.useCallback(
+    (colors) => {
+      setWheel(saveColorWheel(type, colors));
+    },
+    [type]
+  );
+  return [wheel, persist];
+}
 
 // components/ColorPicker/ColorPicker.tsx
 import * as Popover2 from "@radix-ui/react-popover";
-import clsx12 from "clsx";
-import { useRef as useRef8 } from "react";
-
-// components/ColorPicker/ColorInput.tsx
-import { useCallback, useEffect as useEffect10, useRef as useRef7, useState as useState6 } from "react";
+import clsx8 from "clsx";
 
 // components/EyeDropper.tsx
-import { useEffect as useEffect9, useRef as useRef6 } from "react";
+import { useEffect as useEffect6, useRef as useRef4 } from "react";
 import { createPortal } from "react-dom";
 
 // context/ui-appState.ts
@@ -2870,9 +2615,9 @@ var UIAppStateContext = React5.createContext(null);
 var useUIAppState = () => React5.useContext(UIAppStateContext);
 
 // hooks/useCreatePortalContainer.ts
-import { useState as useState5, useLayoutEffect } from "react";
+import { useState as useState4, useLayoutEffect } from "react";
 var useCreatePortalContainer = (opts) => {
-  const [div, setDiv] = useState5(null);
+  const [div, setDiv] = useState4(null);
   const device = useDevice();
   const { theme } = useUIAppState();
   const { container: excalidrawContainer } = useExcalidrawContainer();
@@ -2900,9 +2645,9 @@ var useCreatePortalContainer = (opts) => {
 };
 
 // hooks/useOutsideClick.ts
-import { useEffect as useEffect8 } from "react";
+import { useEffect as useEffect5 } from "react";
 function useOutsideClick(ref, callback, isInside) {
-  useEffect8(() => {
+  useEffect5(() => {
     function onOutsideClick(event) {
       const _event = event;
       if (!ref.current) {
@@ -2943,15 +2688,15 @@ function useOutsideClick(ref, callback, isInside) {
 }
 
 // hooks/useStable.ts
-import { useRef as useRef5 } from "react";
+import { useRef as useRef3 } from "react";
 var useStable = (value) => {
-  const ref = useRef5(value);
+  const ref = useRef3(value);
   Object.assign(ref.current, value);
   return ref.current;
 };
 
 // components/EyeDropper.tsx
-import { jsx as jsx17 } from "react/jsx-runtime";
+import { jsx as jsx13 } from "react/jsx-runtime";
 var activeEyeDropperAtom = atom(null);
 var EyeDropper = ({ onCancel, onChange, onSelect, colorPickerType }) => {
   const eyeDropperContainer = useCreatePortalContainer({
@@ -2970,7 +2715,7 @@ var EyeDropper = ({ onCancel, onChange, onSelect, colorPickerType }) => {
     selectedElements
   });
   const { container: excalidrawContainer } = useExcalidrawContainer();
-  useEffect9(() => {
+  useEffect6(() => {
     const colorPreviewDiv = ref.current;
     if (!colorPreviewDiv || !app.canvas || !eyeDropperContainer) {
       return;
@@ -3071,7 +2816,7 @@ var EyeDropper = ({ onCancel, onChange, onSelect, colorPickerType }) => {
     appState.offsetLeft,
     appState.offsetTop
   ]);
-  const ref = useRef6(null);
+  const ref = useRef4(null);
   useOutsideClick(
     ref,
     () => {
@@ -3090,130 +2835,25 @@ var EyeDropper = ({ onCancel, onChange, onSelect, colorPickerType }) => {
     return null;
   }
   return createPortal(
-    /* @__PURE__ */ jsx17("div", { ref, className: "excalidraw-eye-dropper-preview" }),
+    /* @__PURE__ */ jsx13("div", { ref, className: "excalidraw-eye-dropper-preview" }),
     eyeDropperContainer
   );
 };
 
-// components/ColorPicker/ColorInput.tsx
-import clsx9 from "clsx";
-import { Fragment, jsx as jsx18, jsxs as jsxs9 } from "react/jsx-runtime";
-var ColorInput = ({
-  color,
-  onChange,
-  label,
-  colorPickerType
-}) => {
-  const device = useDevice();
-  const [innerValue, setInnerValue] = useState6(color);
-  const [activeSection, setActiveColorPickerSection] = useAtom(
-    activeColorPickerSectionAtom
-  );
-  useEffect10(() => {
-    setInnerValue(color);
-  }, [color]);
-  const changeColor = useCallback(
-    (inputValue) => {
-      const value = inputValue.toLowerCase();
-      const color2 = getColor(value);
-      if (color2) {
-        onChange(color2);
-      }
-      setInnerValue(value);
-    },
-    [onChange]
-  );
-  const inputRef = useRef7(null);
-  const eyeDropperTriggerRef = useRef7(null);
-  useEffect10(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [activeSection]);
-  const [eyeDropperState, setEyeDropperState] = useAtom(activeEyeDropperAtom);
-  useEffect10(() => {
-    return () => {
-      setEyeDropperState(null);
-    };
-  }, [setEyeDropperState]);
-  return /* @__PURE__ */ jsxs9("div", { className: "color-picker__input-label", children: [
-    /* @__PURE__ */ jsx18("div", { className: "color-picker__input-hash", children: "#" }),
-    /* @__PURE__ */ jsx18(
-      "input",
-      {
-        ref: activeSection === "hex" ? inputRef : void 0,
-        style: { border: 0, padding: 0 },
-        spellCheck: false,
-        className: "color-picker-input",
-        "aria-label": label,
-        onChange: (event) => {
-          changeColor(event.target.value);
-        },
-        value: (innerValue || "").replace(/^#/, ""),
-        onBlur: () => {
-          setInnerValue(color);
-        },
-        tabIndex: -1,
-        onFocus: () => setActiveColorPickerSection("hex"),
-        onKeyDown: (event) => {
-          if (event.key === KEYS.TAB) {
-            return;
-          } else if (event.key === KEYS.ESCAPE) {
-            eyeDropperTriggerRef.current?.focus();
-          }
-          event.stopPropagation();
-        }
-      }
-    ),
-    !device.editor.isMobile && /* @__PURE__ */ jsxs9(Fragment, { children: [
-      /* @__PURE__ */ jsx18(
-        "div",
-        {
-          style: {
-            width: "1px",
-            height: "1.25rem",
-            backgroundColor: "var(--default-border-color)"
-          }
-        }
-      ),
-      /* @__PURE__ */ jsx18(
-        "div",
-        {
-          ref: eyeDropperTriggerRef,
-          className: clsx9("excalidraw-eye-dropper-trigger", {
-            selected: eyeDropperState
-          }),
-          onClick: () => setEyeDropperState(
-            (s) => s ? null : {
-              keepOpenOnAlt: false,
-              onSelect: (color2) => onChange(color2),
-              colorPickerType
-            }
-          ),
-          title: `${t(
-            "labels.eyeDropper"
-          )} \u2014 ${KEYS.I.toLocaleUpperCase()} or ${getShortcutKey("Alt")} `,
-          children: eyeDropperIcon
-        }
-      )
-    ] })
-  ] });
-};
-
 // components/PropertiesPopover.tsx
 import React7 from "react";
-import clsx11 from "clsx";
+import clsx7 from "clsx";
 import * as Popover from "@radix-ui/react-popover";
 
 // components/Island.tsx
 import React6 from "react";
-import clsx10 from "clsx";
-import { jsx as jsx19 } from "react/jsx-runtime";
+import clsx6 from "clsx";
+import { jsx as jsx14 } from "react/jsx-runtime";
 var Island = React6.forwardRef(
-  ({ children, padding, className, style }, ref) => /* @__PURE__ */ jsx19(
+  ({ children, padding, className, style }, ref) => /* @__PURE__ */ jsx14(
     "div",
     {
-      className: clsx10("Island", className),
+      className: clsx6("Island", className),
       style: { "--padding": padding, ...style },
       ref,
       children
@@ -3222,7 +2862,7 @@ var Island = React6.forwardRef(
 );
 
 // components/PropertiesPopover.tsx
-import { jsx as jsx20, jsxs as jsxs10 } from "react/jsx-runtime";
+import { jsx as jsx15, jsxs as jsxs4 } from "react/jsx-runtime";
 var PropertiesPopover = React7.forwardRef(
   ({
     className,
@@ -3236,11 +2876,11 @@ var PropertiesPopover = React7.forwardRef(
     onPointerDownOutside
   }, ref) => {
     const device = useDevice();
-    return /* @__PURE__ */ jsx20(Popover.Portal, { container, children: /* @__PURE__ */ jsxs10(
+    return /* @__PURE__ */ jsx15(Popover.Portal, { container, children: /* @__PURE__ */ jsxs4(
       Popover.Content,
       {
         ref,
-        className: clsx11("focus-visible-none", className),
+        className: clsx7("focus-visible-none", className),
         "data-prevent-outside-click": true,
         side: device.editor.isMobile && !device.viewport.isLandscape ? "bottom" : "right",
         align: device.editor.isMobile && !device.viewport.isLandscape ? "center" : "start",
@@ -3262,8 +2902,8 @@ var PropertiesPopover = React7.forwardRef(
           onClose();
         },
         children: [
-          /* @__PURE__ */ jsx20(Island, { padding: 3, style, children }),
-          /* @__PURE__ */ jsx20(
+          /* @__PURE__ */ jsx15(Island, { padding: 3, style, children }),
+          /* @__PURE__ */ jsx15(
             Popover.Arrow,
             {
               width: 20,
@@ -3281,18 +2921,7 @@ var PropertiesPopover = React7.forwardRef(
 );
 
 // components/ColorPicker/ColorPicker.tsx
-import { jsx as jsx21, jsxs as jsxs11 } from "react/jsx-runtime";
-var isValidColor = (color) => {
-  const style = new Option().style;
-  style.color = color;
-  return !!style.color;
-};
-var getColor = (color) => {
-  if (isTransparent(color)) {
-    return color;
-  }
-  return isValidColor(`#${color}`) ? `#${color}` : isValidColor(color) ? color : null;
-};
+import { jsx as jsx16, jsxs as jsxs5 } from "react/jsx-runtime";
 var ColorPickerPopupContent = ({
   type,
   color,
@@ -3300,36 +2929,19 @@ var ColorPickerPopupContent = ({
   label,
   elements,
   palette: palette2 = COLOR_PALETTE,
-  updateData
+  updateData,
+  wheelColors,
+  onWheelChange
 }) => {
   const { container } = useExcalidrawContainer();
   const [, setActiveColorPickerSection] = useAtom(activeColorPickerSectionAtom);
   const [eyeDropperState, setEyeDropperState] = useAtom(activeEyeDropperAtom);
-  const colorInputJSX = /* @__PURE__ */ jsxs11("div", { children: [
-    /* @__PURE__ */ jsx21(PickerHeading_default, { children: t("colorPicker.hexCode") }),
-    /* @__PURE__ */ jsx21(
-      ColorInput,
-      {
-        color,
-        label,
-        onChange: (color2) => {
-          onChange(color2);
-        },
-        colorPickerType: type
-      }
-    )
-  ] });
-  const popoverRef = useRef8(null);
-  const focusPickerContent = () => {
-    popoverRef.current?.querySelector(".color-picker-content")?.focus();
-  };
-  return /* @__PURE__ */ jsx21(
+  return /* @__PURE__ */ jsx16(
     PropertiesPopover,
     {
       container,
       style: { maxWidth: "13rem" },
       onFocusOutside: (event) => {
-        focusPickerContent();
         event.preventDefault();
       },
       onPointerDownOutside: (event) => {
@@ -3341,14 +2953,12 @@ var ColorPickerPopupContent = ({
         updateData({ openPopup: null });
         setActiveColorPickerSection(null);
       },
-      children: palette2 ? /* @__PURE__ */ jsx21(
+      children: palette2 ? /* @__PURE__ */ jsx16(
         Picker,
         {
           palette: palette2,
           color,
-          onChange: (changedColor) => {
-            onChange(changedColor);
-          },
+          onChange,
           onEyeDropperToggle: (force) => {
             setEyeDropperState((state) => {
               if (force) {
@@ -3378,28 +2988,54 @@ var ColorPickerPopupContent = ({
           type,
           elements,
           updateData,
-          children: colorInputJSX
+          customColors: wheelColors,
+          onAddToWheel: (swatch) => onWheelChange(addToColorWheel(type, swatch))
         }
-      ) : colorInputJSX
+      ) : null
     }
   );
 };
+function WheelSwatch({
+  swatch,
+  onChange,
+  onRemove
+}) {
+  const normalized = normalizeWheelColor(swatch);
+  return /* @__PURE__ */ jsx16(
+    "button",
+    {
+      type: "button",
+      className: clsx8("color-picker__button color-picker__wheel-inline", {
+        "is-transparent": normalized === "transparent" || !normalized
+      }),
+      style: normalized && normalized !== "transparent" ? { "--swatch-color": normalized } : void 0,
+      title: `${normalized} \u2014 ${t("colorPicker.colorWheelRemoveHint")}`,
+      "aria-label": normalized,
+      onClick: () => onChange(normalized),
+      onDoubleClick: (e) => {
+        e.preventDefault();
+        onRemove();
+      },
+      children: /* @__PURE__ */ jsx16("div", { className: "color-picker__button-outline" })
+    }
+  );
+}
 var ColorPickerTrigger = ({
   label,
   color,
   type
 }) => {
-  return /* @__PURE__ */ jsx21(
+  return /* @__PURE__ */ jsx16(
     Popover2.Trigger,
     {
       type: "button",
-      className: clsx12("color-picker__button active-color properties-trigger", {
+      className: clsx8("color-picker__button active-color properties-trigger", {
         "is-transparent": color === "transparent" || !color
       }),
       "aria-label": label,
       style: color ? { "--swatch-color": color } : void 0,
       title: type === "elementStroke" ? t("labels.showStroke") : t("labels.showBackground"),
-      children: /* @__PURE__ */ jsx21("div", { className: "color-picker__button-outline" })
+      children: /* @__PURE__ */ jsx16("div", { className: "color-picker__button-outline" })
     }
   );
 };
@@ -3410,57 +3046,56 @@ var ColorPicker = ({
   label,
   elements,
   palette: palette2 = COLOR_PALETTE,
-  topPicks,
   updateData,
   appState
 }) => {
-  return /* @__PURE__ */ jsx21("div", { children: /* @__PURE__ */ jsxs11("div", { role: "dialog", "aria-modal": "true", className: "color-picker-container", children: [
-    /* @__PURE__ */ jsx21(
-      TopPicks,
-      {
-        activeColor: color,
-        onChange,
-        type,
-        topPicks
-      }
-    ),
-    /* @__PURE__ */ jsx21(ButtonSeparator, {}),
-    /* @__PURE__ */ jsxs11(
-      Popover2.Root,
-      {
-        open: appState.openPopup === type,
-        onOpenChange: (open) => {
-          updateData({ openPopup: open ? type : null });
-        },
-        children: [
-          /* @__PURE__ */ jsx21(ColorPickerTrigger, { color, label, type }),
-          appState.openPopup === type && /* @__PURE__ */ jsx21(
-            ColorPickerPopupContent,
-            {
-              type,
-              color,
-              onChange,
-              label,
-              elements,
-              palette: palette2,
-              updateData
-            }
-          )
-        ]
-      }
-    )
-  ] }) });
+  const [wheelColors, setWheelColors] = useColorWheel(type);
+  return /* @__PURE__ */ jsx16("div", { children: /* @__PURE__ */ jsx16("div", { role: "dialog", "aria-modal": "true", className: "color-picker-container", children: /* @__PURE__ */ jsxs5(
+    Popover2.Root,
+    {
+      open: appState.openPopup === type,
+      onOpenChange: (open) => {
+        updateData({ openPopup: open ? type : null });
+      },
+      children: [
+        wheelColors.map((swatch) => /* @__PURE__ */ jsx16(
+          WheelSwatch,
+          {
+            swatch,
+            onChange,
+            onRemove: () => setWheelColors(removeFromColorWheel(type, swatch))
+          },
+          swatch
+        )),
+        /* @__PURE__ */ jsx16(ColorPickerTrigger, { color, label, type }),
+        appState.openPopup === type && /* @__PURE__ */ jsx16(
+          ColorPickerPopupContent,
+          {
+            type,
+            color,
+            onChange,
+            label,
+            elements,
+            palette: palette2,
+            updateData,
+            wheelColors,
+            onWheelChange: setWheelColors
+          }
+        )
+      ]
+    }
+  ) }) });
 };
 
 // components/IconPicker.tsx
-import React8, { useEffect as useEffect11 } from "react";
+import React8, { useEffect as useEffect7 } from "react";
 import * as Popover3 from "@radix-ui/react-popover";
-import clsx13 from "clsx";
+import clsx9 from "clsx";
 
 // components/InlineIcon.tsx
-import { jsx as jsx22 } from "react/jsx-runtime";
+import { jsx as jsx17 } from "react/jsx-runtime";
 var InlineIcon = ({ icon }) => {
-  return /* @__PURE__ */ jsx22(
+  return /* @__PURE__ */ jsx17(
     "span",
     {
       style: {
@@ -3476,7 +3111,7 @@ var InlineIcon = ({ icon }) => {
 };
 
 // components/Stats/Collapsible.tsx
-import { Fragment as Fragment2, jsx as jsx23, jsxs as jsxs12 } from "react/jsx-runtime";
+import { Fragment, jsx as jsx18, jsxs as jsxs6 } from "react/jsx-runtime";
 var Collapsible = ({
   label,
   open,
@@ -3484,8 +3119,8 @@ var Collapsible = ({
   children,
   className
 }) => {
-  return /* @__PURE__ */ jsxs12(Fragment2, { children: [
-    /* @__PURE__ */ jsxs12(
+  return /* @__PURE__ */ jsxs6(Fragment, { children: [
+    /* @__PURE__ */ jsxs6(
       "div",
       {
         style: {
@@ -3498,17 +3133,17 @@ var Collapsible = ({
         onClick: openTrigger,
         children: [
           label,
-          /* @__PURE__ */ jsx23(InlineIcon, { icon: open ? collapseUpIcon : collapseDownIcon })
+          /* @__PURE__ */ jsx18(InlineIcon, { icon: open ? collapseUpIcon : collapseDownIcon })
         ]
       }
     ),
-    open && /* @__PURE__ */ jsx23("div", { style: { display: "flex", flexDirection: "column" }, children })
+    open && /* @__PURE__ */ jsx18("div", { style: { display: "flex", flexDirection: "column" }, children })
   ] });
 };
 var Collapsible_default = Collapsible;
 
 // components/IconPicker.tsx
-import { jsx as jsx24, jsxs as jsxs13 } from "react/jsx-runtime";
+import { jsx as jsx19, jsxs as jsxs7 } from "react/jsx-runtime";
 var moreOptionsAtom = atom(false);
 function Picker2({
   options,
@@ -3571,17 +3206,17 @@ function Picker2({
     () => options.slice(numberOfOptionsToAlwaysShow),
     [options, numberOfOptionsToAlwaysShow]
   );
-  useEffect11(() => {
+  useEffect7(() => {
     if (!alwaysVisibleOptions.some((option) => option.value === value)) {
       setShowMoreOptions(true);
     }
   }, [value, alwaysVisibleOptions, setShowMoreOptions]);
   const renderOptions = (options2) => {
-    return /* @__PURE__ */ jsx24("div", { className: "picker-content", children: options2.map((option, i) => /* @__PURE__ */ jsxs13(
+    return /* @__PURE__ */ jsx19("div", { className: "picker-content", children: options2.map((option, i) => /* @__PURE__ */ jsxs7(
       "button",
       {
         type: "button",
-        className: clsx13("picker-option", {
+        className: clsx9("picker-option", {
           active: value === option.value
         }),
         onClick: (event) => {
@@ -3599,13 +3234,13 @@ function Picker2({
         },
         children: [
           option.icon,
-          option.keyBinding && /* @__PURE__ */ jsx24("span", { className: "picker-keybinding", children: option.keyBinding })
+          option.keyBinding && /* @__PURE__ */ jsx19("span", { className: "picker-keybinding", children: option.keyBinding })
         ]
       },
       option.text
     )) });
   };
-  return /* @__PURE__ */ jsx24(
+  return /* @__PURE__ */ jsx19(
     Popover3.Content,
     {
       side: device.editor.isMobile && !device.viewport.isLandscape ? "top" : "bottom",
@@ -3613,7 +3248,7 @@ function Picker2({
       sideOffset: 12,
       style: { zIndex: "var(--zIndex-popup)" },
       onKeyDown: handleKeyDown,
-      children: /* @__PURE__ */ jsxs13(
+      children: /* @__PURE__ */ jsxs7(
         "div",
         {
           className: `picker`,
@@ -3622,7 +3257,7 @@ function Picker2({
           "aria-label": label,
           children: [
             renderOptions(alwaysVisibleOptions),
-            moreOptions.length > 0 && /* @__PURE__ */ jsx24(
+            moreOptions.length > 0 && /* @__PURE__ */ jsx19(
               Collapsible_default,
               {
                 label: t("labels.more_options"),
@@ -3650,8 +3285,8 @@ function IconPicker({
 }) {
   const [isActive, setActive] = React8.useState(false);
   const rPickerButton = React8.useRef(null);
-  return /* @__PURE__ */ jsx24("div", { children: /* @__PURE__ */ jsxs13(Popover3.Root, { open: isActive, onOpenChange: (open) => setActive(open), children: [
-    /* @__PURE__ */ jsx24(
+  return /* @__PURE__ */ jsx19("div", { children: /* @__PURE__ */ jsxs7(Popover3.Root, { open: isActive, onOpenChange: (open) => setActive(open), children: [
+    /* @__PURE__ */ jsx19(
       Popover3.Trigger,
       {
         name: group,
@@ -3663,7 +3298,7 @@ function IconPicker({
         children: options.find((option) => option.value === value)?.icon
       }
     ),
-    isActive && /* @__PURE__ */ jsx24(
+    isActive && /* @__PURE__ */ jsx19(
       Picker2,
       {
         options,
@@ -3680,27 +3315,27 @@ function IconPicker({
 }
 
 // components/FontPicker/FontPicker.tsx
-import React13, { useCallback as useCallback3, useMemo as useMemo3 } from "react";
+import React13, { useCallback as useCallback2, useMemo as useMemo3 } from "react";
 import * as Popover5 from "@radix-ui/react-popover";
 
 // components/FontPicker/FontPickerList.tsx
 import React12, {
   useMemo,
-  useState as useState7,
-  useRef as useRef10,
-  useEffect as useEffect13,
-  useCallback as useCallback2
+  useState as useState5,
+  useRef as useRef6,
+  useEffect as useEffect9,
+  useCallback
 } from "react";
 
 // components/QuickSearch.tsx
-import clsx14 from "clsx";
+import clsx10 from "clsx";
 import React9 from "react";
-import { jsx as jsx25, jsxs as jsxs14 } from "react/jsx-runtime";
+import { jsx as jsx20, jsxs as jsxs8 } from "react/jsx-runtime";
 var QuickSearch = React9.forwardRef(
   ({ className, placeholder, onChange }, ref) => {
-    return /* @__PURE__ */ jsxs14("div", { className: clsx14("QuickSearch__wrapper", className), children: [
+    return /* @__PURE__ */ jsxs8("div", { className: clsx10("QuickSearch__wrapper", className), children: [
       searchIcon,
-      /* @__PURE__ */ jsx25(
+      /* @__PURE__ */ jsx20(
         "input",
         {
           ref,
@@ -3715,28 +3350,28 @@ var QuickSearch = React9.forwardRef(
 );
 
 // components/ScrollableList.tsx
-import clsx15 from "clsx";
+import clsx11 from "clsx";
 import { Children } from "react";
-import { jsx as jsx26 } from "react/jsx-runtime";
+import { jsx as jsx21 } from "react/jsx-runtime";
 var ScrollableList = ({
   className,
   placeholder,
   children
 }) => {
   const isEmpty = !Children.count(children);
-  return /* @__PURE__ */ jsx26("div", { className: clsx15("ScrollableList__wrapper", className), role: "menu", children: isEmpty ? /* @__PURE__ */ jsx26("div", { className: "empty", children: placeholder }) : children });
+  return /* @__PURE__ */ jsx21("div", { className: clsx11("ScrollableList__wrapper", className), role: "menu", children: isEmpty ? /* @__PURE__ */ jsx21("div", { className: "empty", children: placeholder }) : children });
 };
 
 // components/dropdownMenu/DropdownMenuGroup.tsx
-import { jsx as jsx27, jsxs as jsxs15 } from "react/jsx-runtime";
+import { jsx as jsx22, jsxs as jsxs9 } from "react/jsx-runtime";
 var MenuGroup = ({
   children,
   className = "",
   style,
   title
 }) => {
-  return /* @__PURE__ */ jsxs15("div", { className: `dropdown-menu-group ${className}`, style, children: [
-    title && /* @__PURE__ */ jsx27("p", { className: "dropdown-menu-group-title", children: title }),
+  return /* @__PURE__ */ jsxs9("div", { className: `dropdown-menu-group ${className}`, style, children: [
+    title && /* @__PURE__ */ jsx22("p", { className: "dropdown-menu-group-title", children: title }),
     children
   ] });
 };
@@ -3744,7 +3379,7 @@ var DropdownMenuGroup_default = MenuGroup;
 MenuGroup.displayName = "DropdownMenuGroup";
 
 // components/dropdownMenu/DropdownMenuItem.tsx
-import { useEffect as useEffect12, useRef as useRef9 } from "react";
+import { useEffect as useEffect8, useRef as useRef5 } from "react";
 
 // components/dropdownMenu/common.ts
 import React10, { useContext } from "react";
@@ -3768,7 +3403,7 @@ var useHandleDropdownMenuItemClick = (origOnClick, onSelect) => {
 };
 
 // components/dropdownMenu/DropdownMenuItemContent.tsx
-import { Fragment as Fragment3, jsx as jsx28, jsxs as jsxs16 } from "react/jsx-runtime";
+import { Fragment as Fragment2, jsx as jsx23, jsxs as jsxs10 } from "react/jsx-runtime";
 var MenuItemContent = ({
   textStyle,
   icon,
@@ -3776,16 +3411,16 @@ var MenuItemContent = ({
   children
 }) => {
   const device = useDevice();
-  return /* @__PURE__ */ jsxs16(Fragment3, { children: [
-    icon && /* @__PURE__ */ jsx28("div", { className: "dropdown-menu-item__icon", children: icon }),
-    /* @__PURE__ */ jsx28("div", { style: textStyle, className: "dropdown-menu-item__text", children }),
-    shortcut && !device.editor.isMobile && /* @__PURE__ */ jsx28("div", { className: "dropdown-menu-item__shortcut", children: shortcut })
+  return /* @__PURE__ */ jsxs10(Fragment2, { children: [
+    icon && /* @__PURE__ */ jsx23("div", { className: "dropdown-menu-item__icon", children: icon }),
+    /* @__PURE__ */ jsx23("div", { style: textStyle, className: "dropdown-menu-item__text", children }),
+    shortcut && !device.editor.isMobile && /* @__PURE__ */ jsx23("div", { className: "dropdown-menu-item__shortcut", children: shortcut })
   ] });
 };
 var DropdownMenuItemContent_default = MenuItemContent;
 
 // components/dropdownMenu/DropdownMenuItem.tsx
-import { jsx as jsx29 } from "react/jsx-runtime";
+import { jsx as jsx24 } from "react/jsx-runtime";
 var DropdownMenuItem = ({
   icon,
   value,
@@ -3801,8 +3436,8 @@ var DropdownMenuItem = ({
   ...rest
 }) => {
   const handleClick = useHandleDropdownMenuItemClick(onClick, onSelect);
-  const ref = useRef9(null);
-  useEffect12(() => {
+  const ref = useRef5(null);
+  useEffect8(() => {
     if (hovered) {
       if (order === 0) {
         ref.current?.scrollIntoView({ block: "end" });
@@ -3811,7 +3446,7 @@ var DropdownMenuItem = ({
       }
     }
   }, [hovered, order]);
-  return /* @__PURE__ */ jsx29(
+  return /* @__PURE__ */ jsx24(
     "button",
     {
       ...rest,
@@ -3820,7 +3455,7 @@ var DropdownMenuItem = ({
       onClick: handleClick,
       className: getDropdownMenuItemClassName(className, selected, hovered),
       title: rest.title ?? rest["aria-label"],
-      children: /* @__PURE__ */ jsx29(DropdownMenuItemContent_default, { textStyle, icon, shortcut, children })
+      children: /* @__PURE__ */ jsx24(DropdownMenuItemContent_default, { textStyle, icon, shortcut, children })
     }
   );
 };
@@ -3864,7 +3499,7 @@ var DropDownMenuItemBadge = ({
         color: "var(--color-surface-lowest)"
       });
   }
-  return /* @__PURE__ */ jsx29("div", { className: "DropDownMenuItemBadge", style, children });
+  return /* @__PURE__ */ jsx24("div", { className: "DropDownMenuItemBadge", style, children });
 };
 DropDownMenuItemBadge.displayName = "DropdownMenuItemBadge";
 DropdownMenuItem.Badge = DropDownMenuItemBadge;
@@ -3913,7 +3548,7 @@ var fontPickerKeyHandler = ({
 };
 
 // components/FontPicker/FontPickerList.tsx
-import { jsx as jsx30, jsxs as jsxs17 } from "react/jsx-runtime";
+import { jsx as jsx25, jsxs as jsxs11 } from "react/jsx-runtime";
 var FontPickerList = React12.memo(
   ({
     selectedFontFamily,
@@ -3927,8 +3562,8 @@ var FontPickerList = React12.memo(
     const { container } = useExcalidrawContainer();
     const { fonts } = useApp();
     const { showDeprecatedFonts } = useAppProps();
-    const [searchTerm, setSearchTerm] = useState7("");
-    const inputRef = useRef10(null);
+    const [searchTerm, setSearchTerm] = useState5("");
+    const inputRef = useRef6(null);
     const allFonts = useMemo(
       () => Array.from(Fonts.registered.entries()).filter(
         ([_, { metadata }]) => !metadata.serverSide && !metadata.fallback
@@ -4002,7 +3637,7 @@ var FontPickerList = React12.memo(
       onHover,
       onLeave
     ]);
-    const onKeyDown = useCallback2(
+    const onKeyDown = useCallback(
       (event) => {
         const handled = fontPickerKeyHandler({
           event,
@@ -4020,7 +3655,7 @@ var FontPickerList = React12.memo(
       },
       [hoveredFont, filteredFonts, onSelect, onHover, onClose]
     );
-    useEffect13(() => {
+    useEffect9(() => {
       onOpen();
       return () => {
         onClose();
@@ -4034,7 +3669,7 @@ var FontPickerList = React12.memo(
       () => filteredFonts.filter((font) => !sceneFamilies.has(font.value)),
       [filteredFonts, sceneFamilies]
     );
-    const renderFont = (font, index) => /* @__PURE__ */ jsxs17(
+    const renderFont = (font, index) => /* @__PURE__ */ jsxs11(
       DropdownMenuItem_default,
       {
         icon: font.icon,
@@ -4056,7 +3691,7 @@ var FontPickerList = React12.memo(
         },
         children: [
           font.text,
-          font.badge && /* @__PURE__ */ jsx30(DropDownMenuItemBadge, { type: font.badge.type, children: font.badge.placeholder })
+          font.badge && /* @__PURE__ */ jsx25(DropDownMenuItemBadge, { type: font.badge.type, children: font.badge.placeholder })
         ]
       },
       font.value
@@ -4064,17 +3699,17 @@ var FontPickerList = React12.memo(
     const groups = [];
     if (sceneFilteredFonts.length) {
       groups.push(
-        /* @__PURE__ */ jsx30(DropdownMenuGroup_default, { title: t("fontList.sceneFonts"), children: sceneFilteredFonts.map(renderFont) }, "group_1")
+        /* @__PURE__ */ jsx25(DropdownMenuGroup_default, { title: t("fontList.sceneFonts"), children: sceneFilteredFonts.map(renderFont) }, "group_1")
       );
     }
     if (availableFilteredFonts.length) {
       groups.push(
-        /* @__PURE__ */ jsx30(DropdownMenuGroup_default, { title: t("fontList.availableFonts"), children: availableFilteredFonts.map(
+        /* @__PURE__ */ jsx25(DropdownMenuGroup_default, { title: t("fontList.availableFonts"), children: availableFilteredFonts.map(
           (font, index) => renderFont(font, index + sceneFilteredFonts.length)
         ) }, "group_2")
       );
     }
-    return /* @__PURE__ */ jsxs17(
+    return /* @__PURE__ */ jsxs11(
       PropertiesPopover,
       {
         className: "properties-content",
@@ -4084,7 +3719,7 @@ var FontPickerList = React12.memo(
         onPointerLeave: onLeave,
         onKeyDown,
         children: [
-          /* @__PURE__ */ jsx30(
+          /* @__PURE__ */ jsx25(
             QuickSearch,
             {
               ref: inputRef,
@@ -4092,7 +3727,7 @@ var FontPickerList = React12.memo(
               onChange: debounce(setSearchTerm, 20)
             }
           ),
-          /* @__PURE__ */ jsx30(
+          /* @__PURE__ */ jsx25(
             ScrollableList,
             {
               className: "dropdown-menu fonts manual-hover",
@@ -4110,7 +3745,7 @@ var FontPickerList = React12.memo(
 // components/FontPicker/FontPickerTrigger.tsx
 import * as Popover4 from "@radix-ui/react-popover";
 import { useMemo as useMemo2 } from "react";
-import { jsx as jsx31 } from "react/jsx-runtime";
+import { jsx as jsx26 } from "react/jsx-runtime";
 var FontPickerTrigger = ({
   selectedFontFamily
 }) => {
@@ -4118,7 +3753,7 @@ var FontPickerTrigger = ({
     () => Boolean(selectedFontFamily && !isDefaultFont(selectedFontFamily)),
     [selectedFontFamily]
   );
-  return /* @__PURE__ */ jsx31(Popover4.Trigger, { asChild: true, children: /* @__PURE__ */ jsx31("div", { children: /* @__PURE__ */ jsx31(
+  return /* @__PURE__ */ jsx26(Popover4.Trigger, { asChild: true, children: /* @__PURE__ */ jsx26("div", { children: /* @__PURE__ */ jsx26(
     ButtonIcon,
     {
       standalone: true,
@@ -4133,8 +3768,22 @@ var FontPickerTrigger = ({
   ) }) });
 };
 
+// components/ButtonSeparator.tsx
+import { jsx as jsx27 } from "react/jsx-runtime";
+var ButtonSeparator = () => /* @__PURE__ */ jsx27(
+  "div",
+  {
+    style: {
+      width: 1,
+      height: "1rem",
+      backgroundColor: "var(--default-border-color)",
+      margin: "0 auto"
+    }
+  }
+);
+
 // components/FontPicker/FontPicker.tsx
-import { jsx as jsx32, jsxs as jsxs18 } from "react/jsx-runtime";
+import { jsx as jsx28, jsxs as jsxs12 } from "react/jsx-runtime";
 var DEFAULT_FONTS = [
   {
     value: FONT_FAMILY.Excalifont,
@@ -4173,7 +3822,7 @@ var FontPicker = React13.memo(
     onPopupChange
   }) => {
     const defaultFonts = useMemo3(() => DEFAULT_FONTS, []);
-    const onSelectCallback = useCallback3(
+    const onSelectCallback = useCallback2(
       (value) => {
         if (value) {
           onSelect(value);
@@ -4181,8 +3830,8 @@ var FontPicker = React13.memo(
       },
       [onSelect]
     );
-    return /* @__PURE__ */ jsxs18("div", { role: "dialog", "aria-modal": "true", className: "FontPicker__container", children: [
-      /* @__PURE__ */ jsx32(
+    return /* @__PURE__ */ jsxs12("div", { role: "dialog", "aria-modal": "true", className: "FontPicker__container", children: [
+      /* @__PURE__ */ jsx28(
         ButtonIconSelect,
         {
           type: "button",
@@ -4191,10 +3840,10 @@ var FontPicker = React13.memo(
           onClick: onSelectCallback
         }
       ),
-      /* @__PURE__ */ jsx32(ButtonSeparator, {}),
-      /* @__PURE__ */ jsxs18(Popover5.Root, { open: isOpened, onOpenChange: onPopupChange, children: [
-        /* @__PURE__ */ jsx32(FontPickerTrigger, { selectedFontFamily }),
-        isOpened && /* @__PURE__ */ jsx32(
+      /* @__PURE__ */ jsx28(ButtonSeparator, {}),
+      /* @__PURE__ */ jsxs12(Popover5.Root, { open: isOpened, onOpenChange: onPopupChange, children: [
+        /* @__PURE__ */ jsx28(FontPickerTrigger, { selectedFontFamily }),
+        isOpened && /* @__PURE__ */ jsx28(
           FontPickerList,
           {
             selectedFontFamily,
@@ -4213,8 +3862,8 @@ var FontPicker = React13.memo(
 );
 
 // components/Range.tsx
-import React14, { useEffect as useEffect14 } from "react";
-import { jsx as jsx33, jsxs as jsxs19 } from "react/jsx-runtime";
+import React14, { useEffect as useEffect10 } from "react";
+import { jsx as jsx29, jsxs as jsxs13 } from "react/jsx-runtime";
 var Range = ({
   updateData,
   appState,
@@ -4230,7 +3879,7 @@ var Range = ({
     true,
     appState.currentItemOpacity
   );
-  useEffect14(() => {
+  useEffect10(() => {
     if (rangeRef.current && valueRef.current) {
       const rangeElement = rangeRef.current;
       const valueElement = valueRef.current;
@@ -4241,10 +3890,10 @@ var Range = ({
       rangeElement.style.background = `linear-gradient(to right, var(--color-slider-track) 0%, var(--color-slider-track) ${value}%, var(--button-bg) ${value}%, var(--button-bg) 100%)`;
     }
   }, [value]);
-  return /* @__PURE__ */ jsxs19("label", { className: "control-label", children: [
+  return /* @__PURE__ */ jsxs13("label", { className: "control-label", children: [
     t("labels.opacity"),
-    /* @__PURE__ */ jsxs19("div", { className: "range-wrapper", children: [
-      /* @__PURE__ */ jsx33(
+    /* @__PURE__ */ jsxs13("div", { className: "range-wrapper", children: [
+      /* @__PURE__ */ jsx29(
         "input",
         {
           ref: rangeRef,
@@ -4260,14 +3909,14 @@ var Range = ({
           "data-testid": testId
         }
       ),
-      /* @__PURE__ */ jsx33("div", { className: "value-bubble", ref: valueRef, children: value !== 0 ? value : null }),
-      /* @__PURE__ */ jsx33("div", { className: "zero-label", children: "0" })
+      /* @__PURE__ */ jsx29("div", { className: "value-bubble", ref: valueRef, children: value !== 0 ? value : null }),
+      /* @__PURE__ */ jsx29("div", { className: "zero-label", children: "0" })
     ] })
   ] });
 };
 
 // actions/actionProperties.tsx
-import { Fragment as Fragment4, jsx as jsx34, jsxs as jsxs20 } from "react/jsx-runtime";
+import { Fragment as Fragment3, jsx as jsx30, jsxs as jsxs14 } from "react/jsx-runtime";
 var FONT_SIZE_RELATIVE_INCREASE_STEP = 0.1;
 var changeProperty = (elements, appState, callback, includeBoundText = false) => {
   const selectedElementIds = arrayToMap(
@@ -4389,12 +4038,11 @@ var actionChangeStrokeColor = register({
       captureUpdate: !!value.currentItemStrokeColor ? CaptureUpdateAction.IMMEDIATELY : CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ elements, appState, updateData, appProps }) => /* @__PURE__ */ jsxs20(Fragment4, { children: [
-    /* @__PURE__ */ jsx34("h3", { "aria-hidden": "true", children: t("labels.stroke") }),
-    /* @__PURE__ */ jsx34(
+  PanelComponent: ({ elements, appState, updateData, appProps }) => /* @__PURE__ */ jsxs14(Fragment3, { children: [
+    /* @__PURE__ */ jsx30("h3", { "aria-hidden": "true", children: t("labels.stroke") }),
+    /* @__PURE__ */ jsx30(
       ColorPicker,
       {
-        topPicks: DEFAULT_ELEMENT_STROKE_PICKS,
         palette: DEFAULT_ELEMENT_STROKE_COLOR_PALETTE,
         type: "elementStroke",
         label: t("labels.stroke"),
@@ -4435,12 +4083,11 @@ var actionChangeBackgroundColor = register({
       captureUpdate: !!value.currentItemBackgroundColor ? CaptureUpdateAction.IMMEDIATELY : CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ elements, appState, updateData, appProps }) => /* @__PURE__ */ jsxs20(Fragment4, { children: [
-    /* @__PURE__ */ jsx34("h3", { "aria-hidden": "true", children: t("labels.background") }),
-    /* @__PURE__ */ jsx34(
+  PanelComponent: ({ elements, appState, updateData, appProps }) => /* @__PURE__ */ jsxs14(Fragment3, { children: [
+    /* @__PURE__ */ jsx30("h3", { "aria-hidden": "true", children: t("labels.background") }),
+    /* @__PURE__ */ jsx30(
       ColorPicker,
       {
-        topPicks: DEFAULT_ELEMENT_BACKGROUND_PICKS,
         palette: DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE,
         type: "elementBackground",
         label: t("labels.background"),
@@ -4484,9 +4131,9 @@ var actionChangeFillStyle = register({
   PanelComponent: ({ elements, appState, updateData }) => {
     const selectedElements = getSelectedElements(elements, appState);
     const allElementsZigZag = selectedElements.length > 0 && selectedElements.every((el) => el.fillStyle === "zigzag");
-    return /* @__PURE__ */ jsxs20("fieldset", { children: [
-      /* @__PURE__ */ jsx34("legend", { children: t("labels.fill") }),
-      /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsxs14("fieldset", { children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.fill") }),
+      /* @__PURE__ */ jsx30(
         ButtonIconSelect,
         {
           type: "button",
@@ -4527,6 +4174,20 @@ var actionChangeFillStyle = register({
     ] });
   }
 });
+var STROKE_WIDTH_CYCLE = [
+  STROKE_WIDTH.thin,
+  STROKE_WIDTH.bold,
+  STROKE_WIDTH.extraBold
+];
+var nextStrokeWidth = (current) => {
+  const idx = STROKE_WIDTH_CYCLE.indexOf(
+    current
+  );
+  if (idx === -1) {
+    return STROKE_WIDTH.bold;
+  }
+  return STROKE_WIDTH_CYCLE[(idx + 1) % STROKE_WIDTH_CYCLE.length];
+};
 var actionChangeStrokeWidth = register({
   name: "changeStrokeWidth",
   label: "labels.strokeWidth",
@@ -4544,43 +4205,32 @@ var actionChangeStrokeWidth = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY
     };
   },
-  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsxs20("fieldset", { children: [
-    /* @__PURE__ */ jsx34("legend", { children: t("labels.strokeWidth") }),
-    /* @__PURE__ */ jsx34(
-      ButtonIconSelect,
-      {
-        group: "stroke-width",
-        options: [
-          {
-            value: STROKE_WIDTH.thin,
-            text: t("labels.thin"),
-            icon: StrokeWidthBaseIcon,
-            testId: "strokeWidth-thin"
-          },
-          {
-            value: STROKE_WIDTH.bold,
-            text: t("labels.bold"),
-            icon: StrokeWidthBoldIcon,
-            testId: "strokeWidth-bold"
-          },
-          {
-            value: STROKE_WIDTH.extraBold,
-            text: t("labels.extraBold"),
-            icon: StrokeWidthExtraBoldIcon,
-            testId: "strokeWidth-extraBold"
-          }
-        ],
-        value: getFormValue(
-          elements,
-          appState,
-          (element) => element.strokeWidth,
-          (element) => element.hasOwnProperty("strokeWidth"),
-          (hasSelection) => hasSelection ? null : appState.currentItemStrokeWidth
-        ),
-        onChange: (value) => updateData(value)
-      }
-    )
-  ] })
+  PanelComponent: ({ elements, appState, updateData }) => {
+    const currentWidth = getFormValue(
+      elements,
+      appState,
+      (element) => element.strokeWidth,
+      (element) => element.hasOwnProperty("strokeWidth"),
+      (hasSelection) => hasSelection ? null : appState.currentItemStrokeWidth
+    ) ?? appState.currentItemStrokeWidth;
+    return /* @__PURE__ */ jsxs14("fieldset", { className: "mathbook-stroke-width-fieldset", children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.strokeWidth") }),
+      /* @__PURE__ */ jsxs14(
+        "button",
+        {
+          type: "button",
+          className: "mathbook-stroke-width-btn",
+          title: t("labels.strokeWidth"),
+          "data-testid": "strokeWidth-cycle",
+          onClick: () => updateData(nextStrokeWidth(currentWidth)),
+          children: [
+            currentWidth,
+            "px"
+          ]
+        }
+      )
+    ] });
+  }
 });
 var actionChangeSloppiness = register({
   name: "changeSloppiness",
@@ -4600,9 +4250,9 @@ var actionChangeSloppiness = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY
     };
   },
-  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsxs20("fieldset", { children: [
-    /* @__PURE__ */ jsx34("legend", { children: t("labels.sloppiness") }),
-    /* @__PURE__ */ jsx34(
+  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsxs14("fieldset", { children: [
+    /* @__PURE__ */ jsx30("legend", { children: t("labels.sloppiness") }),
+    /* @__PURE__ */ jsx30(
       ButtonIconSelect,
       {
         group: "sloppiness",
@@ -4652,9 +4302,9 @@ var actionChangeStrokeStyle = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY
     };
   },
-  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsxs20("fieldset", { children: [
-    /* @__PURE__ */ jsx34("legend", { children: t("labels.strokeStyle") }),
-    /* @__PURE__ */ jsx34(
+  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsxs14("fieldset", { children: [
+    /* @__PURE__ */ jsx30("legend", { children: t("labels.strokeStyle") }),
+    /* @__PURE__ */ jsx30(
       ButtonIconSelect,
       {
         group: "strokeStyle",
@@ -4705,7 +4355,7 @@ var actionChangeOpacity = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY
     };
   },
-  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsx34(
+  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsx30(
     Range,
     {
       updateData,
@@ -4722,9 +4372,9 @@ var actionChangeFontSize = register({
   perform: (elements, appState, value, app) => {
     return changeFontSize(elements, appState, app, () => value, value);
   },
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsxs20("fieldset", { children: [
-    /* @__PURE__ */ jsx34("legend", { children: t("labels.fontSize") }),
-    /* @__PURE__ */ jsx34(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsxs14("fieldset", { children: [
+    /* @__PURE__ */ jsx30("legend", { children: t("labels.fontSize") }),
+    /* @__PURE__ */ jsx30(
       ButtonIconSelect,
       {
         group: "font-size",
@@ -4964,10 +4614,10 @@ var actionChangeFontFamily = register({
     return result;
   },
   PanelComponent: ({ elements, appState, app, updateData }) => {
-    const cachedElementsRef = useRef11(/* @__PURE__ */ new Map());
-    const prevSelectedFontFamilyRef = useRef11(null);
-    const [batchedData, setBatchedData] = useState8({});
-    const isUnmounted = useRef11(true);
+    const cachedElementsRef = useRef7(/* @__PURE__ */ new Map());
+    const prevSelectedFontFamilyRef = useRef7(null);
+    const [batchedData, setBatchedData] = useState6({});
+    const isUnmounted = useRef7(true);
     const selectedFontFamily = useMemo4(() => {
       const getFontFamily = (elementsArray, elementsMap) => getFormValue(
         elementsArray,
@@ -4996,24 +4646,24 @@ var actionChangeFontFamily = register({
       }
       return prevSelectedFontFamilyRef.current;
     }, [batchedData.openPopup, appState, elements, app.scene]);
-    useEffect15(() => {
+    useEffect11(() => {
       prevSelectedFontFamilyRef.current = selectedFontFamily;
     }, [selectedFontFamily]);
-    useEffect15(() => {
+    useEffect11(() => {
       if (Object.keys(batchedData).length) {
         updateData(batchedData);
         setBatchedData({});
       }
     }, [batchedData]);
-    useEffect15(() => {
+    useEffect11(() => {
       isUnmounted.current = false;
       return () => {
         isUnmounted.current = true;
       };
     }, []);
-    return /* @__PURE__ */ jsxs20("fieldset", { children: [
-      /* @__PURE__ */ jsx34("legend", { children: t("labels.fontFamily") }),
-      /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsxs14("fieldset", { children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.fontFamily") }),
+      /* @__PURE__ */ jsx30(
         FontPicker,
         {
           isOpened: appState.openPopup === "fontFamily",
@@ -5130,9 +4780,9 @@ var actionChangeTextAlign = register({
   },
   PanelComponent: ({ elements, appState, updateData, app }) => {
     const elementsMap = app.scene.getNonDeletedElementsMap();
-    return /* @__PURE__ */ jsxs20("fieldset", { children: [
-      /* @__PURE__ */ jsx34("legend", { children: t("labels.textAlign") }),
-      /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsxs14("fieldset", { children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.textAlign") }),
+      /* @__PURE__ */ jsx30(
         ButtonIconSelect,
         {
           group: "text-align",
@@ -5214,7 +4864,7 @@ var actionChangeVerticalAlign = register({
     };
   },
   PanelComponent: ({ elements, appState, updateData, app }) => {
-    return /* @__PURE__ */ jsx34("fieldset", { children: /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsx30("fieldset", { children: /* @__PURE__ */ jsx30(
       ButtonIconSelect,
       {
         group: "text-align",
@@ -5222,19 +4872,19 @@ var actionChangeVerticalAlign = register({
           {
             value: VERTICAL_ALIGN.TOP,
             text: t("labels.alignTop"),
-            icon: /* @__PURE__ */ jsx34(TextAlignTopIcon, { theme: appState.theme }),
+            icon: /* @__PURE__ */ jsx30(TextAlignTopIcon, { theme: appState.theme }),
             testId: "align-top"
           },
           {
             value: VERTICAL_ALIGN.MIDDLE,
             text: t("labels.centerVertically"),
-            icon: /* @__PURE__ */ jsx34(TextAlignMiddleIcon, { theme: appState.theme }),
+            icon: /* @__PURE__ */ jsx30(TextAlignMiddleIcon, { theme: appState.theme }),
             testId: "align-middle"
           },
           {
             value: VERTICAL_ALIGN.BOTTOM,
             text: t("labels.alignBottom"),
-            icon: /* @__PURE__ */ jsx34(TextAlignBottomIcon, { theme: appState.theme }),
+            icon: /* @__PURE__ */ jsx30(TextAlignBottomIcon, { theme: appState.theme }),
             testId: "align-bottom"
           }
         ],
@@ -5296,9 +4946,9 @@ var actionChangeRoundness = register({
     const hasLegacyRoundness = targetElements.some(
       (el) => el.roundness?.type === ROUNDNESS.LEGACY
     );
-    return /* @__PURE__ */ jsxs20("fieldset", { children: [
-      /* @__PURE__ */ jsx34("legend", { children: t("labels.edges") }),
-      /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsxs14("fieldset", { children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.edges") }),
+      /* @__PURE__ */ jsx30(
         ButtonIconSelect,
         {
           group: "edges",
@@ -5339,66 +4989,66 @@ var getArrowheadOptions = (flip) => {
       value: "arrow",
       text: t("labels.arrowhead_arrow"),
       keyBinding: "w",
-      icon: /* @__PURE__ */ jsx34(ArrowheadArrowIcon, { flip })
+      icon: /* @__PURE__ */ jsx30(ArrowheadArrowIcon, { flip })
     },
     {
       value: "triangle",
       text: t("labels.arrowhead_triangle"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadTriangleIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadTriangleIcon, { flip }),
       keyBinding: "e"
     },
     {
       value: "triangle_outline",
       text: t("labels.arrowhead_triangle_outline"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadTriangleOutlineIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadTriangleOutlineIcon, { flip }),
       keyBinding: "r"
     },
     {
       value: "circle",
       text: t("labels.arrowhead_circle"),
       keyBinding: "a",
-      icon: /* @__PURE__ */ jsx34(ArrowheadCircleIcon, { flip })
+      icon: /* @__PURE__ */ jsx30(ArrowheadCircleIcon, { flip })
     },
     {
       value: "circle_outline",
       text: t("labels.arrowhead_circle_outline"),
       keyBinding: "s",
-      icon: /* @__PURE__ */ jsx34(ArrowheadCircleOutlineIcon, { flip })
+      icon: /* @__PURE__ */ jsx30(ArrowheadCircleOutlineIcon, { flip })
     },
     {
       value: "diamond",
       text: t("labels.arrowhead_diamond"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadDiamondIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadDiamondIcon, { flip }),
       keyBinding: "d"
     },
     {
       value: "diamond_outline",
       text: t("labels.arrowhead_diamond_outline"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadDiamondOutlineIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadDiamondOutlineIcon, { flip }),
       keyBinding: "f"
     },
     {
       value: "bar",
       text: t("labels.arrowhead_bar"),
       keyBinding: "z",
-      icon: /* @__PURE__ */ jsx34(ArrowheadBarIcon, { flip })
+      icon: /* @__PURE__ */ jsx30(ArrowheadBarIcon, { flip })
     },
     {
       value: "crowfoot_one",
       text: t("labels.arrowhead_crowfoot_one"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadCrowfootOneIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadCrowfootOneIcon, { flip }),
       keyBinding: "c"
     },
     {
       value: "crowfoot_many",
       text: t("labels.arrowhead_crowfoot_many"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadCrowfootIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadCrowfootIcon, { flip }),
       keyBinding: "x"
     },
     {
       value: "crowfoot_one_or_many",
       text: t("labels.arrowhead_crowfoot_one_or_many"),
-      icon: /* @__PURE__ */ jsx34(ArrowheadCrowfootOneOrManyIcon, { flip }),
+      icon: /* @__PURE__ */ jsx30(ArrowheadCrowfootOneOrManyIcon, { flip }),
       keyBinding: "v"
     }
   ];
@@ -5435,10 +5085,10 @@ var actionChangeArrowhead = register({
   },
   PanelComponent: ({ elements, appState, updateData }) => {
     const isRTL = getLanguage().rtl;
-    return /* @__PURE__ */ jsxs20("fieldset", { children: [
-      /* @__PURE__ */ jsx34("legend", { children: t("labels.arrowheads") }),
-      /* @__PURE__ */ jsxs20("div", { className: "iconSelectList buttonList", children: [
-        /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsxs14("fieldset", { children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.arrowheads") }),
+      /* @__PURE__ */ jsxs14("div", { className: "iconSelectList buttonList", children: [
+        /* @__PURE__ */ jsx30(
           IconPicker,
           {
             label: "arrowhead_start",
@@ -5454,7 +5104,7 @@ var actionChangeArrowhead = register({
             numberOfOptionsToAlwaysShow: 4
           }
         ),
-        /* @__PURE__ */ jsx34(
+        /* @__PURE__ */ jsx30(
           IconPicker,
           {
             label: "arrowhead_end",
@@ -5600,9 +5250,9 @@ var actionChangeArrowType = register({
     };
   },
   PanelComponent: ({ elements, appState, updateData }) => {
-    return /* @__PURE__ */ jsxs20("fieldset", { children: [
-      /* @__PURE__ */ jsx34("legend", { children: t("labels.arrowtypes") }),
-      /* @__PURE__ */ jsx34(
+    return /* @__PURE__ */ jsxs14("fieldset", { children: [
+      /* @__PURE__ */ jsx30("legend", { children: t("labels.arrowtypes") }),
+      /* @__PURE__ */ jsx30(
         ButtonIconSelect,
         {
           group: "arrowtypes",
@@ -5668,8 +5318,8 @@ var getStateForZoom = ({
 };
 
 // components/Tooltip.tsx
-import { useEffect as useEffect16 } from "react";
-import { jsx as jsx35 } from "react/jsx-runtime";
+import { useEffect as useEffect12 } from "react";
+import { jsx as jsx31 } from "react/jsx-runtime";
 var getTooltipDiv = () => {
   const existingDiv = document.querySelector(
     ".excalidraw-tooltip"
@@ -5725,13 +5375,13 @@ var Tooltip = ({
   style,
   disabled
 }) => {
-  useEffect16(() => {
+  useEffect12(() => {
     return () => getTooltipDiv().classList.remove("excalidraw-tooltip--visible");
   }, []);
   if (disabled) {
     return null;
   }
-  return /* @__PURE__ */ jsx35(
+  return /* @__PURE__ */ jsx31(
     "div",
     {
       className: "excalidraw-tooltip-wrapper",
@@ -5749,7 +5399,7 @@ var Tooltip = ({
 };
 
 // actions/actionCanvas.tsx
-import { jsx as jsx36, jsxs as jsxs21 } from "react/jsx-runtime";
+import { jsx as jsx32, jsxs as jsxs15 } from "react/jsx-runtime";
 var actionChangeViewBackgroundColor = register({
   name: "changeViewBackgroundColor",
   label: "labels.canvasBackground",
@@ -5765,11 +5415,10 @@ var actionChangeViewBackgroundColor = register({
     };
   },
   PanelComponent: ({ elements, appState, updateData, appProps }) => {
-    return /* @__PURE__ */ jsx36(
+    return /* @__PURE__ */ jsx32(
       ColorPicker,
       {
-        palette: null,
-        topPicks: DEFAULT_CANVAS_BACKGROUND_PICKS,
+        palette: DEFAULT_CANVAS_BACKGROUND_COLOR_PALETTE,
         label: t("labels.canvasBackground"),
         type: "canvasBackground",
         color: appState.viewBackgroundColor,
@@ -5809,6 +5458,8 @@ var actionClearCanvas = register({
         gridStep: appState.gridStep,
         gridType: appState.gridType,
         gridModeEnabled: appState.gridModeEnabled,
+        gridColor: appState.gridColor,
+        gridOpacity: appState.gridOpacity,
         stats: appState.stats,
         pasteDialog: appState.pasteDialog,
         activeTool: appState.activeTool.type === "image" ? { ...appState.activeTool, type: "selection" } : appState.activeTool
@@ -5840,7 +5491,7 @@ var actionZoomIn = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ updateData, appState }) => /* @__PURE__ */ jsx36(
+  PanelComponent: ({ updateData, appState }) => /* @__PURE__ */ jsx32(
     ToolButton,
     {
       type: "button",
@@ -5879,7 +5530,7 @@ var actionZoomOut = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ updateData, appState }) => /* @__PURE__ */ jsx36(
+  PanelComponent: ({ updateData, appState }) => /* @__PURE__ */ jsx32(
     ToolButton,
     {
       type: "button",
@@ -5918,7 +5569,7 @@ var actionResetZoom = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ updateData, appState }) => /* @__PURE__ */ jsx36(Tooltip, { label: t("buttons.resetZoom"), style: { height: "100%" }, children: /* @__PURE__ */ jsxs21(
+  PanelComponent: ({ updateData, appState }) => /* @__PURE__ */ jsx32(Tooltip, { label: t("buttons.resetZoom"), style: { height: "100%" }, children: /* @__PURE__ */ jsxs15(
     ToolButton,
     {
       type: "button",
@@ -6176,7 +5827,7 @@ var actionToggleHandTool = register({
 });
 
 // actions/actionFinalize.tsx
-import { jsx as jsx37 } from "react/jsx-runtime";
+import { jsx as jsx33 } from "react/jsx-runtime";
 var actionFinalize = register({
   name: "finalize",
   label: "",
@@ -6300,7 +5951,7 @@ var actionFinalize = register({
     };
   },
   keyTest: (event, appState) => event.key === KEYS.ESCAPE && (appState.editingLinearElement !== null || !appState.newElement && appState.multiElement === null) || (event.key === KEYS.ESCAPE || event.key === KEYS.ENTER) && appState.multiElement !== null,
-  PanelComponent: ({ appState, updateData, data }) => /* @__PURE__ */ jsx37(
+  PanelComponent: ({ appState, updateData, data }) => /* @__PURE__ */ jsx33(
     ToolButton,
     {
       type: "button",
@@ -6316,11 +5967,11 @@ var actionFinalize = register({
 });
 
 // components/ProjectName.tsx
-import { useState as useState9 } from "react";
-import { jsx as jsx38, jsxs as jsxs22 } from "react/jsx-runtime";
+import { useState as useState7 } from "react";
+import { jsx as jsx34, jsxs as jsxs16 } from "react/jsx-runtime";
 var ProjectName = (props) => {
   const { id } = useExcalidrawContainer();
-  const [fileName, setFileName] = useState9(props.value);
+  const [fileName, setFileName] = useState7(props.value);
   const handleBlur = (event) => {
     if (!props.ignoreFocus) {
       focusNearestParent(event.target);
@@ -6339,9 +5990,9 @@ var ProjectName = (props) => {
       event.currentTarget.blur();
     }
   };
-  return /* @__PURE__ */ jsxs22("div", { className: "ProjectName", children: [
-    /* @__PURE__ */ jsx38("label", { className: "ProjectName-label", htmlFor: "filename", children: `${props.label}:` }),
-    /* @__PURE__ */ jsx38(
+  return /* @__PURE__ */ jsxs16("div", { className: "ProjectName", children: [
+    /* @__PURE__ */ jsx34("label", { className: "ProjectName-label", htmlFor: "filename", children: `${props.label}:` }),
+    /* @__PURE__ */ jsx34(
       "input",
       {
         type: "text",
@@ -6357,10 +6008,10 @@ var ProjectName = (props) => {
 };
 
 // components/DarkModeToggle.tsx
-import { jsx as jsx39 } from "react/jsx-runtime";
+import { jsx as jsx35 } from "react/jsx-runtime";
 var DarkModeToggle = (props) => {
   const title = props.title || (props.value === THEME.DARK ? t("buttons.lightMode") : t("buttons.darkMode"));
-  return /* @__PURE__ */ jsx39(
+  return /* @__PURE__ */ jsx35(
     ToolButton,
     {
       type: "icon",
@@ -6373,14 +6024,14 @@ var DarkModeToggle = (props) => {
   );
 };
 var ICONS = {
-  SUN: /* @__PURE__ */ jsx39("svg", { width: "512", height: "512", className: "rtl-mirror", viewBox: "0 0 512 512", children: /* @__PURE__ */ jsx39(
+  SUN: /* @__PURE__ */ jsx35("svg", { width: "512", height: "512", className: "rtl-mirror", viewBox: "0 0 512 512", children: /* @__PURE__ */ jsx35(
     "path",
     {
       fill: "currentColor",
       d: "M256 160c-52.9 0-96 43.1-96 96s43.1 96 96 96 96-43.1 96-96-43.1-96-96-96zm246.4 80.5l-94.7-47.3 33.5-100.4c4.5-13.6-8.4-26.5-21.9-21.9l-100.4 33.5-47.4-94.8c-6.4-12.8-24.6-12.8-31 0l-47.3 94.7L92.7 70.8c-13.6-4.5-26.5 8.4-21.9 21.9l33.5 100.4-94.7 47.4c-12.8 6.4-12.8 24.6 0 31l94.7 47.3-33.5 100.5c-4.5 13.6 8.4 26.5 21.9 21.9l100.4-33.5 47.3 94.7c6.4 12.8 24.6 12.8 31 0l47.3-94.7 100.4 33.5c13.6 4.5 26.5-8.4 21.9-21.9l-33.5-100.4 94.7-47.3c13-6.5 13-24.7.2-31.1zm-155.9 106c-49.9 49.9-131.1 49.9-181 0-49.9-49.9-49.9-131.1 0-181 49.9-49.9 131.1-49.9 181 0 49.9 49.9 49.9 131.1 0 181z"
     }
   ) }),
-  MOON: /* @__PURE__ */ jsx39("svg", { width: "512", height: "512", className: "rtl-mirror", viewBox: "0 0 512 512", children: /* @__PURE__ */ jsx39(
+  MOON: /* @__PURE__ */ jsx35("svg", { width: "512", height: "512", className: "rtl-mirror", viewBox: "0 0 512 512", children: /* @__PURE__ */ jsx35(
     "path",
     {
       fill: "currentColor",
@@ -6479,7 +6130,7 @@ var exportCanvas = async (type, elements, appState, files, {
     let blob = canvasToBlob(tempCanvas);
     if (appState.exportEmbedScene) {
       blob = blob.then(
-        (blob2) => import("./data/image-LV6TNWT3.js").then(
+        (blob2) => import("./data/image-JAXGM5XZ.js").then(
           ({ encodePngMetadata }) => encodePngMetadata({
             blob: blob2,
             metadata: serializeAsJSON(elements, appState, files, "local")
@@ -6549,13 +6200,13 @@ var resaveAsImageWithScene = async (elements, appState, files, name) => {
 };
 
 // components/CheckboxItem.tsx
-import clsx16 from "clsx";
-import { jsx as jsx40, jsxs as jsxs23 } from "react/jsx-runtime";
+import clsx12 from "clsx";
+import { jsx as jsx36, jsxs as jsxs17 } from "react/jsx-runtime";
 var CheckboxItem = ({ children, checked, onChange, className }) => {
-  return /* @__PURE__ */ jsxs23(
+  return /* @__PURE__ */ jsxs17(
     "div",
     {
-      className: clsx16("Checkbox", className, { "is-checked": checked }),
+      className: clsx12("Checkbox", className, { "is-checked": checked }),
       onClick: (event) => {
         onChange(!checked, event);
         event.currentTarget.querySelector(
@@ -6563,7 +6214,7 @@ var CheckboxItem = ({ children, checked, onChange, className }) => {
         ).focus();
       },
       children: [
-        /* @__PURE__ */ jsx40(
+        /* @__PURE__ */ jsx36(
           "button",
           {
             type: "button",
@@ -6573,14 +6224,14 @@ var CheckboxItem = ({ children, checked, onChange, className }) => {
             children: checkIcon
           }
         ),
-        /* @__PURE__ */ jsx40("div", { className: "Checkbox-label", children })
+        /* @__PURE__ */ jsx36("div", { className: "Checkbox-label", children })
       ]
     }
   );
 };
 
 // actions/actionExport.tsx
-import { Fragment as Fragment5, jsx as jsx41, jsxs as jsxs24 } from "react/jsx-runtime";
+import { Fragment as Fragment4, jsx as jsx37, jsxs as jsxs18 } from "react/jsx-runtime";
 var actionChangeProjectName = register({
   name: "changeProjectName",
   label: "labels.fileTitle",
@@ -6591,7 +6242,7 @@ var actionChangeProjectName = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ appState, updateData, appProps, data, app }) => /* @__PURE__ */ jsx41(
+  PanelComponent: ({ appState, updateData, appProps, data, app }) => /* @__PURE__ */ jsx37(
     ProjectName,
     {
       label: t("labels.fileTitle"),
@@ -6615,7 +6266,7 @@ var actionChangeExportScale = register({
     const elements = getNonDeletedElements(allElements);
     const exportSelected = isSomeElementSelected(elements, appState);
     const exportedElements = exportSelected ? getSelectedElements(elements, appState) : elements;
-    return /* @__PURE__ */ jsx41(Fragment5, { children: EXPORT_SCALES.map((s) => {
+    return /* @__PURE__ */ jsx37(Fragment4, { children: EXPORT_SCALES.map((s) => {
       const [width, height] = getExportSize(
         exportedElements,
         DEFAULT_EXPORT_PADDING,
@@ -6624,7 +6275,7 @@ var actionChangeExportScale = register({
       const scaleButtonTitle = `${t(
         "imageExportDialog.label.scale"
       )} ${s}x (${width}x${height})`;
-      return /* @__PURE__ */ jsx41(
+      return /* @__PURE__ */ jsx37(
         ToolButton,
         {
           size: "small",
@@ -6652,7 +6303,7 @@ var actionChangeExportBackground = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsx41(
+  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsx37(
     CheckboxItem,
     {
       checked: appState.exportBackground,
@@ -6671,14 +6322,14 @@ var actionChangeExportEmbedScene = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsxs24(
+  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsxs18(
     CheckboxItem,
     {
       checked: appState.exportEmbedScene,
       onChange: (checked) => updateData(checked),
       children: [
         t("imageExportDialog.label.embedScene"),
-        /* @__PURE__ */ jsx41(Tooltip, { label: t("imageExportDialog.tooltip.embedScene"), long: true, children: /* @__PURE__ */ jsx41("div", { className: "excalidraw-tooltip-icon", children: questionCircle }) })
+        /* @__PURE__ */ jsx37(Tooltip, { label: t("imageExportDialog.tooltip.embedScene"), long: true, children: /* @__PURE__ */ jsx37("div", { className: "excalidraw-tooltip-icon", children: questionCircle }) })
       ]
     }
   )
@@ -6760,7 +6411,7 @@ var actionSaveFileToDisk = register({
     }
   },
   keyTest: (event) => event.key === KEYS.S && event.shiftKey && event[KEYS.CTRL_OR_CMD],
-  PanelComponent: ({ updateData }) => /* @__PURE__ */ jsx41(
+  PanelComponent: ({ updateData }) => /* @__PURE__ */ jsx37(
     ToolButton,
     {
       type: "button",
@@ -6819,7 +6470,7 @@ var actionExportWithDarkMode = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY
     };
   },
-  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsx41(
+  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsx37(
     "div",
     {
       style: {
@@ -6828,7 +6479,7 @@ var actionExportWithDarkMode = register({
         marginTop: "-45px",
         marginBottom: "10px"
       },
-      children: /* @__PURE__ */ jsx41(
+      children: /* @__PURE__ */ jsx37(
         DarkModeToggle,
         {
           value: appState.exportWithDarkMode ? THEME.DARK : THEME.LIGHT,
@@ -6956,7 +6607,7 @@ var actionPasteStyles = register({
 });
 
 // actions/actionMenu.tsx
-import { jsx as jsx42 } from "react/jsx-runtime";
+import { jsx as jsx38 } from "react/jsx-runtime";
 var actionToggleCanvasMenu = register({
   name: "toggleCanvasMenu",
   label: "buttons.menu",
@@ -6968,7 +6619,7 @@ var actionToggleCanvasMenu = register({
     },
     captureUpdate: CaptureUpdateAction.EVENTUALLY
   }),
-  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsx42(
+  PanelComponent: ({ appState, updateData }) => /* @__PURE__ */ jsx38(
     ToolButton,
     {
       type: "button",
@@ -6990,7 +6641,7 @@ var actionToggleEditMenu = register({
     },
     captureUpdate: CaptureUpdateAction.EVENTUALLY
   }),
-  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsx42(
+  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsx38(
     ToolButton,
     {
       visible: showSelectedShapeActions(
@@ -7029,7 +6680,7 @@ var actionShortcuts = register({
 });
 
 // actions/actionGroup.tsx
-import { jsx as jsx43 } from "react/jsx-runtime";
+import { jsx as jsx39 } from "react/jsx-runtime";
 var allElementsInSameGroup = (elements) => {
   if (elements.length >= 2) {
     const groupIds = elements[0].groupIds;
@@ -7054,7 +6705,7 @@ var enableActionGroup = (elements, appState, app) => {
 var actionGroup = register({
   name: "group",
   label: "labels.group",
-  icon: (appState) => /* @__PURE__ */ jsx43(GroupIcon, { theme: appState.theme }),
+  icon: (appState) => /* @__PURE__ */ jsx39(GroupIcon, { theme: appState.theme }),
   trackEvent: { category: "element" },
   perform: (elements, appState, _, app) => {
     const selectedElements = getRootElements(
@@ -7146,12 +6797,12 @@ var actionGroup = register({
   },
   predicate: (elements, appState, _, app) => enableActionGroup(elements, appState, app),
   keyTest: (event) => !event.shiftKey && event[KEYS.CTRL_OR_CMD] && event.key === KEYS.G,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx43(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx39(
     ToolButton,
     {
       hidden: !enableActionGroup(elements, appState, app),
       type: "button",
-      icon: /* @__PURE__ */ jsx43(GroupIcon, { theme: appState.theme }),
+      icon: /* @__PURE__ */ jsx39(GroupIcon, { theme: appState.theme }),
       onClick: () => updateData(null),
       title: `${t("labels.group")} \u2014 ${getShortcutKey("CtrlOrCmd+G")}`,
       "aria-label": t("labels.group"),
@@ -7162,7 +6813,7 @@ var actionGroup = register({
 var actionUngroup = register({
   name: "ungroup",
   label: "labels.ungroup",
-  icon: (appState) => /* @__PURE__ */ jsx43(UngroupIcon, { theme: appState.theme }),
+  icon: (appState) => /* @__PURE__ */ jsx39(UngroupIcon, { theme: appState.theme }),
   trackEvent: { category: "element" },
   perform: (elements, appState, _, app) => {
     const groupIds = getSelectedGroupIds(appState);
@@ -7238,12 +6889,12 @@ var actionUngroup = register({
   },
   keyTest: (event) => event.shiftKey && event[KEYS.CTRL_OR_CMD] && event.key === KEYS.G.toUpperCase(),
   predicate: (elements, appState) => getSelectedGroupIds(appState).length > 0,
-  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsx43(
+  PanelComponent: ({ elements, appState, updateData }) => /* @__PURE__ */ jsx39(
     ToolButton,
     {
       type: "button",
       hidden: getSelectedGroupIds(appState).length === 0,
-      icon: /* @__PURE__ */ jsx43(UngroupIcon, { theme: appState.theme }),
+      icon: /* @__PURE__ */ jsx39(UngroupIcon, { theme: appState.theme }),
       onClick: () => updateData(null),
       title: `${t("labels.ungroup")} \u2014 ${getShortcutKey("CtrlOrCmd+Shift+G")}`,
       "aria-label": t("labels.ungroup"),
@@ -7458,9 +7109,9 @@ var renderRemoteCursors = ({
 };
 
 // components/Avatar.tsx
-import { useState as useState10 } from "react";
-import clsx17 from "clsx";
-import { jsx as jsx44 } from "react/jsx-runtime";
+import { useState as useState8 } from "react";
+import clsx13 from "clsx";
+import { jsx as jsx40 } from "react/jsx-runtime";
 var Avatar = ({
   color,
   onClick,
@@ -7469,10 +7120,10 @@ var Avatar = ({
   className
 }) => {
   const shortName = getNameInitial(name);
-  const [error, setError] = useState10(false);
+  const [error, setError] = useState8(false);
   const loadImg = !error && src;
   const style = loadImg ? void 0 : { background: color };
-  return /* @__PURE__ */ jsx44("div", { className: clsx17("Avatar", className), style, onClick, children: loadImg ? /* @__PURE__ */ jsx44(
+  return /* @__PURE__ */ jsx40("div", { className: clsx13("Avatar", className), style, onClick, children: loadImg ? /* @__PURE__ */ jsx40(
     "img",
     {
       className: "Avatar-img",
@@ -7485,8 +7136,8 @@ var Avatar = ({
 };
 
 // actions/actionNavigate.tsx
-import clsx18 from "clsx";
-import { jsx as jsx45, jsxs as jsxs25 } from "react/jsx-runtime";
+import clsx14 from "clsx";
+import { jsx as jsx41, jsxs as jsxs19 } from "react/jsx-runtime";
 var actionGoToCollaborator = register({
   name: "goToCollaborator",
   label: "Go to a collaborator",
@@ -7518,40 +7169,40 @@ var actionGoToCollaborator = register({
   PanelComponent: ({ updateData, data, appState }) => {
     const { socketId, collaborator, withName, isBeingFollowed } = data;
     const background = getClientColor(socketId, collaborator);
-    const statusClassNames = clsx18({
+    const statusClassNames = clsx14({
       "is-followed": isBeingFollowed,
       "is-current-user": collaborator.isCurrentUser === true,
       "is-speaking": collaborator.isSpeaking,
       "is-in-call": collaborator.isInCall,
       "is-muted": collaborator.isMuted
     });
-    const statusIconJSX = collaborator.isInCall ? collaborator.isSpeaking ? /* @__PURE__ */ jsxs25(
+    const statusIconJSX = collaborator.isInCall ? collaborator.isSpeaking ? /* @__PURE__ */ jsxs19(
       "div",
       {
         className: "UserList__collaborator-status-icon-speaking-indicator",
         title: t("userList.hint.isSpeaking"),
         children: [
-          /* @__PURE__ */ jsx45("div", {}),
-          /* @__PURE__ */ jsx45("div", {}),
-          /* @__PURE__ */ jsx45("div", {})
+          /* @__PURE__ */ jsx41("div", {}),
+          /* @__PURE__ */ jsx41("div", {}),
+          /* @__PURE__ */ jsx41("div", {})
         ]
       }
-    ) : collaborator.isMuted ? /* @__PURE__ */ jsx45(
+    ) : collaborator.isMuted ? /* @__PURE__ */ jsx41(
       "div",
       {
         className: "UserList__collaborator-status-icon-microphone-muted",
         title: t("userList.hint.micMuted"),
         children: microphoneMutedIcon
       }
-    ) : /* @__PURE__ */ jsx45("div", { title: t("userList.hint.inCall"), children: microphoneIcon }) : null;
-    return withName ? /* @__PURE__ */ jsxs25(
+    ) : /* @__PURE__ */ jsx41("div", { title: t("userList.hint.inCall"), children: microphoneIcon }) : null;
+    return withName ? /* @__PURE__ */ jsxs19(
       "div",
       {
         className: `dropdown-menu-item dropdown-menu-item-base UserList__collaborator ${statusClassNames}`,
         style: { [`--avatar-size`]: "1.5rem" },
         onClick: () => updateData(collaborator),
         children: [
-          /* @__PURE__ */ jsx45(
+          /* @__PURE__ */ jsx41(
             Avatar,
             {
               color: background,
@@ -7562,9 +7213,9 @@ var actionGoToCollaborator = register({
               className: statusClassNames
             }
           ),
-          /* @__PURE__ */ jsx45("div", { className: "UserList__collaborator-name", children: collaborator.username }),
-          /* @__PURE__ */ jsxs25("div", { className: "UserList__collaborator-status-icons", "aria-hidden": true, children: [
-            isBeingFollowed && /* @__PURE__ */ jsx45(
+          /* @__PURE__ */ jsx41("div", { className: "UserList__collaborator-name", children: collaborator.username }),
+          /* @__PURE__ */ jsxs19("div", { className: "UserList__collaborator-status-icons", "aria-hidden": true, children: [
+            isBeingFollowed && /* @__PURE__ */ jsx41(
               "div",
               {
                 className: "UserList__collaborator-status-icon-is-followed",
@@ -7576,12 +7227,12 @@ var actionGoToCollaborator = register({
           ] })
         ]
       }
-    ) : /* @__PURE__ */ jsxs25(
+    ) : /* @__PURE__ */ jsxs19(
       "div",
       {
         className: `UserList__collaborator UserList__collaborator--avatar-only ${statusClassNames}`,
         children: [
-          /* @__PURE__ */ jsx45(
+          /* @__PURE__ */ jsx41(
             Avatar,
             {
               color: background,
@@ -7593,7 +7244,7 @@ var actionGoToCollaborator = register({
               className: statusClassNames
             }
           ),
-          statusIconJSX && /* @__PURE__ */ jsx45("div", { className: "UserList__collaborator-status-icon", children: statusIconJSX })
+          statusIconJSX && /* @__PURE__ */ jsx41("div", { className: "UserList__collaborator-status-icon", children: statusIconJSX })
         ]
       }
     );
@@ -7699,7 +7350,7 @@ var calculateTranslation = (group, selectionBoundingBox, { axis, position }) => 
 };
 
 // actions/actionAlign.tsx
-import { jsx as jsx46 } from "react/jsx-runtime";
+import { jsx as jsx42 } from "react/jsx-runtime";
 var alignActionsPredicate = (appState, app) => {
   const selectedElements = app.scene.getSelectedElements(appState);
   return selectedElements.length > 1 && // TODO enable aligning frames when implemented properly
@@ -7738,7 +7389,7 @@ var actionAlignTop = register({
     };
   },
   keyTest: (event) => event[KEYS.CTRL_OR_CMD] && event.shiftKey && event.key === KEYS.ARROW_UP,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx46(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx42(
     ToolButton,
     {
       hidden: !alignActionsPredicate(appState, app),
@@ -7770,7 +7421,7 @@ var actionAlignBottom = register({
     };
   },
   keyTest: (event) => event[KEYS.CTRL_OR_CMD] && event.shiftKey && event.key === KEYS.ARROW_DOWN,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx46(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx42(
     ToolButton,
     {
       hidden: !alignActionsPredicate(appState, app),
@@ -7802,7 +7453,7 @@ var actionAlignLeft = register({
     };
   },
   keyTest: (event) => event[KEYS.CTRL_OR_CMD] && event.shiftKey && event.key === KEYS.ARROW_LEFT,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx46(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx42(
     ToolButton,
     {
       hidden: !alignActionsPredicate(appState, app),
@@ -7834,7 +7485,7 @@ var actionAlignRight = register({
     };
   },
   keyTest: (event) => event[KEYS.CTRL_OR_CMD] && event.shiftKey && event.key === KEYS.ARROW_RIGHT,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx46(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx42(
     ToolButton,
     {
       hidden: !alignActionsPredicate(appState, app),
@@ -7865,7 +7516,7 @@ var actionAlignVerticallyCentered = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY
     };
   },
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx46(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx42(
     ToolButton,
     {
       hidden: !alignActionsPredicate(appState, app),
@@ -7894,7 +7545,7 @@ var actionAlignHorizontallyCentered = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY
     };
   },
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx46(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx42(
     ToolButton,
     {
       hidden: !alignActionsPredicate(appState, app),
@@ -7959,7 +7610,7 @@ var distributeElements = (selectedElements, elementsMap, distribution) => {
 };
 
 // actions/actionDistribute.tsx
-import { jsx as jsx47 } from "react/jsx-runtime";
+import { jsx as jsx43 } from "react/jsx-runtime";
 var enableActionGroup2 = (appState, app) => {
   const selectedElements = app.scene.getSelectedElements(appState);
   return selectedElements.length > 1 && // TODO enable distributing frames when implemented properly
@@ -7994,7 +7645,7 @@ var distributeHorizontally = register({
     };
   },
   keyTest: (event) => !event[KEYS.CTRL_OR_CMD] && event.altKey && event.code === CODES.H,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx47(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx43(
     ToolButton,
     {
       hidden: !enableActionGroup2(appState, app),
@@ -8024,7 +7675,7 @@ var distributeVertically = register({
     };
   },
   keyTest: (event) => !event[KEYS.CTRL_OR_CMD] && event.altKey && event.code === CODES.V,
-  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx47(
+  PanelComponent: ({ elements, appState, updateData, app }) => /* @__PURE__ */ jsx43(
     ToolButton,
     {
       hidden: !enableActionGroup2(appState, app),
@@ -8748,14 +8399,14 @@ var actionWrapTextInContainer = register({
 
 // components/hyperlink/Hyperlink.tsx
 import {
-  useCallback as useCallback4,
-  useEffect as useEffect17,
+  useCallback as useCallback3,
+  useEffect as useEffect13,
   useLayoutEffect as useLayoutEffect2,
-  useRef as useRef12,
-  useState as useState11
+  useRef as useRef8,
+  useState as useState9
 } from "react";
-import clsx19 from "clsx";
-import { jsx as jsx48, jsxs as jsxs26 } from "react/jsx-runtime";
+import clsx15 from "clsx";
+import { jsx as jsx44, jsxs as jsxs20 } from "react/jsx-runtime";
 var POPUP_WIDTH = 380;
 var POPUP_HEIGHT = 42;
 var POPUP_PADDING = 5;
@@ -8775,10 +8426,10 @@ var Hyperlink = ({
   const appProps = useAppProps();
   const device = useDevice();
   const linkVal = element.link || "";
-  const [inputVal, setInputVal] = useState11(linkVal);
-  const inputRef = useRef12(null);
+  const [inputVal, setInputVal] = useState9(linkVal);
+  const inputRef = useRef8(null);
   const isEditing = appState.showHyperlinkPopup === "editor";
-  const handleSubmit = useCallback4(() => {
+  const handleSubmit = useCallback3(() => {
     if (!inputRef.current) {
       return;
     }
@@ -8845,12 +8496,12 @@ var Hyperlink = ({
       handleSubmit();
     };
   }, [handleSubmit]);
-  useEffect17(() => {
+  useEffect13(() => {
     if (isEditing && inputRef?.current && !(device.viewport.isMobile || device.isTouchScreen)) {
       inputRef.current.select();
     }
   }, [isEditing, device.viewport.isMobile, device.isTouchScreen]);
-  useEffect17(() => {
+  useEffect13(() => {
     let timeoutId = null;
     const handlePointerMove = (event) => {
       if (isEditing) {
@@ -8879,7 +8530,7 @@ var Hyperlink = ({
       }
     };
   }, [appState, element, isEditing, setAppState, elementsMap]);
-  const handleRemove = useCallback4(() => {
+  const handleRemove = useCallback3(() => {
     trackEvent("hyperlink", "delete");
     mutateElement(element, { link: null });
     setAppState({ showHyperlinkPopup: false });
@@ -8892,7 +8543,7 @@ var Hyperlink = ({
   if (appState.contextMenu || appState.selectedElementsAreBeingDragged || appState.resizingElement || appState.isRotating || appState.openMenu || appState.viewModeEnabled) {
     return null;
   }
-  return /* @__PURE__ */ jsxs26(
+  return /* @__PURE__ */ jsxs20(
     "div",
     {
       className: "excalidraw-hyperlinkContainer",
@@ -8903,10 +8554,10 @@ var Hyperlink = ({
         padding: POPUP_PADDING
       },
       children: [
-        isEditing ? /* @__PURE__ */ jsx48(
+        isEditing ? /* @__PURE__ */ jsx44(
           "input",
           {
-            className: clsx19("excalidraw-hyperlinkContainer-input"),
+            className: clsx15("excalidraw-hyperlinkContainer-input"),
             placeholder: t("labels.link.hint"),
             ref: inputRef,
             value: inputVal,
@@ -8923,7 +8574,7 @@ var Hyperlink = ({
               }
             }
           }
-        ) : element.link ? /* @__PURE__ */ jsx48(
+        ) : element.link ? /* @__PURE__ */ jsx44(
           "a",
           {
             href: normalizeLink(element.link || ""),
@@ -8950,9 +8601,9 @@ var Hyperlink = ({
             rel: "noopener noreferrer",
             children: element.link
           }
-        ) : /* @__PURE__ */ jsx48("div", { className: "excalidraw-hyperlinkContainer-link", children: t("labels.link.empty") }),
-        /* @__PURE__ */ jsxs26("div", { className: "excalidraw-hyperlinkContainer__buttons", children: [
-          !isEditing && /* @__PURE__ */ jsx48(
+        ) : /* @__PURE__ */ jsx44("div", { className: "excalidraw-hyperlinkContainer-link", children: t("labels.link.empty") }),
+        /* @__PURE__ */ jsxs20("div", { className: "excalidraw-hyperlinkContainer__buttons", children: [
+          !isEditing && /* @__PURE__ */ jsx44(
             ToolButton,
             {
               type: "button",
@@ -8964,7 +8615,7 @@ var Hyperlink = ({
               icon: FreedrawIcon
             }
           ),
-          /* @__PURE__ */ jsx48(
+          /* @__PURE__ */ jsx44(
             ToolButton,
             {
               type: "button",
@@ -8982,7 +8633,7 @@ var Hyperlink = ({
               icon: elementLinkIcon
             }
           ),
-          linkVal && !isEmbeddableElement(element) && /* @__PURE__ */ jsx48(
+          linkVal && !isEmbeddableElement(element) && /* @__PURE__ */ jsx44(
             ToolButton,
             {
               type: "button",
@@ -9089,7 +8740,7 @@ var shouldHideLinkPopup = (element, elementsMap, appState, [clientX, clientY]) =
 };
 
 // actions/actionLink.tsx
-import { jsx as jsx49 } from "react/jsx-runtime";
+import { jsx as jsx45 } from "react/jsx-runtime";
 var actionLink = register({
   name: "hyperlink",
   label: (elements, appState) => getContextMenuLabel(elements, appState),
@@ -9116,7 +8767,7 @@ var actionLink = register({
   },
   PanelComponent: ({ elements, appState, updateData }) => {
     const selectedElements = getSelectedElements(elements, appState);
-    return /* @__PURE__ */ jsx49(
+    return /* @__PURE__ */ jsx45(
       ToolButton,
       {
         type: "button",
@@ -9217,31 +8868,31 @@ var actionUnlockAllElements = register({
 });
 
 // components/CommandPalette/CommandPalette.tsx
-import { useEffect as useEffect28, useRef as useRef22, useState as useState23 } from "react";
+import { useEffect as useEffect24, useRef as useRef18, useState as useState21 } from "react";
 
 // components/Dialog.tsx
-import clsx28 from "clsx";
-import { useEffect as useEffect27, useState as useState20 } from "react";
+import clsx24 from "clsx";
+import { useEffect as useEffect23, useState as useState18 } from "react";
 
 // hooks/useCallbackRefState.ts
-import { useCallback as useCallback5, useState as useState12 } from "react";
+import { useCallback as useCallback4, useState as useState10 } from "react";
 var useCallbackRefState = () => {
-  const [refValue, setRefValue] = useState12(null);
-  const refCallback = useCallback5((value) => setRefValue(value), []);
+  const [refValue, setRefValue] = useState10(null);
+  const refCallback = useCallback4((value) => setRefValue(value), []);
   return [refValue, refCallback];
 };
 
 // components/Modal.tsx
 import { createPortal as createPortal2 } from "react-dom";
-import clsx20 from "clsx";
-import { useRef as useRef13 } from "react";
-import { jsx as jsx50, jsxs as jsxs27 } from "react/jsx-runtime";
+import clsx16 from "clsx";
+import { useRef as useRef9 } from "react";
+import { jsx as jsx46, jsxs as jsxs21 } from "react/jsx-runtime";
 var Modal = (props) => {
   const { closeOnClickOutside = true } = props;
   const modalRoot = useCreatePortalContainer({
     className: "excalidraw-modal-container"
   });
-  const animationsDisabledRef = useRef13(
+  const animationsDisabledRef = useRef9(
     document.body.classList.contains("excalidraw-animations-disabled")
   );
   if (!modalRoot) {
@@ -9255,10 +8906,10 @@ var Modal = (props) => {
     }
   };
   return createPortal2(
-    /* @__PURE__ */ jsxs27(
+    /* @__PURE__ */ jsxs21(
       "div",
       {
-        className: clsx20("Modal", props.className, {
+        className: clsx16("Modal", props.className, {
           "animations-disabled": animationsDisabledRef.current
         }),
         role: "dialog",
@@ -9267,14 +8918,14 @@ var Modal = (props) => {
         "aria-labelledby": props.labelledBy,
         "data-prevent-outside-click": true,
         children: [
-          /* @__PURE__ */ jsx50(
+          /* @__PURE__ */ jsx46(
             "div",
             {
               className: "Modal__background",
               onClick: closeOnClickOutside ? props.onCloseRequest : void 0
             }
           ),
-          /* @__PURE__ */ jsx50(
+          /* @__PURE__ */ jsx46(
             "div",
             {
               className: "Modal__content",
@@ -9292,19 +8943,19 @@ var Modal = (props) => {
 
 // components/LibraryMenu.tsx
 import {
-  useState as useState19,
-  useCallback as useCallback10,
+  useState as useState17,
+  useCallback as useCallback9,
   useMemo as useMemo6,
-  useEffect as useEffect26,
+  useEffect as useEffect22,
   memo as memo3,
-  useRef as useRef19
+  useRef as useRef15
 } from "react";
 
 // data/library.ts
-import { useEffect as useEffect19, useRef as useRef14 } from "react";
+import { useEffect as useEffect15, useRef as useRef10 } from "react";
 
 // hooks/useLibraryItemSvg.ts
-import { useEffect as useEffect18, useState as useState13 } from "react";
+import { useEffect as useEffect14, useState as useState11 } from "react";
 var libraryItemSvgsCache = atom(/* @__PURE__ */ new Map());
 var exportLibraryItemToSvg = async (elements) => {
   return await exportToSvg2({
@@ -9319,8 +8970,8 @@ var exportLibraryItemToSvg = async (elements) => {
   });
 };
 var useLibraryItemSvg = (id, elements, svgCache) => {
-  const [svg, setSvg] = useState13();
-  useEffect18(() => {
+  const [svg, setSvg] = useState11();
+  useEffect14(() => {
     if (elements) {
       if (id) {
         const cachedSvg = svgCache.get(id);
@@ -9744,10 +9395,10 @@ var persistLibraryUpdate = async (adapter, update) => {
 };
 var useHandleLibrary = (opts) => {
   const { excalidrawAPI } = opts;
-  const optsRef = useRef14(opts);
+  const optsRef = useRef10(opts);
   optsRef.current = opts;
-  const isLibraryLoadedRef = useRef14(false);
-  useEffect19(() => {
+  const isLibraryLoadedRef = useRef10(false);
+  useEffect15(() => {
     if (!excalidrawAPI) {
       return;
     }
@@ -9899,7 +9550,7 @@ var useHandleLibrary = (opts) => {
     // on editor remounts (the excalidrawAPI changes)
     excalidrawAPI
   ]);
-  useEffect19(
+  useEffect15(
     () => {
       const unsubOnLibraryUpdate = onLibraryUpdateEmitter.on(
         async (update, nextLibraryItems) => {
@@ -9953,23 +9604,23 @@ var useHandleLibrary = (opts) => {
 
 // components/LibraryMenuItems.tsx
 import {
-  useCallback as useCallback9,
-  useEffect as useEffect25,
+  useCallback as useCallback8,
+  useEffect as useEffect21,
   useMemo as useMemo5,
-  useRef as useRef18,
-  useState as useState18
+  useRef as useRef14,
+  useState as useState16
 } from "react";
 
 // components/Stack.tsx
 import { forwardRef as forwardRef2 } from "react";
-import clsx21 from "clsx";
-import { jsx as jsx51 } from "react/jsx-runtime";
+import clsx17 from "clsx";
+import { jsx as jsx47 } from "react/jsx-runtime";
 var RowStack = forwardRef2(
   ({ children, gap, align, justifyContent, className, style }, ref) => {
-    return /* @__PURE__ */ jsx51(
+    return /* @__PURE__ */ jsx47(
       "div",
       {
-        className: clsx21("Stack Stack_horizontal", className),
+        className: clsx17("Stack Stack_horizontal", className),
         style: {
           "--gap": gap,
           alignItems: align,
@@ -9984,10 +9635,10 @@ var RowStack = forwardRef2(
 );
 var ColStack = forwardRef2(
   ({ children, gap, align, justifyContent, className, style }, ref) => {
-    return /* @__PURE__ */ jsx51(
+    return /* @__PURE__ */ jsx47(
       "div",
       {
-        className: clsx21("Stack Stack_vertical", className),
+        className: clsx17("Stack Stack_vertical", className),
         style: {
           "--gap": gap,
           justifyItems: align,
@@ -10006,14 +9657,14 @@ var Stack_default = {
 };
 
 // components/LibraryMenuBrowseButton.tsx
-import { jsx as jsx52 } from "react/jsx-runtime";
+import { jsx as jsx48 } from "react/jsx-runtime";
 var LibraryMenuBrowseButton = ({
   theme,
   id,
   libraryReturnUrl
 }) => {
   const referrer = libraryReturnUrl || window.location.origin + window.location.pathname;
-  return /* @__PURE__ */ jsx52(
+  return /* @__PURE__ */ jsx48(
     "a",
     {
       className: "library-menu-browse-button",
@@ -10026,8 +9677,8 @@ var LibraryMenuBrowseButton = ({
 var LibraryMenuBrowseButton_default = LibraryMenuBrowseButton;
 
 // components/LibraryMenuControlButtons.tsx
-import clsx22 from "clsx";
-import { jsx as jsx53, jsxs as jsxs28 } from "react/jsx-runtime";
+import clsx18 from "clsx";
+import { jsx as jsx49, jsxs as jsxs22 } from "react/jsx-runtime";
 var LibraryMenuControlButtons = ({
   libraryReturnUrl,
   theme,
@@ -10036,13 +9687,13 @@ var LibraryMenuControlButtons = ({
   children,
   className
 }) => {
-  return /* @__PURE__ */ jsxs28(
+  return /* @__PURE__ */ jsxs22(
     "div",
     {
-      className: clsx22("library-menu-control-buttons", className),
+      className: clsx18("library-menu-control-buttons", className),
       style,
       children: [
-        /* @__PURE__ */ jsx53(
+        /* @__PURE__ */ jsx49(
           LibraryMenuBrowseButton_default,
           {
             id,
@@ -10057,7 +9708,7 @@ var LibraryMenuControlButtons = ({
 };
 
 // components/LibraryMenuHeaderContent.tsx
-import { useCallback as useCallback7, useState as useState15 } from "react";
+import { useCallback as useCallback6, useState as useState13 } from "react";
 
 // components/Trans.tsx
 import React19 from "react";
@@ -10142,8 +9793,8 @@ var Trans_default = Trans;
 import { flushSync } from "react-dom";
 
 // components/DialogActionButton.tsx
-import clsx23 from "clsx";
-import { jsx as jsx54, jsxs as jsxs29 } from "react/jsx-runtime";
+import clsx19 from "clsx";
+import { jsx as jsx50, jsxs as jsxs23 } from "react/jsx-runtime";
 var DialogActionButton = ({
   label,
   onClick,
@@ -10155,18 +9806,18 @@ var DialogActionButton = ({
   ...rest
 }) => {
   const cs = actionType ? `Dialog__action-button--${actionType}` : "";
-  return /* @__PURE__ */ jsxs29(
+  return /* @__PURE__ */ jsxs23(
     "button",
     {
-      className: clsx23("Dialog__action-button", cs, className),
+      className: clsx19("Dialog__action-button", cs, className),
       type,
       "aria-label": label,
       onClick,
       ...rest,
       children: [
-        children && /* @__PURE__ */ jsx54("div", { style: isLoading ? { visibility: "hidden" } : {}, children }),
-        /* @__PURE__ */ jsx54("div", { style: isLoading ? { visibility: "hidden" } : {}, children: label }),
-        isLoading && /* @__PURE__ */ jsx54("div", { style: { position: "absolute", inset: 0 }, children: /* @__PURE__ */ jsx54(Spinner_default, {}) })
+        children && /* @__PURE__ */ jsx50("div", { style: isLoading ? { visibility: "hidden" } : {}, children }),
+        /* @__PURE__ */ jsx50("div", { style: isLoading ? { visibility: "hidden" } : {}, children: label }),
+        isLoading && /* @__PURE__ */ jsx50("div", { style: { position: "absolute", inset: 0 }, children: /* @__PURE__ */ jsx50(Spinner_default, {}) })
       ]
     }
   );
@@ -10174,7 +9825,7 @@ var DialogActionButton = ({
 var DialogActionButton_default = DialogActionButton;
 
 // components/ConfirmDialog.tsx
-import { jsx as jsx55, jsxs as jsxs30 } from "react/jsx-runtime";
+import { jsx as jsx51, jsxs as jsxs24 } from "react/jsx-runtime";
 var ConfirmDialog = (props) => {
   const {
     onConfirm,
@@ -10188,7 +9839,7 @@ var ConfirmDialog = (props) => {
   const setAppState = useExcalidrawSetAppState();
   const setIsLibraryMenuOpen = useSetAtom(isLibraryMenuOpenAtom);
   const { container } = useExcalidrawContainer();
-  return /* @__PURE__ */ jsxs30(
+  return /* @__PURE__ */ jsxs24(
     Dialog,
     {
       onCloseRequest: onCancel,
@@ -10197,8 +9848,8 @@ var ConfirmDialog = (props) => {
       className: `confirm-dialog ${className}`,
       children: [
         children,
-        /* @__PURE__ */ jsxs30("div", { className: "confirm-dialog-buttons", children: [
-          /* @__PURE__ */ jsx55(
+        /* @__PURE__ */ jsxs24("div", { className: "confirm-dialog-buttons", children: [
+          /* @__PURE__ */ jsx51(
             DialogActionButton_default,
             {
               label: cancelText,
@@ -10212,7 +9863,7 @@ var ConfirmDialog = (props) => {
               }
             }
           ),
-          /* @__PURE__ */ jsx55(
+          /* @__PURE__ */ jsx51(
             DialogActionButton_default,
             {
               label: confirmText,
@@ -10235,7 +9886,7 @@ var ConfirmDialog = (props) => {
 var ConfirmDialog_default = ConfirmDialog;
 
 // components/PublishLibrary.tsx
-import { useCallback as useCallback6, useEffect as useEffect20, useRef as useRef15, useState as useState14 } from "react";
+import { useCallback as useCallback5, useEffect as useEffect16, useRef as useRef11, useState as useState12 } from "react";
 import OpenColor from "open-color";
 
 // data/EditorLocalStorage.ts
@@ -10279,7 +9930,7 @@ __publicField(EditorLocalStorage, "delete", (name) => {
 });
 
 // components/PublishLibrary.tsx
-import { jsx as jsx56, jsxs as jsxs31 } from "react/jsx-runtime";
+import { jsx as jsx52, jsxs as jsxs25 } from "react/jsx-runtime";
 var generatePreviewImage = async (libraryItems) => {
   const MAX_ITEMS_PER_ROW = 6;
   const BOX_SIZE = 128;
@@ -10330,9 +9981,9 @@ var SingleLibraryItem = ({
   onChange,
   onRemove
 }) => {
-  const svgRef = useRef15(null);
-  const inputRef = useRef15(null);
-  useEffect20(() => {
+  const svgRef = useRef11(null);
+  const inputRef = useRef11(null);
+  useEffect16(() => {
     const node = svgRef.current;
     if (!node) {
       return;
@@ -10351,10 +10002,10 @@ var SingleLibraryItem = ({
       node.innerHTML = svg.outerHTML;
     })();
   }, [libItem.elements, appState]);
-  return /* @__PURE__ */ jsxs31("div", { className: "single-library-item", children: [
-    libItem.status === "published" && /* @__PURE__ */ jsx56("span", { className: "single-library-item-status", children: t("labels.statusPublished") }),
-    /* @__PURE__ */ jsx56("div", { ref: svgRef, className: "single-library-item__svg" }),
-    /* @__PURE__ */ jsx56(
+  return /* @__PURE__ */ jsxs25("div", { className: "single-library-item", children: [
+    libItem.status === "published" && /* @__PURE__ */ jsx52("span", { className: "single-library-item-status", children: t("labels.statusPublished") }),
+    /* @__PURE__ */ jsx52("div", { ref: svgRef, className: "single-library-item__svg" }),
+    /* @__PURE__ */ jsx52(
       ToolButton,
       {
         "aria-label": t("buttons.remove"),
@@ -10365,7 +10016,7 @@ var SingleLibraryItem = ({
         title: t("buttons.remove")
       }
     ),
-    /* @__PURE__ */ jsxs31(
+    /* @__PURE__ */ jsxs25(
       "div",
       {
         style: {
@@ -10377,7 +10028,7 @@ var SingleLibraryItem = ({
           flexDirection: "column"
         },
         children: [
-          /* @__PURE__ */ jsxs31(
+          /* @__PURE__ */ jsxs25(
             "label",
             {
               style: {
@@ -10386,11 +10037,11 @@ var SingleLibraryItem = ({
                 flexDirection: "column"
               },
               children: [
-                /* @__PURE__ */ jsxs31("div", { style: { padding: "0.5em 0" }, children: [
-                  /* @__PURE__ */ jsx56("span", { style: { fontWeight: 500, color: OpenColor.gray[6] }, children: t("publishDialog.itemName") }),
-                  /* @__PURE__ */ jsx56("span", { "aria-hidden": "true", className: "required", children: "*" })
+                /* @__PURE__ */ jsxs25("div", { style: { padding: "0.5em 0" }, children: [
+                  /* @__PURE__ */ jsx52("span", { style: { fontWeight: 500, color: OpenColor.gray[6] }, children: t("publishDialog.itemName") }),
+                  /* @__PURE__ */ jsx52("span", { "aria-hidden": "true", className: "required", children: "*" })
                 ] }),
-                /* @__PURE__ */ jsx56(
+                /* @__PURE__ */ jsx52(
                   "input",
                   {
                     type: "text",
@@ -10406,7 +10057,7 @@ var SingleLibraryItem = ({
               ]
             }
           ),
-          /* @__PURE__ */ jsx56("span", { className: "error", children: libItem.error })
+          /* @__PURE__ */ jsx52("span", { className: "error", children: libItem.error })
         ]
       }
     )
@@ -10421,7 +10072,7 @@ var PublishLibrary = ({
   updateItemsInStorage,
   onRemove
 }) => {
-  const [libraryData, setLibraryData] = useState14({
+  const [libraryData, setLibraryData] = useState12({
     authorName: "",
     githubHandle: "",
     name: "",
@@ -10429,8 +10080,8 @@ var PublishLibrary = ({
     twitterHandle: "",
     website: ""
   });
-  const [isSubmitting, setIsSubmitting] = useState14(false);
-  useEffect20(() => {
+  const [isSubmitting, setIsSubmitting] = useState12(false);
+  useEffect16(() => {
     const data = EditorLocalStorage.get(
       EDITOR_LS_KEYS.PUBLISH_LIBRARY
     );
@@ -10438,10 +10089,10 @@ var PublishLibrary = ({
       setLibraryData(data);
     }
   }, []);
-  const [clonedLibItems, setClonedLibItems] = useState14(
+  const [clonedLibItems, setClonedLibItems] = useState12(
     libraryItems.slice()
   );
-  useEffect20(() => {
+  useEffect16(() => {
     setClonedLibItems(libraryItems.slice());
   }, [libraryItems]);
   const onInputChange = (event) => {
@@ -10526,7 +10177,7 @@ var PublishLibrary = ({
     const items = [];
     clonedLibItems.forEach((libItem, index) => {
       items.push(
-        /* @__PURE__ */ jsx56("div", { className: "single-library-item-wrapper", children: /* @__PURE__ */ jsx56(
+        /* @__PURE__ */ jsx52("div", { className: "single-library-item-wrapper", children: /* @__PURE__ */ jsx52(
           SingleLibraryItem,
           {
             libItem,
@@ -10542,9 +10193,9 @@ var PublishLibrary = ({
         ) }, index)
       );
     });
-    return /* @__PURE__ */ jsx56("div", { className: "selected-library-items", children: items });
+    return /* @__PURE__ */ jsx52("div", { className: "selected-library-items", children: items });
   };
-  const onDialogClose = useCallback6(() => {
+  const onDialogClose = useCallback5(() => {
     updateItemsInStorage(clonedLibItems);
     EditorLocalStorage.set(EDITOR_LS_KEYS.PUBLISH_LIBRARY, libraryData);
     onClose();
@@ -10553,18 +10204,18 @@ var PublishLibrary = ({
   const containsPublishedItems = libraryItems.some(
     (item) => item.status === "published"
   );
-  return /* @__PURE__ */ jsx56(
+  return /* @__PURE__ */ jsx52(
     Dialog,
     {
       onCloseRequest: onDialogClose,
       title: t("publishDialog.title"),
       className: "publish-library",
-      children: shouldRenderForm ? /* @__PURE__ */ jsxs31("form", { onSubmit, children: [
-        /* @__PURE__ */ jsx56("div", { className: "publish-library-note", children: /* @__PURE__ */ jsx56(
+      children: shouldRenderForm ? /* @__PURE__ */ jsxs25("form", { onSubmit, children: [
+        /* @__PURE__ */ jsx52("div", { className: "publish-library-note", children: /* @__PURE__ */ jsx52(
           Trans_default,
           {
             i18nKey: "publishDialog.noteDescription",
-            link: (el) => /* @__PURE__ */ jsx56(
+            link: (el) => /* @__PURE__ */ jsx52(
               "a",
               {
                 href: "https://libraries.excalidraw.com",
@@ -10575,11 +10226,11 @@ var PublishLibrary = ({
             )
           }
         ) }),
-        /* @__PURE__ */ jsx56("span", { className: "publish-library-note", children: /* @__PURE__ */ jsx56(
+        /* @__PURE__ */ jsx52("span", { className: "publish-library-note", children: /* @__PURE__ */ jsx52(
           Trans_default,
           {
             i18nKey: "publishDialog.noteGuidelines",
-            link: (el) => /* @__PURE__ */ jsx56(
+            link: (el) => /* @__PURE__ */ jsx52(
               "a",
               {
                 href: "https://github.com/excalidraw/excalidraw-libraries#guidelines",
@@ -10590,16 +10241,16 @@ var PublishLibrary = ({
             )
           }
         ) }),
-        /* @__PURE__ */ jsx56("div", { className: "publish-library-note", children: t("publishDialog.noteItems") }),
-        containsPublishedItems && /* @__PURE__ */ jsx56("span", { className: "publish-library-note publish-library-warning", children: t("publishDialog.republishWarning") }),
+        /* @__PURE__ */ jsx52("div", { className: "publish-library-note", children: t("publishDialog.noteItems") }),
+        containsPublishedItems && /* @__PURE__ */ jsx52("span", { className: "publish-library-note publish-library-warning", children: t("publishDialog.republishWarning") }),
         renderLibraryItems(),
-        /* @__PURE__ */ jsxs31("div", { className: "publish-library__fields", children: [
-          /* @__PURE__ */ jsxs31("label", { children: [
-            /* @__PURE__ */ jsxs31("div", { children: [
-              /* @__PURE__ */ jsx56("span", { children: t("publishDialog.libraryName") }),
-              /* @__PURE__ */ jsx56("span", { "aria-hidden": "true", className: "required", children: "*" })
+        /* @__PURE__ */ jsxs25("div", { className: "publish-library__fields", children: [
+          /* @__PURE__ */ jsxs25("label", { children: [
+            /* @__PURE__ */ jsxs25("div", { children: [
+              /* @__PURE__ */ jsx52("span", { children: t("publishDialog.libraryName") }),
+              /* @__PURE__ */ jsx52("span", { "aria-hidden": "true", className: "required", children: "*" })
             ] }),
-            /* @__PURE__ */ jsx56(
+            /* @__PURE__ */ jsx52(
               "input",
               {
                 type: "text",
@@ -10611,12 +10262,12 @@ var PublishLibrary = ({
               }
             )
           ] }),
-          /* @__PURE__ */ jsxs31("label", { style: { alignItems: "flex-start" }, children: [
-            /* @__PURE__ */ jsxs31("div", { children: [
-              /* @__PURE__ */ jsx56("span", { children: t("publishDialog.libraryDesc") }),
-              /* @__PURE__ */ jsx56("span", { "aria-hidden": "true", className: "required", children: "*" })
+          /* @__PURE__ */ jsxs25("label", { style: { alignItems: "flex-start" }, children: [
+            /* @__PURE__ */ jsxs25("div", { children: [
+              /* @__PURE__ */ jsx52("span", { children: t("publishDialog.libraryDesc") }),
+              /* @__PURE__ */ jsx52("span", { "aria-hidden": "true", className: "required", children: "*" })
             ] }),
-            /* @__PURE__ */ jsx56(
+            /* @__PURE__ */ jsx52(
               "textarea",
               {
                 name: "description",
@@ -10628,12 +10279,12 @@ var PublishLibrary = ({
               }
             )
           ] }),
-          /* @__PURE__ */ jsxs31("label", { children: [
-            /* @__PURE__ */ jsxs31("div", { children: [
-              /* @__PURE__ */ jsx56("span", { children: t("publishDialog.authorName") }),
-              /* @__PURE__ */ jsx56("span", { "aria-hidden": "true", className: "required", children: "*" })
+          /* @__PURE__ */ jsxs25("label", { children: [
+            /* @__PURE__ */ jsxs25("div", { children: [
+              /* @__PURE__ */ jsx52("span", { children: t("publishDialog.authorName") }),
+              /* @__PURE__ */ jsx52("span", { "aria-hidden": "true", className: "required", children: "*" })
             ] }),
-            /* @__PURE__ */ jsx56(
+            /* @__PURE__ */ jsx52(
               "input",
               {
                 type: "text",
@@ -10645,9 +10296,9 @@ var PublishLibrary = ({
               }
             )
           ] }),
-          /* @__PURE__ */ jsxs31("label", { children: [
-            /* @__PURE__ */ jsx56("span", { children: t("publishDialog.githubUsername") }),
-            /* @__PURE__ */ jsx56(
+          /* @__PURE__ */ jsxs25("label", { children: [
+            /* @__PURE__ */ jsx52("span", { children: t("publishDialog.githubUsername") }),
+            /* @__PURE__ */ jsx52(
               "input",
               {
                 type: "text",
@@ -10658,9 +10309,9 @@ var PublishLibrary = ({
               }
             )
           ] }),
-          /* @__PURE__ */ jsxs31("label", { children: [
-            /* @__PURE__ */ jsx56("span", { children: t("publishDialog.twitterUsername") }),
-            /* @__PURE__ */ jsx56(
+          /* @__PURE__ */ jsxs25("label", { children: [
+            /* @__PURE__ */ jsx52("span", { children: t("publishDialog.twitterUsername") }),
+            /* @__PURE__ */ jsx52(
               "input",
               {
                 type: "text",
@@ -10671,9 +10322,9 @@ var PublishLibrary = ({
               }
             )
           ] }),
-          /* @__PURE__ */ jsxs31("label", { children: [
-            /* @__PURE__ */ jsx56("span", { children: t("publishDialog.website") }),
-            /* @__PURE__ */ jsx56(
+          /* @__PURE__ */ jsxs25("label", { children: [
+            /* @__PURE__ */ jsx52("span", { children: t("publishDialog.website") }),
+            /* @__PURE__ */ jsx52(
               "input",
               {
                 type: "text",
@@ -10686,11 +10337,11 @@ var PublishLibrary = ({
               }
             )
           ] }),
-          /* @__PURE__ */ jsx56("span", { className: "publish-library-note", children: /* @__PURE__ */ jsx56(
+          /* @__PURE__ */ jsx52("span", { className: "publish-library-note", children: /* @__PURE__ */ jsx52(
             Trans_default,
             {
               i18nKey: "publishDialog.noteLicense",
-              link: (el) => /* @__PURE__ */ jsx56(
+              link: (el) => /* @__PURE__ */ jsx52(
                 "a",
                 {
                   href: "https://github.com/excalidraw/excalidraw-libraries/blob/main/LICENSE",
@@ -10702,8 +10353,8 @@ var PublishLibrary = ({
             }
           ) })
         ] }),
-        /* @__PURE__ */ jsxs31("div", { className: "publish-library__buttons", children: [
-          /* @__PURE__ */ jsx56(
+        /* @__PURE__ */ jsxs25("div", { className: "publish-library__buttons", children: [
+          /* @__PURE__ */ jsx52(
             DialogActionButton_default,
             {
               label: t("buttons.cancel"),
@@ -10711,7 +10362,7 @@ var PublishLibrary = ({
               "data-testid": "cancel-clear-canvas-button"
             }
           ),
-          /* @__PURE__ */ jsx56(
+          /* @__PURE__ */ jsx52(
             DialogActionButton_default,
             {
               type: "submit",
@@ -10721,15 +10372,15 @@ var PublishLibrary = ({
             }
           )
         ] })
-      ] }) : /* @__PURE__ */ jsx56("p", { style: { padding: "1em", textAlign: "center", fontWeight: 500 }, children: t("publishDialog.atleastOneLibItem") })
+      ] }) : /* @__PURE__ */ jsx52("p", { style: { padding: "1em", textAlign: "center", fontWeight: 500 }, children: t("publishDialog.atleastOneLibItem") })
     }
   );
 };
 var PublishLibrary_default = PublishLibrary;
 
 // components/dropdownMenu/DropdownMenuTrigger.tsx
-import clsx24 from "clsx";
-import { jsx as jsx57 } from "react/jsx-runtime";
+import clsx20 from "clsx";
+import { jsx as jsx53 } from "react/jsx-runtime";
 var MenuTrigger = ({
   className = "",
   children,
@@ -10738,14 +10389,14 @@ var MenuTrigger = ({
   ...rest
 }) => {
   const device = useDevice();
-  const classNames = clsx24(
+  const classNames = clsx20(
     `dropdown-menu-button ${className}`,
     "zen-mode-transition",
     {
       "dropdown-menu-button--mobile": device.editor.isMobile
     }
   ).trim();
-  return /* @__PURE__ */ jsx57(
+  return /* @__PURE__ */ jsx53(
     "button",
     {
       "data-prevent-outside-click": true,
@@ -10763,8 +10414,8 @@ var DropdownMenuTrigger_default = MenuTrigger;
 MenuTrigger.displayName = "DropdownMenuTrigger";
 
 // components/dropdownMenu/DropdownMenuSeparator.tsx
-import { jsx as jsx58 } from "react/jsx-runtime";
-var MenuSeparator = () => /* @__PURE__ */ jsx58(
+import { jsx as jsx54 } from "react/jsx-runtime";
+var MenuSeparator = () => /* @__PURE__ */ jsx54(
   "div",
   {
     style: {
@@ -10778,9 +10429,9 @@ var DropdownMenuSeparator_default = MenuSeparator;
 MenuSeparator.displayName = "DropdownMenuSeparator";
 
 // components/dropdownMenu/DropdownMenuContent.tsx
-import clsx25 from "clsx";
-import { useEffect as useEffect21, useRef as useRef16 } from "react";
-import { jsx as jsx59 } from "react/jsx-runtime";
+import clsx21 from "clsx";
+import { useEffect as useEffect17, useRef as useRef12 } from "react";
+import { jsx as jsx55 } from "react/jsx-runtime";
 var MenuContent = ({
   children,
   onClickOutside,
@@ -10789,12 +10440,12 @@ var MenuContent = ({
   style
 }) => {
   const device = useDevice();
-  const menuRef = useRef16(null);
+  const menuRef = useRef12(null);
   const callbacksRef = useStable({ onClickOutside });
   useOutsideClick(menuRef, () => {
     callbacksRef.onClickOutside?.();
   });
-  useEffect21(() => {
+  useEffect17(() => {
     const onKeyDown = (event) => {
       if (event.key === KEYS.ESCAPE) {
         event.stopImmediatePropagation();
@@ -10811,17 +10462,17 @@ var MenuContent = ({
       document.removeEventListener("keydown" /* KEYDOWN */, onKeyDown, option);
     };
   }, [callbacksRef]);
-  const classNames = clsx25(`dropdown-menu ${className}`, {
+  const classNames = clsx21(`dropdown-menu ${className}`, {
     "dropdown-menu--mobile": device.editor.isMobile
   }).trim();
-  return /* @__PURE__ */ jsx59(DropdownMenuContentPropsContext.Provider, { value: { onSelect }, children: /* @__PURE__ */ jsx59(
+  return /* @__PURE__ */ jsx55(DropdownMenuContentPropsContext.Provider, { value: { onSelect }, children: /* @__PURE__ */ jsx55(
     "div",
     {
       ref: menuRef,
       className: classNames,
       style,
       "data-testid": "dropdown-menu",
-      children: device.editor.isMobile ? /* @__PURE__ */ jsx59(Stack_default.Col, { className: "dropdown-menu-container", children }) : /* @__PURE__ */ jsx59(
+      children: device.editor.isMobile ? /* @__PURE__ */ jsx55(Stack_default.Col, { className: "dropdown-menu-container", children }) : /* @__PURE__ */ jsx55(
         Island,
         {
           className: "dropdown-menu-container",
@@ -10837,7 +10488,7 @@ MenuContent.displayName = "DropdownMenuContent";
 var DropdownMenuContent_default = MenuContent;
 
 // components/dropdownMenu/DropdownMenuItemLink.tsx
-import { jsx as jsx60 } from "react/jsx-runtime";
+import { jsx as jsx56 } from "react/jsx-runtime";
 var DropdownMenuItemLink = ({
   icon,
   shortcut,
@@ -10850,7 +10501,7 @@ var DropdownMenuItemLink = ({
   ...rest
 }) => {
   const handleClick = useHandleDropdownMenuItemClick(rest.onClick, onSelect);
-  return /* @__PURE__ */ jsx60(
+  return /* @__PURE__ */ jsx56(
     "a",
     {
       ...rest,
@@ -10860,7 +10511,7 @@ var DropdownMenuItemLink = ({
       className: getDropdownMenuItemClassName(className, selected),
       title: rest.title ?? rest["aria-label"],
       onClick: handleClick,
-      children: /* @__PURE__ */ jsx60(DropdownMenuItemContent_default, { icon, shortcut, children })
+      children: /* @__PURE__ */ jsx56(DropdownMenuItemContent_default, { icon, shortcut, children })
     }
   );
 };
@@ -10868,14 +10519,14 @@ var DropdownMenuItemLink_default = DropdownMenuItemLink;
 DropdownMenuItemLink.displayName = "DropdownMenuItemLink";
 
 // components/dropdownMenu/DropdownMenuItemCustom.tsx
-import { jsx as jsx61 } from "react/jsx-runtime";
+import { jsx as jsx57 } from "react/jsx-runtime";
 var DropdownMenuItemCustom = ({
   children,
   className = "",
   selected,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx61(
+  return /* @__PURE__ */ jsx57(
     "div",
     {
       ...rest,
@@ -10912,14 +10563,14 @@ var getMenuContentComponent = (children) => {
 };
 
 // components/dropdownMenu/DropdownMenu.tsx
-import { Fragment as Fragment6, jsxs as jsxs32 } from "react/jsx-runtime";
+import { Fragment as Fragment5, jsxs as jsxs26 } from "react/jsx-runtime";
 var DropdownMenu = ({
   children,
   open
 }) => {
   const MenuTriggerComp = getMenuTriggerComponent(children);
   const MenuContentComp = getMenuContentComponent(children);
-  return /* @__PURE__ */ jsxs32(Fragment6, { children: [
+  return /* @__PURE__ */ jsxs26(Fragment5, { children: [
     MenuTriggerComp,
     open && MenuContentComp
   ] });
@@ -10935,8 +10586,8 @@ var DropdownMenu_default = DropdownMenu;
 DropdownMenu.displayName = "DropdownMenu";
 
 // components/LibraryMenuHeaderContent.tsx
-import clsx26 from "clsx";
-import { jsx as jsx62, jsxs as jsxs33 } from "react/jsx-runtime";
+import clsx22 from "clsx";
+import { jsx as jsx58, jsxs as jsxs27 } from "react/jsx-runtime";
 var getSelectedItems = (libraryItems, selectedItems) => libraryItems.filter((item) => selectedItems.includes(item.id));
 var LibraryDropdownMenuButton = ({
   setAppState,
@@ -10955,7 +10606,7 @@ var LibraryDropdownMenuButton = ({
   const renderRemoveLibAlert = () => {
     const content = selectedItems.length ? t("alerts.removeItemsFromsLibrary", { count: selectedItems.length }) : t("alerts.resetLibrary");
     const title = selectedItems.length ? t("confirmDialog.removeItemsFromLib") : t("confirmDialog.resetLibrary");
-    return /* @__PURE__ */ jsx62(
+    return /* @__PURE__ */ jsx58(
       ConfirmDialog_default,
       {
         onConfirm: () => {
@@ -10970,20 +10621,20 @@ var LibraryDropdownMenuButton = ({
           setShowRemoveLibAlert(false);
         },
         title,
-        children: /* @__PURE__ */ jsx62("p", { children: content })
+        children: /* @__PURE__ */ jsx58("p", { children: content })
       }
     );
   };
-  const [showRemoveLibAlert, setShowRemoveLibAlert] = useState15(false);
+  const [showRemoveLibAlert, setShowRemoveLibAlert] = useState13(false);
   const itemsSelected = !!selectedItems.length;
   const items = itemsSelected ? libraryItemsData.libraryItems.filter(
     (item) => selectedItems.includes(item.id)
   ) : libraryItemsData.libraryItems;
   const resetLabel = itemsSelected ? t("buttons.remove") : t("buttons.resetLibrary");
-  const [showPublishLibraryDialog, setShowPublishLibraryDialog] = useState15(false);
-  const [publishLibSuccess, setPublishLibSuccess] = useState15(null);
-  const renderPublishSuccess = useCallback7(() => {
-    return /* @__PURE__ */ jsxs33(
+  const [showPublishLibraryDialog, setShowPublishLibraryDialog] = useState13(false);
+  const [publishLibSuccess, setPublishLibSuccess] = useState13(null);
+  const renderPublishSuccess = useCallback6(() => {
+    return /* @__PURE__ */ jsxs27(
       Dialog,
       {
         onCloseRequest: () => setPublishLibSuccess(null),
@@ -10991,12 +10642,12 @@ var LibraryDropdownMenuButton = ({
         className: "publish-library-success",
         size: "small",
         children: [
-          /* @__PURE__ */ jsx62("p", { children: /* @__PURE__ */ jsx62(
+          /* @__PURE__ */ jsx58("p", { children: /* @__PURE__ */ jsx58(
             Trans_default,
             {
               i18nKey: "publishSuccessDialog.content",
               authorName: publishLibSuccess.authorName,
-              link: (el) => /* @__PURE__ */ jsx62(
+              link: (el) => /* @__PURE__ */ jsx58(
                 "a",
                 {
                   href: publishLibSuccess?.url,
@@ -11007,7 +10658,7 @@ var LibraryDropdownMenuButton = ({
               )
             }
           ) }),
-          /* @__PURE__ */ jsx62(
+          /* @__PURE__ */ jsx58(
             ToolButton,
             {
               type: "button",
@@ -11063,22 +10714,22 @@ var LibraryDropdownMenuButton = ({
     });
   };
   const renderLibraryMenu = () => {
-    return /* @__PURE__ */ jsxs33(DropdownMenu_default, { open: isLibraryMenuOpen, children: [
-      /* @__PURE__ */ jsx62(
+    return /* @__PURE__ */ jsxs27(DropdownMenu_default, { open: isLibraryMenuOpen, children: [
+      /* @__PURE__ */ jsx58(
         DropdownMenu_default.Trigger,
         {
           onToggle: () => setIsLibraryMenuOpen(!isLibraryMenuOpen),
           children: DotsIcon
         }
       ),
-      /* @__PURE__ */ jsxs33(
+      /* @__PURE__ */ jsxs27(
         DropdownMenu_default.Content,
         {
           onClickOutside: () => setIsLibraryMenuOpen(false),
           onSelect: () => setIsLibraryMenuOpen(false),
           className: "library-menu",
           children: [
-            !itemsSelected && /* @__PURE__ */ jsx62(
+            !itemsSelected && /* @__PURE__ */ jsx58(
               DropdownMenu_default.Item,
               {
                 onSelect: onLibraryImport,
@@ -11087,7 +10738,7 @@ var LibraryDropdownMenuButton = ({
                 children: t("buttons.load")
               }
             ),
-            !!items.length && /* @__PURE__ */ jsx62(
+            !!items.length && /* @__PURE__ */ jsx58(
               DropdownMenu_default.Item,
               {
                 onSelect: onLibraryExport,
@@ -11096,7 +10747,7 @@ var LibraryDropdownMenuButton = ({
                 children: t("buttons.export")
               }
             ),
-            !!items.length && /* @__PURE__ */ jsx62(
+            !!items.length && /* @__PURE__ */ jsx58(
               DropdownMenu_default.Item,
               {
                 onSelect: () => setShowRemoveLibAlert(true),
@@ -11104,7 +10755,7 @@ var LibraryDropdownMenuButton = ({
                 children: resetLabel
               }
             ),
-            itemsSelected && /* @__PURE__ */ jsx62(
+            itemsSelected && /* @__PURE__ */ jsx58(
               DropdownMenu_default.Item,
               {
                 icon: publishIcon,
@@ -11118,11 +10769,11 @@ var LibraryDropdownMenuButton = ({
       )
     ] });
   };
-  return /* @__PURE__ */ jsxs33("div", { className: clsx26("library-menu-dropdown-container", className), children: [
+  return /* @__PURE__ */ jsxs27("div", { className: clsx22("library-menu-dropdown-container", className), children: [
     renderLibraryMenu(),
-    selectedItems.length > 0 && /* @__PURE__ */ jsx62("div", { className: "library-actions-counter", children: selectedItems.length }),
+    selectedItems.length > 0 && /* @__PURE__ */ jsx58("div", { className: "library-actions-counter", children: selectedItems.length }),
     showRemoveLibAlert && renderRemoveLibAlert(),
-    showPublishLibraryDialog && /* @__PURE__ */ jsx62(
+    showPublishLibraryDialog && /* @__PURE__ */ jsx58(
       PublishLibrary_default,
       {
         onClose: () => setShowPublishLibraryDialog(false),
@@ -11164,7 +10815,7 @@ var LibraryDropdownMenu = ({
     library.resetLibrary();
     clearLibraryCache();
   };
-  return /* @__PURE__ */ jsx62(
+  return /* @__PURE__ */ jsx58(
     LibraryDropdownMenuButton,
     {
       appState,
@@ -11180,12 +10831,12 @@ var LibraryDropdownMenu = ({
 };
 
 // components/LibraryMenuSection.tsx
-import { memo as memo2, useEffect as useEffect23, useState as useState17 } from "react";
+import { memo as memo2, useEffect as useEffect19, useState as useState15 } from "react";
 
 // components/LibraryUnit.tsx
-import clsx27 from "clsx";
-import { memo, useEffect as useEffect22, useRef as useRef17, useState as useState16 } from "react";
-import { jsx as jsx63, jsxs as jsxs34 } from "react/jsx-runtime";
+import clsx23 from "clsx";
+import { memo, useEffect as useEffect18, useRef as useRef13, useState as useState14 } from "react";
+import { jsx as jsx59, jsxs as jsxs28 } from "react/jsx-runtime";
 var LibraryUnit = memo(
   ({
     id,
@@ -11197,9 +10848,9 @@ var LibraryUnit = memo(
     onDrag,
     svgCache
   }) => {
-    const ref = useRef17(null);
+    const ref = useRef13(null);
     const svg = useLibraryItemSvg(id, elements, svgCache);
-    useEffect22(() => {
+    useEffect18(() => {
       const node = ref.current;
       if (!node) {
         return;
@@ -11211,13 +10862,13 @@ var LibraryUnit = memo(
         node.innerHTML = "";
       };
     }, [svg]);
-    const [isHovered, setIsHovered] = useState16(false);
+    const [isHovered, setIsHovered] = useState14(false);
     const isMobile = useDevice().editor.isMobile;
-    const adder = isPending && /* @__PURE__ */ jsx63("div", { className: "library-unit__adder", children: PlusIcon });
-    return /* @__PURE__ */ jsxs34(
+    const adder = isPending && /* @__PURE__ */ jsx59("div", { className: "library-unit__adder", children: PlusIcon });
+    return /* @__PURE__ */ jsxs28(
       "div",
       {
-        className: clsx27("library-unit", {
+        className: clsx23("library-unit", {
           "library-unit__active": elements,
           "library-unit--hover": elements && isHovered,
           "library-unit--selected": selected,
@@ -11226,10 +10877,10 @@ var LibraryUnit = memo(
         onMouseEnter: () => setIsHovered(true),
         onMouseLeave: () => setIsHovered(false),
         children: [
-          /* @__PURE__ */ jsx63(
+          /* @__PURE__ */ jsx59(
             "div",
             {
-              className: clsx27("library-unit__dragger", {
+              className: clsx23("library-unit__dragger", {
                 "library-unit__pulse": !!isPending
               }),
               ref,
@@ -11252,7 +10903,7 @@ var LibraryUnit = memo(
             }
           ),
           adder,
-          id && elements && (isHovered || isMobile || selected) && /* @__PURE__ */ jsx63(
+          id && elements && (isHovered || isMobile || selected) && /* @__PURE__ */ jsx59(
             CheckboxItem,
             {
               checked: selected,
@@ -11265,22 +10916,22 @@ var LibraryUnit = memo(
     );
   }
 );
-var EmptyLibraryUnit = () => /* @__PURE__ */ jsx63("div", { className: "library-unit library-unit--skeleton" });
+var EmptyLibraryUnit = () => /* @__PURE__ */ jsx59("div", { className: "library-unit library-unit--skeleton" });
 
 // hooks/useTransition.ts
-import React22, { useCallback as useCallback8 } from "react";
+import React22, { useCallback as useCallback7 } from "react";
 function useTransitionPolyfill() {
-  const startTransition = useCallback8((callback) => callback(), []);
+  const startTransition = useCallback7((callback) => callback(), []);
   return [false, startTransition];
 }
 var useTransition = React22.useTransition || useTransitionPolyfill;
 
 // components/LibraryMenuSection.tsx
-import { Fragment as Fragment7, jsx as jsx64 } from "react/jsx-runtime";
+import { Fragment as Fragment6, jsx as jsx60 } from "react/jsx-runtime";
 var LibraryMenuSectionGrid = ({
   children
 }) => {
-  return /* @__PURE__ */ jsx64("div", { className: "library-menu-items-container__grid", children });
+  return /* @__PURE__ */ jsx60("div", { className: "library-menu-items-container__grid", children });
 };
 var LibraryMenuSection = memo2(
   ({
@@ -11293,16 +10944,16 @@ var LibraryMenuSection = memo2(
     itemsRenderedPerBatch
   }) => {
     const [, startTransition] = useTransition();
-    const [index, setIndex] = useState17(0);
-    useEffect23(() => {
+    const [index, setIndex] = useState15(0);
+    useEffect19(() => {
       if (index < items.length) {
         startTransition(() => {
           setIndex(index + itemsRenderedPerBatch);
         });
       }
     }, [index, items.length, startTransition, itemsRenderedPerBatch]);
-    return /* @__PURE__ */ jsx64(Fragment7, { children: items.map((item, i) => {
-      return i < index ? /* @__PURE__ */ jsx64(
+    return /* @__PURE__ */ jsx60(Fragment6, { children: items.map((item, i) => {
+      return i < index ? /* @__PURE__ */ jsx60(
         LibraryUnit,
         {
           elements: item?.elements,
@@ -11315,18 +10966,18 @@ var LibraryMenuSection = memo2(
           onDrag: onItemDrag
         },
         item?.id ?? i
-      ) : /* @__PURE__ */ jsx64(EmptyLibraryUnit, {}, i);
+      ) : /* @__PURE__ */ jsx60(EmptyLibraryUnit, {}, i);
     }) });
   }
 );
 
 // hooks/useScrollPosition.ts
-import { useEffect as useEffect24 } from "react";
+import { useEffect as useEffect20 } from "react";
 import throttle from "lodash.throttle";
 var scrollPositionAtom = atom(0);
 var useScrollPosition = (elementRef) => {
   const [scrollPosition, setScrollPosition] = useAtom(scrollPositionAtom);
-  useEffect24(() => {
+  useEffect20(() => {
     const { current: element } = elementRef;
     if (!element) {
       return;
@@ -11345,7 +10996,7 @@ var useScrollPosition = (elementRef) => {
 };
 
 // components/LibraryMenuItems.tsx
-import { Fragment as Fragment8, jsx as jsx65, jsxs as jsxs35 } from "react/jsx-runtime";
+import { Fragment as Fragment7, jsx as jsx61, jsxs as jsxs29 } from "react/jsx-runtime";
 var ITEMS_RENDERED_PER_BATCH = 17;
 var CACHED_ITEMS_RENDERED_PER_BATCH = 64;
 function LibraryMenuItems({
@@ -11360,9 +11011,9 @@ function LibraryMenuItems({
   onSelectItems,
   selectedItems
 }) {
-  const libraryContainerRef = useRef18(null);
+  const libraryContainerRef = useRef14(null);
   const scrollPosition = useScrollPosition(libraryContainerRef);
-  useEffect25(() => {
+  useEffect21(() => {
     if (scrollPosition > 0) {
       libraryContainerRef.current?.scrollTo(0, scrollPosition);
     }
@@ -11378,8 +11029,8 @@ function LibraryMenuItems({
   );
   const showBtn = !libraryItems.length && !pendingElements.length;
   const isLibraryEmpty = !pendingElements.length && !unpublishedItems.length && !publishedItems.length;
-  const [lastSelectedItem, setLastSelectedItem] = useState18(null);
-  const onItemSelectToggle = useCallback9(
+  const [lastSelectedItem, setLastSelectedItem] = useState16(null);
+  const onItemSelectToggle = useCallback8(
     (id2, event) => {
       const shouldSelect = !selectedItems.includes(id2);
       const orderedItems = [...unpublishedItems, ...publishedItems];
@@ -11421,7 +11072,7 @@ function LibraryMenuItems({
       unpublishedItems
     ]
   );
-  const getInsertedElements = useCallback9(
+  const getInsertedElements = useCallback8(
     (id2) => {
       let targetElements;
       if (selectedItems.includes(id2)) {
@@ -11442,7 +11093,7 @@ function LibraryMenuItems({
     },
     [libraryItems, selectedItems]
   );
-  const onItemDrag = useCallback9(
+  const onItemDrag = useCallback8(
     (id2, event) => {
       event.dataTransfer.setData(
         MIME_TYPES.excalidrawlib,
@@ -11451,7 +11102,7 @@ function LibraryMenuItems({
     },
     [getInsertedElements]
   );
-  const isItemSelected = useCallback9(
+  const isItemSelected = useCallback8(
     (id2) => {
       if (!id2) {
         return false;
@@ -11460,10 +11111,10 @@ function LibraryMenuItems({
     },
     [selectedItems]
   );
-  const onAddToLibraryClick = useCallback9(() => {
+  const onAddToLibraryClick = useCallback8(() => {
     onAddToLibrary(pendingElements);
   }, [pendingElements, onAddToLibrary]);
-  const onItemClick = useCallback9(
+  const onItemClick = useCallback8(
     (id2) => {
       if (id2) {
         onInsertLibraryItems(getInsertedElements(id2));
@@ -11472,13 +11123,13 @@ function LibraryMenuItems({
     [getInsertedElements, onInsertLibraryItems]
   );
   const itemsRenderedPerBatch = svgCache.size >= libraryItems.length ? CACHED_ITEMS_RENDERED_PER_BATCH : ITEMS_RENDERED_PER_BATCH;
-  return /* @__PURE__ */ jsxs35(
+  return /* @__PURE__ */ jsxs29(
     "div",
     {
       className: "library-menu-items-container",
       style: pendingElements.length || unpublishedItems.length || publishedItems.length ? { justifyContent: "flex-start" } : { borderBottom: 0 },
       children: [
-        !isLibraryEmpty && /* @__PURE__ */ jsx65(
+        !isLibraryEmpty && /* @__PURE__ */ jsx61(
           LibraryDropdownMenu,
           {
             selectedItems,
@@ -11486,7 +11137,7 @@ function LibraryMenuItems({
             className: "library-menu-dropdown-container--in-heading"
           }
         ),
-        /* @__PURE__ */ jsxs35(
+        /* @__PURE__ */ jsxs29(
           Stack_default.Col,
           {
             className: "library-menu-items-container__items",
@@ -11498,9 +11149,9 @@ function LibraryMenuItems({
             },
             ref: libraryContainerRef,
             children: [
-              /* @__PURE__ */ jsxs35(Fragment8, { children: [
-                !isLibraryEmpty && /* @__PURE__ */ jsx65("div", { className: "library-menu-items-container__header", children: t("labels.personalLib") }),
-                isLoading && /* @__PURE__ */ jsx65(
+              /* @__PURE__ */ jsxs29(Fragment7, { children: [
+                !isLibraryEmpty && /* @__PURE__ */ jsx61("div", { className: "library-menu-items-container__header", children: t("labels.personalLib") }),
+                isLoading && /* @__PURE__ */ jsx61(
                   "div",
                   {
                     style: {
@@ -11509,14 +11160,14 @@ function LibraryMenuItems({
                       right: "var(--container-padding-x)",
                       transform: "translateY(50%)"
                     },
-                    children: /* @__PURE__ */ jsx65(Spinner_default, {})
+                    children: /* @__PURE__ */ jsx61(Spinner_default, {})
                   }
                 ),
-                !pendingElements.length && !unpublishedItems.length ? /* @__PURE__ */ jsxs35("div", { className: "library-menu-items__no-items", children: [
-                  /* @__PURE__ */ jsx65("div", { className: "library-menu-items__no-items__label", children: t("library.noItems") }),
-                  /* @__PURE__ */ jsx65("div", { className: "library-menu-items__no-items__hint", children: publishedItems.length > 0 ? t("library.hint_emptyPrivateLibrary") : t("library.hint_emptyLibrary") })
-                ] }) : /* @__PURE__ */ jsxs35(LibraryMenuSectionGrid, { children: [
-                  pendingElements.length > 0 && /* @__PURE__ */ jsx65(
+                !pendingElements.length && !unpublishedItems.length ? /* @__PURE__ */ jsxs29("div", { className: "library-menu-items__no-items", children: [
+                  /* @__PURE__ */ jsx61("div", { className: "library-menu-items__no-items__label", children: t("library.noItems") }),
+                  /* @__PURE__ */ jsx61("div", { className: "library-menu-items__no-items__hint", children: publishedItems.length > 0 ? t("library.hint_emptyPrivateLibrary") : t("library.hint_emptyLibrary") })
+                ] }) : /* @__PURE__ */ jsxs29(LibraryMenuSectionGrid, { children: [
+                  pendingElements.length > 0 && /* @__PURE__ */ jsx61(
                     LibraryMenuSection,
                     {
                       itemsRenderedPerBatch,
@@ -11528,7 +11179,7 @@ function LibraryMenuItems({
                       svgCache
                     }
                   ),
-                  /* @__PURE__ */ jsx65(
+                  /* @__PURE__ */ jsx61(
                     LibraryMenuSection,
                     {
                       itemsRenderedPerBatch,
@@ -11542,9 +11193,9 @@ function LibraryMenuItems({
                   )
                 ] })
               ] }),
-              /* @__PURE__ */ jsxs35(Fragment8, { children: [
-                (publishedItems.length > 0 || pendingElements.length > 0 || unpublishedItems.length > 0) && /* @__PURE__ */ jsx65("div", { className: "library-menu-items-container__header library-menu-items-container__header--excal", children: t("labels.excalidrawLib") }),
-                publishedItems.length > 0 ? /* @__PURE__ */ jsx65(LibraryMenuSectionGrid, { children: /* @__PURE__ */ jsx65(
+              /* @__PURE__ */ jsxs29(Fragment7, { children: [
+                (publishedItems.length > 0 || pendingElements.length > 0 || unpublishedItems.length > 0) && /* @__PURE__ */ jsx61("div", { className: "library-menu-items-container__header library-menu-items-container__header--excal", children: t("labels.excalidrawLib") }),
+                publishedItems.length > 0 ? /* @__PURE__ */ jsx61(LibraryMenuSectionGrid, { children: /* @__PURE__ */ jsx61(
                   LibraryMenuSection,
                   {
                     itemsRenderedPerBatch,
@@ -11555,7 +11206,7 @@ function LibraryMenuItems({
                     isItemSelected,
                     svgCache
                   }
-                ) }) : unpublishedItems.length > 0 ? /* @__PURE__ */ jsx65(
+                ) }) : unpublishedItems.length > 0 ? /* @__PURE__ */ jsx61(
                   "div",
                   {
                     style: {
@@ -11571,14 +11222,14 @@ function LibraryMenuItems({
                   }
                 ) : null
               ] }),
-              showBtn && /* @__PURE__ */ jsx65(
+              showBtn && /* @__PURE__ */ jsx61(
                 LibraryMenuControlButtons,
                 {
                   style: { padding: "16px 0", width: "100%" },
                   id,
                   libraryReturnUrl,
                   theme,
-                  children: /* @__PURE__ */ jsx65(
+                  children: /* @__PURE__ */ jsx61(
                     LibraryDropdownMenu,
                     {
                       selectedItems,
@@ -11596,10 +11247,10 @@ function LibraryMenuItems({
 }
 
 // components/LibraryMenu.tsx
-import { jsx as jsx66, jsxs as jsxs36 } from "react/jsx-runtime";
+import { jsx as jsx62, jsxs as jsxs30 } from "react/jsx-runtime";
 var isLibraryMenuOpenAtom = atom(false);
 var LibraryMenuWrapper = ({ children }) => {
-  return /* @__PURE__ */ jsx66("div", { className: "layer-ui__library", children });
+  return /* @__PURE__ */ jsx62("div", { className: "layer-ui__library", children });
 };
 var LibraryMenuContent = memo3(
   ({
@@ -11615,7 +11266,7 @@ var LibraryMenuContent = memo3(
     onSelectItems
   }) => {
     const [libraryItemsData] = useAtom(libraryItemsAtom);
-    const _onAddToLibrary = useCallback10(
+    const _onAddToLibrary = useCallback9(
       (elements) => {
         const addToLibrary = async (processedElements, libraryItems2) => {
           trackEvent("element", "addToLibrary", "ui");
@@ -11649,14 +11300,14 @@ var LibraryMenuContent = memo3(
       [libraryItemsData]
     );
     if (libraryItemsData.status === "loading" && !libraryItemsData.isInitialized) {
-      return /* @__PURE__ */ jsx66(LibraryMenuWrapper, { children: /* @__PURE__ */ jsx66("div", { className: "layer-ui__library-message", children: /* @__PURE__ */ jsxs36("div", { children: [
-        /* @__PURE__ */ jsx66(Spinner_default, { size: "2em" }),
-        /* @__PURE__ */ jsx66("span", { children: t("labels.libraryLoadingMessage") })
+      return /* @__PURE__ */ jsx62(LibraryMenuWrapper, { children: /* @__PURE__ */ jsx62("div", { className: "layer-ui__library-message", children: /* @__PURE__ */ jsxs30("div", { children: [
+        /* @__PURE__ */ jsx62(Spinner_default, { size: "2em" }),
+        /* @__PURE__ */ jsx62("span", { children: t("labels.libraryLoadingMessage") })
       ] }) }) });
     }
     const showBtn = libraryItemsData.libraryItems.length > 0 || pendingElements.length > 0;
-    return /* @__PURE__ */ jsxs36(LibraryMenuWrapper, { children: [
-      /* @__PURE__ */ jsx66(
+    return /* @__PURE__ */ jsxs30(LibraryMenuWrapper, { children: [
+      /* @__PURE__ */ jsx62(
         LibraryMenuItems,
         {
           isLoading: libraryItemsData.status === "loading",
@@ -11671,7 +11322,7 @@ var LibraryMenuContent = memo3(
           selectedItems
         }
       ),
-      showBtn && /* @__PURE__ */ jsx66(
+      showBtn && /* @__PURE__ */ jsx62(
         LibraryMenuControlButtons,
         {
           className: "library-menu-control-buttons--at-bottom",
@@ -11698,18 +11349,18 @@ var getPendingElements = (elements, selectedElementIds) => ({
 });
 var usePendingElementsMemo = (appState, app) => {
   const elements = useExcalidrawElements();
-  const [state, setState] = useState19(
+  const [state, setState] = useState17(
     () => getPendingElements(elements, appState.selectedElementIds)
   );
-  const selectedElementVersions = useRef19(
+  const selectedElementVersions = useRef15(
     /* @__PURE__ */ new Map()
   );
-  useEffect26(() => {
+  useEffect22(() => {
     for (const element of state.pending) {
       selectedElementVersions.current.set(element.id, element.version);
     }
   }, [state.pending]);
-  useEffect26(() => {
+  useEffect22(() => {
     if (
       // Only update once pointer is released.
       // Reading directly from app.state to make it clear it's not reactive
@@ -11746,23 +11397,23 @@ var LibraryMenu = memo3(() => {
   const appProps = useAppProps();
   const appState = useUIAppState();
   const setAppState = useExcalidrawSetAppState();
-  const [selectedItems, setSelectedItems] = useState19([]);
+  const [selectedItems, setSelectedItems] = useState17([]);
   const memoizedLibrary = useMemo6(() => app.library, [app.library]);
   const pendingElements = usePendingElementsMemo(appState, app);
-  const onInsertLibraryItems = useCallback10(
+  const onInsertLibraryItems = useCallback9(
     (libraryItems) => {
       onInsertElements(distributeLibraryItemsOnSquareGrid(libraryItems));
     },
     [onInsertElements]
   );
-  const deselectItems = useCallback10(() => {
+  const deselectItems = useCallback9(() => {
     setAppState({
       selectedElementIds: {},
       selectedGroupIds: {},
       activeEmbeddable: null
     });
   }, [setAppState]);
-  return /* @__PURE__ */ jsx66(
+  return /* @__PURE__ */ jsx62(
     LibraryMenuContent,
     {
       pendingElements,
@@ -11780,7 +11431,7 @@ var LibraryMenu = memo3(() => {
 });
 
 // components/Dialog.tsx
-import { jsx as jsx67, jsxs as jsxs37 } from "react/jsx-runtime";
+import { jsx as jsx63, jsxs as jsxs31 } from "react/jsx-runtime";
 function getDialogSize(size) {
   if (size && typeof size === "number") {
     return size;
@@ -11797,10 +11448,10 @@ function getDialogSize(size) {
 }
 var Dialog = (props) => {
   const [islandNode, setIslandNode] = useCallbackRefState();
-  const [lastActiveElement] = useState20(document.activeElement);
+  const [lastActiveElement] = useState18(document.activeElement);
   const { id } = useExcalidrawContainer();
   const isFullscreen = useDevice().viewport.isMobile;
-  useEffect27(() => {
+  useEffect23(() => {
     if (!islandNode) {
       return;
     }
@@ -11837,19 +11488,19 @@ var Dialog = (props) => {
     lastActiveElement.focus();
     props.onCloseRequest();
   };
-  return /* @__PURE__ */ jsx67(
+  return /* @__PURE__ */ jsx63(
     Modal,
     {
-      className: clsx28("Dialog", props.className, {
+      className: clsx24("Dialog", props.className, {
         "Dialog--fullscreen": isFullscreen
       }),
       labelledBy: "dialog-title",
       maxWidth: getDialogSize(props.size),
       onCloseRequest: onClose,
       closeOnClickOutside: props.closeOnClickOutside,
-      children: /* @__PURE__ */ jsxs37(Island, { ref: setIslandNode, children: [
-        props.title && /* @__PURE__ */ jsx67("h2", { id: `${id}-dialog-title`, className: "Dialog__title", children: /* @__PURE__ */ jsx67("span", { className: "Dialog__titleContent", children: props.title }) }),
-        isFullscreen && /* @__PURE__ */ jsx67(
+      children: /* @__PURE__ */ jsxs31(Island, { ref: setIslandNode, children: [
+        props.title && /* @__PURE__ */ jsx63("h2", { id: `${id}-dialog-title`, className: "Dialog__title", children: /* @__PURE__ */ jsx63("span", { className: "Dialog__titleContent", children: props.title }) }),
+        isFullscreen && /* @__PURE__ */ jsx63(
           "button",
           {
             className: "Dialog__close",
@@ -11860,7 +11511,7 @@ var Dialog = (props) => {
             children: CloseIcon
           }
         ),
-        /* @__PURE__ */ jsx67("div", { className: "Dialog__content", children: props.children })
+        /* @__PURE__ */ jsx63("div", { className: "Dialog__content", children: props.children })
       ] })
     }
   );
@@ -11869,16 +11520,16 @@ var Dialog = (props) => {
 // components/TextField.tsx
 import {
   forwardRef as forwardRef3,
-  useRef as useRef20,
+  useRef as useRef16,
   useImperativeHandle,
   useLayoutEffect as useLayoutEffect3,
-  useState as useState21
+  useState as useState19
 } from "react";
-import clsx30 from "clsx";
+import clsx26 from "clsx";
 
 // components/Button.tsx
-import clsx29 from "clsx";
-import { jsx as jsx68 } from "react/jsx-runtime";
+import clsx25 from "clsx";
+import { jsx as jsx64 } from "react/jsx-runtime";
 var Button = ({
   type = "button",
   onSelect,
@@ -11887,14 +11538,14 @@ var Button = ({
   className = "",
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx68(
+  return /* @__PURE__ */ jsx64(
     "button",
     {
       onClick: composeEventHandlers(rest.onClick, (event) => {
         onSelect();
       }),
       type,
-      className: clsx29("excalidraw-button", className, { selected }),
+      className: clsx25("excalidraw-button", className, { selected }),
       ...rest,
       children
     }
@@ -11902,7 +11553,7 @@ var Button = ({
 };
 
 // components/TextField.tsx
-import { jsx as jsx69, jsxs as jsxs38 } from "react/jsx-runtime";
+import { jsx as jsx65, jsxs as jsxs32 } from "react/jsx-runtime";
 var TextField = forwardRef3(
   ({
     onChange,
@@ -11917,7 +11568,7 @@ var TextField = forwardRef3(
     className,
     ...rest
   }, ref) => {
-    const innerRef = useRef20(null);
+    const innerRef = useRef16(null);
     useImperativeHandle(ref, () => innerRef.current);
     useLayoutEffect3(() => {
       if (selectOnRender) {
@@ -11925,11 +11576,11 @@ var TextField = forwardRef3(
         innerRef.current?.select();
       }
     }, [selectOnRender]);
-    const [isTemporarilyUnredacted, setIsTemporarilyUnredacted] = useState21(false);
-    return /* @__PURE__ */ jsxs38(
+    const [isTemporarilyUnredacted, setIsTemporarilyUnredacted] = useState19(false);
+    return /* @__PURE__ */ jsxs32(
       "div",
       {
-        className: clsx30("ExcTextField", className, {
+        className: clsx26("ExcTextField", className, {
           "ExcTextField--fullWidth": fullWidth,
           "ExcTextField--hasIcon": !!icon
         }),
@@ -11938,18 +11589,18 @@ var TextField = forwardRef3(
         },
         children: [
           icon,
-          label && /* @__PURE__ */ jsx69("div", { className: "ExcTextField__label", children: label }),
-          /* @__PURE__ */ jsxs38(
+          label && /* @__PURE__ */ jsx65("div", { className: "ExcTextField__label", children: label }),
+          /* @__PURE__ */ jsxs32(
             "div",
             {
-              className: clsx30("ExcTextField__input", {
+              className: clsx26("ExcTextField__input", {
                 "ExcTextField__input--readonly": readonly
               }),
               children: [
-                /* @__PURE__ */ jsx69(
+                /* @__PURE__ */ jsx65(
                   "input",
                   {
-                    className: clsx30({
+                    className: clsx26({
                       "is-redacted": "value" in rest && rest.value && isRedacted && !isTemporarilyUnredacted
                     }),
                     readOnly: readonly,
@@ -11961,7 +11612,7 @@ var TextField = forwardRef3(
                     onKeyDown
                   }
                 ),
-                isRedacted && /* @__PURE__ */ jsx69(
+                isRedacted && /* @__PURE__ */ jsx65(
                   Button,
                   {
                     onSelect: () => setIsTemporarilyUnredacted(!isTemporarilyUnredacted),
@@ -11979,7 +11630,7 @@ var TextField = forwardRef3(
 );
 
 // components/CommandPalette/CommandPalette.tsx
-import clsx32 from "clsx";
+import clsx28 from "clsx";
 
 // actions/shortcuts.ts
 var shortcutMap = {
@@ -12260,8 +11911,8 @@ var deburr = (str) => {
 };
 
 // components/Actions.tsx
-import { useState as useState22 } from "react";
-import clsx31 from "clsx";
+import { useState as useState20 } from "react";
+import clsx27 from "clsx";
 
 // context/tunnels.ts
 import React27 from "react";
@@ -12289,7 +11940,7 @@ var useInitializeTunnels = () => {
 };
 
 // components/Actions.tsx
-import { Fragment as Fragment9, jsx as jsx70, jsxs as jsxs39 } from "react/jsx-runtime";
+import { Fragment as Fragment8, jsx as jsx66, jsxs as jsxs33 } from "react/jsx-runtime";
 var canChangeStrokeColor = (appState, targetElements) => {
   let commonSelectedType = targetElements[0]?.type || null;
   for (const element of targetElements) {
@@ -12301,7 +11952,19 @@ var canChangeStrokeColor = (appState, targetElements) => {
   return hasStrokeColor(appState.activeTool.type) && appState.activeTool.type !== "image" && commonSelectedType !== "image" && commonSelectedType !== "frame" && commonSelectedType !== "magicframe" || targetElements.some((element) => hasStrokeColor(element.type));
 };
 var canChangeBackgroundColor = (appState, targetElements) => {
-  return hasBackground(appState.activeTool.type) || targetElements.some((element) => hasBackground(element.type));
+  return isFillableShape(appState.activeTool.type) || targetElements.some((element) => isFillableShape(element.type));
+};
+var shouldShowOpacity = (appState, targetElements) => {
+  const { type: activeType } = appState.activeTool;
+  if (activeType === "freedraw" || isFillableShape(activeType)) {
+    return false;
+  }
+  if (targetElements.length > 0 && targetElements.every(
+    (element) => element.type === "freedraw" || isFillableShape(element.type)
+  )) {
+    return false;
+  }
+  return true;
 };
 var SelectedShapeActions = ({
   appState,
@@ -12319,57 +11982,57 @@ var SelectedShapeActions = ({
   );
   const device = useDevice();
   const isRTL = document.documentElement.getAttribute("dir") === "rtl";
-  const showFillIcons = hasBackground(appState.activeTool.type) && !isTransparent(appState.currentItemBackgroundColor) || targetElements.some(
-    (element) => hasBackground(element.type) && !isTransparent(element.backgroundColor)
+  const showFillIcons = isFillableShape(appState.activeTool.type) && !isTransparent(appState.currentItemBackgroundColor) || targetElements.some(
+    (element) => isFillableShape(element.type) && !isTransparent(element.backgroundColor)
   );
   const showLinkIcon = targetElements.length === 1 || isSingleElementBoundContainer;
   const showLineEditorAction = !appState.editingLinearElement && targetElements.length === 1 && isLinearElement(targetElements[0]) && !isElbowArrow(targetElements[0]);
   const showCropEditorAction = !appState.croppingElementId && targetElements.length === 1 && isImageElement(targetElements[0]);
   const showAlignActions = !isSingleElementBoundContainer && alignActionsPredicate(appState, app);
-  return /* @__PURE__ */ jsxs39("div", { className: "panelColumn", children: [
-    /* @__PURE__ */ jsx70("div", { children: canChangeStrokeColor(appState, targetElements) && renderAction("changeStrokeColor") }),
-    canChangeBackgroundColor(appState, targetElements) && /* @__PURE__ */ jsx70("div", { children: renderAction("changeBackgroundColor") }),
+  return /* @__PURE__ */ jsxs33("div", { className: "panelColumn", children: [
+    /* @__PURE__ */ jsx66("div", { children: canChangeStrokeColor(appState, targetElements) && renderAction("changeStrokeColor") }),
+    canChangeBackgroundColor(appState, targetElements) && /* @__PURE__ */ jsx66("div", { children: renderAction("changeBackgroundColor") }),
     showFillIcons && renderAction("changeFillStyle"),
     (hasStrokeWidth(appState.activeTool.type) || targetElements.some((element) => hasStrokeWidth(element.type))) && renderAction("changeStrokeWidth"),
     (appState.activeTool.type === "freedraw" || targetElements.some((element) => element.type === "freedraw")) && renderAction("changeStrokeShape"),
-    (hasStrokeStyle(appState.activeTool.type) || targetElements.some((element) => hasStrokeStyle(element.type))) && /* @__PURE__ */ jsxs39(Fragment9, { children: [
+    (hasStrokeStyle(appState.activeTool.type) || targetElements.some((element) => hasStrokeStyle(element.type))) && /* @__PURE__ */ jsxs33(Fragment8, { children: [
       renderAction("changeStrokeStyle"),
       renderAction("changeSloppiness")
     ] }),
-    (canChangeRoundness(appState.activeTool.type) || targetElements.some((element) => canChangeRoundness(element.type))) && /* @__PURE__ */ jsx70(Fragment9, { children: renderAction("changeRoundness") }),
-    (toolIsArrow(appState.activeTool.type) || targetElements.some((element) => toolIsArrow(element.type))) && /* @__PURE__ */ jsx70(Fragment9, { children: renderAction("changeArrowType") }),
-    (appState.activeTool.type === "text" || targetElements.some(isTextElement)) && /* @__PURE__ */ jsxs39(Fragment9, { children: [
+    (canChangeRoundness(appState.activeTool.type) || targetElements.some((element) => canChangeRoundness(element.type))) && /* @__PURE__ */ jsx66(Fragment8, { children: renderAction("changeRoundness") }),
+    (toolIsArrow(appState.activeTool.type) || targetElements.some((element) => toolIsArrow(element.type))) && /* @__PURE__ */ jsx66(Fragment8, { children: renderAction("changeArrowType") }),
+    (appState.activeTool.type === "text" || targetElements.some(isTextElement)) && /* @__PURE__ */ jsxs33(Fragment8, { children: [
       renderAction("changeFontFamily"),
       renderAction("changeFontSize"),
       (appState.activeTool.type === "text" || suppportsHorizontalAlign(targetElements, elementsMap)) && renderAction("changeTextAlign")
     ] }),
     shouldAllowVerticalAlign(targetElements, elementsMap) && renderAction("changeVerticalAlign"),
-    (canHaveArrowheads(appState.activeTool.type) || targetElements.some((element) => canHaveArrowheads(element.type))) && /* @__PURE__ */ jsx70(Fragment9, { children: renderAction("changeArrowhead") }),
-    renderAction("changeOpacity"),
-    /* @__PURE__ */ jsxs39("fieldset", { children: [
-      /* @__PURE__ */ jsx70("legend", { children: t("labels.layers") }),
-      /* @__PURE__ */ jsxs39("div", { className: "buttonList", children: [
+    (canHaveArrowheads(appState.activeTool.type) || targetElements.some((element) => canHaveArrowheads(element.type))) && /* @__PURE__ */ jsx66(Fragment8, { children: renderAction("changeArrowhead") }),
+    shouldShowOpacity(appState, targetElements) && renderAction("changeOpacity"),
+    /* @__PURE__ */ jsxs33("fieldset", { children: [
+      /* @__PURE__ */ jsx66("legend", { children: t("labels.layers") }),
+      /* @__PURE__ */ jsxs33("div", { className: "buttonList", children: [
         renderAction("sendToBack"),
         renderAction("sendBackward"),
         renderAction("bringForward"),
         renderAction("bringToFront")
       ] })
     ] }),
-    showAlignActions && !isSingleElementBoundContainer && /* @__PURE__ */ jsxs39("fieldset", { children: [
-      /* @__PURE__ */ jsx70("legend", { children: t("labels.align") }),
-      /* @__PURE__ */ jsxs39("div", { className: "buttonList", children: [
-        isRTL ? /* @__PURE__ */ jsxs39(Fragment9, { children: [
+    showAlignActions && !isSingleElementBoundContainer && /* @__PURE__ */ jsxs33("fieldset", { children: [
+      /* @__PURE__ */ jsx66("legend", { children: t("labels.align") }),
+      /* @__PURE__ */ jsxs33("div", { className: "buttonList", children: [
+        isRTL ? /* @__PURE__ */ jsxs33(Fragment8, { children: [
           renderAction("alignRight"),
           renderAction("alignHorizontallyCentered"),
           renderAction("alignLeft")
-        ] }) : /* @__PURE__ */ jsxs39(Fragment9, { children: [
+        ] }) : /* @__PURE__ */ jsxs33(Fragment8, { children: [
           renderAction("alignLeft"),
           renderAction("alignHorizontallyCentered"),
           renderAction("alignRight")
         ] }),
         targetElements.length > 2 && renderAction("distributeHorizontally"),
-        /* @__PURE__ */ jsx70("div", { style: { flexBasis: "100%", height: 0 } }),
-        /* @__PURE__ */ jsxs39(
+        /* @__PURE__ */ jsx66("div", { style: { flexBasis: "100%", height: 0 } }),
+        /* @__PURE__ */ jsxs33(
           "div",
           {
             style: {
@@ -12388,9 +12051,9 @@ var SelectedShapeActions = ({
         )
       ] })
     ] }),
-    !isEditingTextOrNewElement && targetElements.length > 0 && /* @__PURE__ */ jsxs39("fieldset", { children: [
-      /* @__PURE__ */ jsx70("legend", { children: t("labels.actions") }),
-      /* @__PURE__ */ jsxs39("div", { className: "buttonList", children: [
+    !isEditingTextOrNewElement && targetElements.length > 0 && /* @__PURE__ */ jsxs33("fieldset", { children: [
+      /* @__PURE__ */ jsx66("legend", { children: t("labels.actions") }),
+      /* @__PURE__ */ jsxs33("div", { className: "buttonList", children: [
         !device.editor.isMobile && renderAction("duplicateSelection"),
         !device.editor.isMobile && renderAction("deleteSelectedElements"),
         renderAction("group"),
@@ -12408,12 +12071,12 @@ var ShapesSwitcher = ({
   app,
   UIOptions
 }) => {
-  const [isExtraToolsMenuOpen, setIsExtraToolsMenuOpen] = useState22(false);
+  const [isExtraToolsMenuOpen, setIsExtraToolsMenuOpen] = useState20(false);
   const frameToolSelected = activeTool.type === "frame";
   const laserToolSelected = activeTool.type === "laser";
   const embeddableToolSelected = activeTool.type === "embeddable";
   const { TTDDialogTriggerTunnel } = useTunnels();
-  return /* @__PURE__ */ jsxs39(Fragment9, { children: [
+  return /* @__PURE__ */ jsxs33(Fragment8, { children: [
     SHAPES.map(({ value, icon, key, numericKey, fillable }, index) => {
       if (UIOptions.tools?.[value] === false) {
         return null;
@@ -12421,10 +12084,10 @@ var ShapesSwitcher = ({
       const label = t(`toolBar.${value}`);
       const letter = key && capitalizeString(typeof key === "string" ? key : key[0]);
       const shortcut = letter ? `${letter} ${t("helpDialog.or")} ${numericKey}` : `${numericKey}`;
-      return /* @__PURE__ */ jsx70(
+      return /* @__PURE__ */ jsx66(
         ToolButton,
         {
-          className: clsx31("Shape", { fillable }),
+          className: clsx27("Shape", { fillable }),
           type: "radio",
           icon,
           checked: activeTool.type === value,
@@ -12438,6 +12101,9 @@ var ShapesSwitcher = ({
             if (!appState.penDetected && pointerType === "pen") {
               app.togglePenMode(true);
             }
+          },
+          onSelectedClick: () => {
+            app.toggleShapeActionsPanel();
           },
           onChange: ({ pointerType }) => {
             if (appState.activeTool.type !== value) {
@@ -12456,12 +12122,12 @@ var ShapesSwitcher = ({
         value
       );
     }),
-    /* @__PURE__ */ jsx70("div", { className: "App-toolbar__divider" }),
-    /* @__PURE__ */ jsxs39(DropdownMenu_default, { open: isExtraToolsMenuOpen, children: [
-      /* @__PURE__ */ jsx70(
+    /* @__PURE__ */ jsx66("div", { className: "App-toolbar__divider" }),
+    /* @__PURE__ */ jsxs33(DropdownMenu_default, { open: isExtraToolsMenuOpen, children: [
+      /* @__PURE__ */ jsx66(
         DropdownMenu_default.Trigger,
         {
-          className: clsx31("App-toolbar__extra-tools-trigger", {
+          className: clsx27("App-toolbar__extra-tools-trigger", {
             "App-toolbar__extra-tools-trigger--selected": frameToolSelected || embeddableToolSelected || // in collab we're already highlighting the laser button
             // outside toolbar, so let's not highlight extra-tools button
             // on top of it
@@ -12472,14 +12138,14 @@ var ShapesSwitcher = ({
           children: extraToolsIcon
         }
       ),
-      /* @__PURE__ */ jsxs39(
+      /* @__PURE__ */ jsxs33(
         DropdownMenu_default.Content,
         {
           onClickOutside: () => setIsExtraToolsMenuOpen(false),
           onSelect: () => setIsExtraToolsMenuOpen(false),
           className: "App-toolbar__extra-tools-dropdown",
           children: [
-            /* @__PURE__ */ jsx70(
+            /* @__PURE__ */ jsx66(
               DropdownMenu_default.Item,
               {
                 onSelect: () => app.setActiveTool({ type: "frame" }),
@@ -12490,7 +12156,7 @@ var ShapesSwitcher = ({
                 children: t("toolBar.frame")
               }
             ),
-            /* @__PURE__ */ jsx70(
+            /* @__PURE__ */ jsx66(
               DropdownMenu_default.Item,
               {
                 onSelect: () => app.setActiveTool({ type: "embeddable" }),
@@ -12500,7 +12166,7 @@ var ShapesSwitcher = ({
                 children: t("toolBar.embeddable")
               }
             ),
-            /* @__PURE__ */ jsx70(
+            /* @__PURE__ */ jsx66(
               DropdownMenu_default.Item,
               {
                 onSelect: () => app.setActiveTool({ type: "laser" }),
@@ -12511,9 +12177,9 @@ var ShapesSwitcher = ({
                 children: t("toolBar.laser")
               }
             ),
-            /* @__PURE__ */ jsx70("div", { style: { margin: "6px 0", fontSize: 14, fontWeight: 600 }, children: "Generate" }),
-            app.props.aiEnabled !== false && /* @__PURE__ */ jsx70(TTDDialogTriggerTunnel.Out, {}),
-            /* @__PURE__ */ jsx70(
+            /* @__PURE__ */ jsx66("div", { style: { margin: "6px 0", fontSize: 14, fontWeight: 600 }, children: "Generate" }),
+            app.props.aiEnabled !== false && /* @__PURE__ */ jsx66(TTDDialogTriggerTunnel.Out, {}),
+            /* @__PURE__ */ jsx66(
               DropdownMenu_default.Item,
               {
                 onSelect: () => app.setOpenDialog({ name: "ttd", tab: "mermaid" }),
@@ -12522,7 +12188,7 @@ var ShapesSwitcher = ({
                 children: t("toolBar.mermaidToExcalidraw")
               }
             ),
-            app.props.aiEnabled !== false && app.plugins.diagramToCode && /* @__PURE__ */ jsx70(Fragment9, { children: /* @__PURE__ */ jsxs39(
+            app.props.aiEnabled !== false && app.plugins.diagramToCode && /* @__PURE__ */ jsx66(Fragment8, { children: /* @__PURE__ */ jsxs33(
               DropdownMenu_default.Item,
               {
                 onSelect: () => app.onMagicframeToolSelect(),
@@ -12530,7 +12196,7 @@ var ShapesSwitcher = ({
                 "data-testid": "toolbar-magicframe",
                 children: [
                   t("toolBar.magicframe"),
-                  /* @__PURE__ */ jsx70(DropdownMenu_default.Item.Badge, { children: "AI" })
+                  /* @__PURE__ */ jsx66(DropdownMenu_default.Item.Badge, { children: "AI" })
                 ]
               }
             ) })
@@ -12543,7 +12209,7 @@ var ShapesSwitcher = ({
 var ZoomActions = ({
   renderAction,
   zoom
-}) => /* @__PURE__ */ jsx70(Stack_default.Col, { gap: 1, className: CLASSES.ZOOM_ACTIONS, children: /* @__PURE__ */ jsxs39(Stack_default.Row, { align: "center", children: [
+}) => /* @__PURE__ */ jsx66(Stack_default.Col, { gap: 1, className: CLASSES.ZOOM_ACTIONS, children: /* @__PURE__ */ jsxs33(Stack_default.Row, { align: "center", children: [
   renderAction("zoomOut"),
   renderAction("resetZoom"),
   renderAction("zoomIn")
@@ -12551,9 +12217,9 @@ var ZoomActions = ({
 var UndoRedoActions = ({
   renderAction,
   className
-}) => /* @__PURE__ */ jsxs39("div", { className: `undo-redo-buttons ${className}`, children: [
-  /* @__PURE__ */ jsx70("div", { className: "undo-button-container", children: /* @__PURE__ */ jsx70(Tooltip, { label: t("buttons.undo"), children: renderAction("undo") }) }),
-  /* @__PURE__ */ jsx70("div", { className: "redo-button-container", children: /* @__PURE__ */ jsxs39(Tooltip, { label: t("buttons.redo"), children: [
+}) => /* @__PURE__ */ jsxs33("div", { className: `undo-redo-buttons ${className}`, children: [
+  /* @__PURE__ */ jsx66("div", { className: "undo-button-container", children: /* @__PURE__ */ jsx66(Tooltip, { label: t("buttons.undo"), children: renderAction("undo") }) }),
+  /* @__PURE__ */ jsx66("div", { className: "redo-button-container", children: /* @__PURE__ */ jsxs33(Tooltip, { label: t("buttons.redo"), children: [
     " ",
     renderAction("redo")
   ] }) })
@@ -12561,11 +12227,11 @@ var UndoRedoActions = ({
 var ExitZenModeAction = ({
   actionManager,
   showExitZenModeBtn
-}) => /* @__PURE__ */ jsx70(
+}) => /* @__PURE__ */ jsx66(
   "button",
   {
     type: "button",
-    className: clsx31("disable-zen-mode", {
+    className: clsx27("disable-zen-mode", {
       "disable-zen-mode--visible": showExitZenModeBtn
     }),
     onClick: () => actionManager.executeAction(actionToggleZenMode),
@@ -12575,12 +12241,12 @@ var ExitZenModeAction = ({
 var FinalizeAction = ({
   renderAction,
   className
-}) => /* @__PURE__ */ jsx70("div", { className: `finalize-button ${className}`, children: renderAction("finalize", { size: "small" }) });
+}) => /* @__PURE__ */ jsx66("div", { className: `finalize-button ${className}`, children: renderAction("finalize", { size: "small" }) });
 
 // hooks/useStableCallback.ts
-import { useRef as useRef21 } from "react";
+import { useRef as useRef17 } from "react";
 var useStableCallback = (userFn) => {
-  const stableRef = useRef21({ userFn });
+  const stableRef = useRef17({ userFn });
   stableRef.current.userFn = userFn;
   if (!stableRef.current.stableFn) {
     stableRef.current.stableFn = (...args) => stableRef.current.userFn(...args);
@@ -12589,7 +12255,7 @@ var useStableCallback = (userFn) => {
 };
 
 // components/ActiveConfirmDialog.tsx
-import { jsx as jsx71, jsxs as jsxs40 } from "react/jsx-runtime";
+import { jsx as jsx67, jsxs as jsxs34 } from "react/jsx-runtime";
 var activeConfirmDialogAtom = atom(null);
 var ActiveConfirmDialog = () => {
   const [activeConfirmDialog, setActiveConfirmDialog] = useAtom(
@@ -12600,7 +12266,7 @@ var ActiveConfirmDialog = () => {
     return null;
   }
   if (activeConfirmDialog === "clearCanvas") {
-    return /* @__PURE__ */ jsx71(
+    return /* @__PURE__ */ jsx67(
       ConfirmDialog_default,
       {
         onConfirm: () => {
@@ -12609,7 +12275,7 @@ var ActiveConfirmDialog = () => {
         },
         onCancel: () => setActiveConfirmDialog(null),
         title: t("clearCanvasDialog.title"),
-        children: /* @__PURE__ */ jsxs40("p", { className: "clear-canvas__content", children: [
+        children: /* @__PURE__ */ jsxs34("p", { className: "clear-canvas__content", children: [
           " ",
           t("alerts.clearReset")
         ] })
@@ -12716,7 +12382,7 @@ var actionLinkToElement = register({
 });
 
 // components/CommandPalette/CommandPalette.tsx
-import { jsx as jsx72, jsxs as jsxs41 } from "react/jsx-runtime";
+import { jsx as jsx68, jsxs as jsxs35 } from "react/jsx-runtime";
 var lastUsedPaletteItem = atom(null);
 var DEFAULT_CATEGORIES = {
   app: "App",
@@ -12750,11 +12416,11 @@ var CommandShortcutHint = ({
   children
 }) => {
   const shortcuts = shortcut.replace("++", "+$").split("+");
-  return /* @__PURE__ */ jsxs41("div", { className: clsx32("shortcut", className), children: [
+  return /* @__PURE__ */ jsxs35("div", { className: clsx28("shortcut", className), children: [
     shortcuts.map((item, idx) => {
-      return /* @__PURE__ */ jsx72("div", { className: "shortcut-wrapper", children: /* @__PURE__ */ jsx72("div", { className: "shortcut-key", children: item === "$" ? "+" : item }) }, item);
+      return /* @__PURE__ */ jsx68("div", { className: "shortcut-wrapper", children: /* @__PURE__ */ jsx68("div", { className: "shortcut-key", children: item === "$" ? "+" : item }) }, item);
     }),
-    /* @__PURE__ */ jsx72("div", { className: "shortcut-desc", children })
+    /* @__PURE__ */ jsx68("div", { className: "shortcut-desc", children })
   ] });
 };
 var isCommandPaletteToggleShortcut = (event) => {
@@ -12764,7 +12430,7 @@ var CommandPalette = Object.assign(
   (props) => {
     const uiAppState = useUIAppState();
     const setAppState = useExcalidrawSetAppState();
-    useEffect28(() => {
+    useEffect24(() => {
       const commandPaletteShortcut = (event) => {
         if (isCommandPaletteToggleShortcut(event)) {
           event.preventDefault();
@@ -12790,7 +12456,7 @@ var CommandPalette = Object.assign(
     if (uiAppState.openDialog?.name !== "commandPalette") {
       return null;
     }
-    return /* @__PURE__ */ jsx72(CommandPaletteInner, { ...props });
+    return /* @__PURE__ */ jsx68(CommandPaletteInner, { ...props });
   },
   {
     defaultItems: defaultCommandPaletteItems_exports
@@ -12805,14 +12471,14 @@ function CommandPaletteInner({
   const appProps = useAppProps();
   const actionManager = useExcalidrawActionManager();
   const [lastUsed, setLastUsed] = useAtom(lastUsedPaletteItem);
-  const [allCommands, setAllCommands] = useState23(null);
-  const inputRef = useRef22(null);
+  const [allCommands, setAllCommands] = useState21(null);
+  const inputRef = useRef18(null);
   const stableDeps = useStable({
     uiAppState,
     customCommandPaletteItems,
     appProps
   });
-  useEffect28(() => {
+  useEffect24(() => {
     const { uiAppState: uiAppState2, customCommandPaletteItems: customCommandPaletteItems2, appProps: appProps2 } = stableDeps;
     const getActionLabel = (action) => {
       let label = "";
@@ -13149,9 +12815,9 @@ function CommandPaletteInner({
     setLastUsed,
     setAppState
   ]);
-  const [commandSearch, setCommandSearch] = useState23("");
-  const [currentCommand, setCurrentCommand] = useState23(null);
-  const [commandsByCategory, setCommandsByCategory] = useState23({});
+  const [commandSearch, setCommandSearch] = useState21("");
+  const [currentCommand, setCurrentCommand] = useState21(null);
+  const [commandsByCategory, setCommandsByCategory] = useState21({});
   const closeCommandPalette = (cb) => {
     setAppState(
       {
@@ -13267,7 +12933,7 @@ function CommandPaletteInner({
     }
     event.preventDefault();
   });
-  useEffect28(() => {
+  useEffect24(() => {
     window.addEventListener("keydown" /* KEYDOWN */, handleKeyDown, {
       capture: true
     });
@@ -13275,7 +12941,7 @@ function CommandPaletteInner({
       capture: true
     });
   }, [handleKeyDown]);
-  useEffect28(() => {
+  useEffect24(() => {
     if (!allCommands) {
       return;
     }
@@ -13312,7 +12978,7 @@ function CommandPaletteInner({
     setCommandsByCategory(getNextCommandsByCategory(matchingCommands));
     setCurrentCommand(matchingCommands[0] ?? null);
   }, [commandSearch, allCommands, isCommandAvailable, lastUsed]);
-  return /* @__PURE__ */ jsxs41(
+  return /* @__PURE__ */ jsxs35(
     Dialog,
     {
       onCloseRequest: () => closeCommandPalette(),
@@ -13322,7 +12988,7 @@ function CommandPaletteInner({
       autofocus: true,
       className: "command-palette-dialog",
       children: [
-        /* @__PURE__ */ jsx72(
+        /* @__PURE__ */ jsx68(
           TextField,
           {
             value: commandSearch,
@@ -13334,16 +13000,16 @@ function CommandPaletteInner({
             ref: inputRef
           }
         ),
-        !app.device.viewport.isMobile && /* @__PURE__ */ jsxs41("div", { className: "shortcuts-wrapper", children: [
-          /* @__PURE__ */ jsx72(CommandShortcutHint, { shortcut: "\u2191\u2193", children: t("commandPalette.shortcuts.select") }),
-          /* @__PURE__ */ jsx72(CommandShortcutHint, { shortcut: "\u21B5", children: t("commandPalette.shortcuts.confirm") }),
-          /* @__PURE__ */ jsx72(CommandShortcutHint, { shortcut: getShortcutKey("Esc"), children: t("commandPalette.shortcuts.close") })
+        !app.device.viewport.isMobile && /* @__PURE__ */ jsxs35("div", { className: "shortcuts-wrapper", children: [
+          /* @__PURE__ */ jsx68(CommandShortcutHint, { shortcut: "\u2191\u2193", children: t("commandPalette.shortcuts.select") }),
+          /* @__PURE__ */ jsx68(CommandShortcutHint, { shortcut: "\u21B5", children: t("commandPalette.shortcuts.confirm") }),
+          /* @__PURE__ */ jsx68(CommandShortcutHint, { shortcut: getShortcutKey("Esc"), children: t("commandPalette.shortcuts.close") })
         ] }),
-        /* @__PURE__ */ jsxs41("div", { className: "commands", children: [
-          lastUsed && !commandSearch && /* @__PURE__ */ jsxs41("div", { className: "command-category", children: [
-            /* @__PURE__ */ jsxs41("div", { className: "command-category-title", children: [
+        /* @__PURE__ */ jsxs35("div", { className: "commands", children: [
+          lastUsed && !commandSearch && /* @__PURE__ */ jsxs35("div", { className: "command-category", children: [
+            /* @__PURE__ */ jsxs35("div", { className: "command-category-title", children: [
               t("commandPalette.recents"),
-              /* @__PURE__ */ jsx72(
+              /* @__PURE__ */ jsx68(
                 "div",
                 {
                   className: "icon",
@@ -13354,7 +13020,7 @@ function CommandPaletteInner({
                 }
               )
             ] }),
-            /* @__PURE__ */ jsx72(
+            /* @__PURE__ */ jsx68(
               CommandItem,
               {
                 command: lastUsed,
@@ -13368,9 +13034,9 @@ function CommandPaletteInner({
             )
           ] }),
           Object.keys(commandsByCategory).length > 0 ? Object.keys(commandsByCategory).map((category, idx) => {
-            return /* @__PURE__ */ jsxs41("div", { className: "command-category", children: [
-              /* @__PURE__ */ jsx72("div", { className: "command-category-title", children: category }),
-              commandsByCategory[category].map((command) => /* @__PURE__ */ jsx72(
+            return /* @__PURE__ */ jsxs35("div", { className: "command-category", children: [
+              /* @__PURE__ */ jsx68("div", { className: "command-category-title", children: category }),
+              commandsByCategory[category].map((command) => /* @__PURE__ */ jsx68(
                 CommandItem,
                 {
                   command,
@@ -13383,8 +13049,8 @@ function CommandPaletteInner({
                 command.label
               ))
             ] }, category);
-          }) : allCommands ? /* @__PURE__ */ jsxs41("div", { className: "no-match", children: [
-            /* @__PURE__ */ jsx72("div", { className: "icon", children: searchIcon }),
+          }) : allCommands ? /* @__PURE__ */ jsxs35("div", { className: "no-match", children: [
+            /* @__PURE__ */ jsx68("div", { className: "icon", children: searchIcon }),
             " ",
             t("commandPalette.search.noMatch")
           ] }) : null
@@ -13404,10 +13070,10 @@ var CommandItem = ({
 }) => {
   const noop = () => {
   };
-  return /* @__PURE__ */ jsxs41(
+  return /* @__PURE__ */ jsxs35(
     "div",
     {
-      className: clsx32("command-item", {
+      className: clsx28("command-item", {
         "item-selected": isSelected,
         "item-disabled": disabled
       }),
@@ -13422,8 +13088,8 @@ var CommandItem = ({
       onMouseMove: disabled ? noop : onMouseMove,
       title: disabled ? t("commandPalette.itemNotAvailable") : "",
       children: [
-        /* @__PURE__ */ jsxs41("div", { className: "name", children: [
-          command.icon && /* @__PURE__ */ jsx72(
+        /* @__PURE__ */ jsxs35("div", { className: "name", children: [
+          command.icon && /* @__PURE__ */ jsx68(
             InlineIcon,
             {
               icon: typeof command.icon === "function" ? command.icon(appState) : command.icon
@@ -13431,14 +13097,14 @@ var CommandItem = ({
           ),
           command.label
         ] }),
-        showShortcut && command.shortcut && /* @__PURE__ */ jsx72(CommandShortcutHint, { shortcut: command.shortcut })
+        showShortcut && command.shortcut && /* @__PURE__ */ jsx68(CommandShortcutHint, { shortcut: command.shortcut })
       ]
     }
   );
 };
 
 // actions/actionLinearEditor.tsx
-import { jsx as jsx73 } from "react/jsx-runtime";
+import { jsx as jsx69 } from "react/jsx-runtime";
 var actionToggleLinearEditor = register({
   name: "toggleLinearEditor",
   category: DEFAULT_CATEGORIES.elements,
@@ -13480,7 +13146,7 @@ var actionToggleLinearEditor = register({
     const label = t(
       selectedElement.type === "arrow" ? "labels.lineEditor.editArrow" : "labels.lineEditor.edit"
     );
-    return /* @__PURE__ */ jsx73(
+    return /* @__PURE__ */ jsx69(
       ToolButton,
       {
         type: "button",
@@ -13537,7 +13203,7 @@ var actionToggleSearchMenu = register({
 });
 
 // actions/actionCropEditor.tsx
-import { jsx as jsx74 } from "react/jsx-runtime";
+import { jsx as jsx70 } from "react/jsx-runtime";
 var actionToggleCropEditor = register({
   name: "cropEditor",
   label: "helpDialog.cropStart",
@@ -13568,7 +13234,7 @@ var actionToggleCropEditor = register({
   },
   PanelComponent: ({ appState, updateData, app }) => {
     const label = t("helpDialog.cropStart");
-    return /* @__PURE__ */ jsx74(
+    return /* @__PURE__ */ jsx70(
       ToolButton,
       {
         type: "button",
@@ -13712,10 +13378,10 @@ var HistoryEntry = class _HistoryEntry {
 };
 
 // hooks/useEmitter.ts
-import { useEffect as useEffect29, useState as useState24 } from "react";
+import { useEffect as useEffect25, useState as useState22 } from "react";
 var useEmitter = (emitter, initialState) => {
-  const [event, setEvent] = useState24(initialState);
-  useEffect29(() => {
+  const [event, setEvent] = useState22(initialState);
+  useEffect25(() => {
     const unsubscribe = emitter.on((event2) => {
       setEvent(event2);
     });
@@ -13727,7 +13393,7 @@ var useEmitter = (emitter, initialState) => {
 };
 
 // actions/actionHistory.tsx
-import { jsx as jsx75 } from "react/jsx-runtime";
+import { jsx as jsx71 } from "react/jsx-runtime";
 var executeHistoryAction = (app, appState, updater) => {
   if (!appState.multiElement && !appState.resizingElement && !appState.editingTextElement && !appState.newElement && !appState.selectedElementsAreBeingDragged && !appState.selectionElement && !app.flowChartCreator.isCreatingChart) {
     const result = updater();
@@ -13769,7 +13435,7 @@ var createUndoAction = (history, store) => ({
         history.isRedoStackEmpty
       )
     );
-    return /* @__PURE__ */ jsx75(
+    return /* @__PURE__ */ jsx71(
       ToolButton,
       {
         type: "button",
@@ -13808,7 +13474,7 @@ var createRedoAction = (history, store) => ({
         history.isRedoStackEmpty
       )
     );
-    return /* @__PURE__ */ jsx75(
+    return /* @__PURE__ */ jsx71(
       ToolButton,
       {
         type: "button",
@@ -13824,7 +13490,7 @@ var createRedoAction = (history, store) => ({
 });
 
 // actions/manager.tsx
-import { jsx as jsx76 } from "react/jsx-runtime";
+import { jsx as jsx72 } from "react/jsx-runtime";
 var trackAction = (action, source, appState, elements, app, value) => {
   if (action.trackEvent) {
     try {
@@ -13872,7 +13538,7 @@ var ActionManager = class {
             )
           );
         };
-        return /* @__PURE__ */ jsx76(
+        return /* @__PURE__ */ jsx72(
           PanelComponent,
           {
             elements: this.getElementsIncludingDeleted(),
@@ -13959,12 +13625,12 @@ var getDistance = ([a, b]) => Math.hypot(a.x - b.x, a.y - b.y);
 var sum = (array, mapper) => array.reduce((acc, item) => acc + mapper(item), 0);
 
 // components/ContextMenu.tsx
-import clsx33 from "clsx";
+import clsx29 from "clsx";
 
 // components/Popover.tsx
-import { useLayoutEffect as useLayoutEffect4, useRef as useRef23, useEffect as useEffect30 } from "react";
+import { useLayoutEffect as useLayoutEffect4, useRef as useRef19, useEffect as useEffect26 } from "react";
 import { unstable_batchedUpdates } from "react-dom";
-import { jsx as jsx77 } from "react/jsx-runtime";
+import { jsx as jsx73 } from "react/jsx-runtime";
 var Popover6 = ({
   children,
   left,
@@ -13976,8 +13642,8 @@ var Popover6 = ({
   viewportWidth = window.innerWidth,
   viewportHeight = window.innerHeight
 }) => {
-  const popoverRef = useRef23(null);
-  useEffect30(() => {
+  const popoverRef = useRef19(null);
+  useEffect26(() => {
     const container = popoverRef.current;
     if (!container) {
       return;
@@ -14014,7 +13680,7 @@ var Popover6 = ({
     container.addEventListener("keydown", handleKeyDown);
     return () => container.removeEventListener("keydown", handleKeyDown);
   }, []);
-  const lastInitializedPosRef = useRef23(
+  const lastInitializedPosRef = useRef19(
     null
   );
   useLayoutEffect4(() => {
@@ -14053,7 +13719,7 @@ var Popover6 = ({
     offsetLeft,
     offsetTop
   ]);
-  useEffect30(() => {
+  useEffect26(() => {
     if (onCloseRequest) {
       const handler = (event) => {
         if (!popoverRef.current?.contains(event.target)) {
@@ -14064,12 +13730,12 @@ var Popover6 = ({
       return () => document.removeEventListener("pointerdown", handler, false);
     }
   }, [onCloseRequest]);
-  return /* @__PURE__ */ jsx77("div", { className: "popover", ref: popoverRef, tabIndex: -1, children });
+  return /* @__PURE__ */ jsx73("div", { className: "popover", ref: popoverRef, tabIndex: -1, children });
 };
 
 // components/ContextMenu.tsx
 import React29 from "react";
-import { jsx as jsx78, jsxs as jsxs42 } from "react/jsx-runtime";
+import { jsx as jsx74, jsxs as jsxs36 } from "react/jsx-runtime";
 var CONTEXT_MENU_SEPARATOR = "separator";
 var ContextMenu = React29.memo(
   ({ actionManager, items, top, left, onClose }) => {
@@ -14086,7 +13752,7 @@ var ContextMenu = React29.memo(
       }
       return acc;
     }, []);
-    return /* @__PURE__ */ jsx78(
+    return /* @__PURE__ */ jsx74(
       Popover6,
       {
         onCloseRequest: () => {
@@ -14099,7 +13765,7 @@ var ContextMenu = React29.memo(
         offsetTop: appState.offsetTop,
         viewportWidth: appState.width,
         viewportHeight: appState.height,
-        children: /* @__PURE__ */ jsx78(
+        children: /* @__PURE__ */ jsx74(
           "ul",
           {
             className: "context-menu",
@@ -14109,7 +13775,7 @@ var ContextMenu = React29.memo(
                 if (!filteredItems[idx - 1] || filteredItems[idx - 1] === CONTEXT_MENU_SEPARATOR) {
                   return null;
                 }
-                return /* @__PURE__ */ jsx78("hr", { className: "context-menu-item-separator" }, idx);
+                return /* @__PURE__ */ jsx74("hr", { className: "context-menu-item-separator" }, idx);
               }
               const actionName = item.name;
               let label = "";
@@ -14126,7 +13792,7 @@ var ContextMenu = React29.memo(
                   label = t(item.label);
                 }
               }
-              return /* @__PURE__ */ jsx78(
+              return /* @__PURE__ */ jsx74(
                 "li",
                 {
                   "data-testid": actionName,
@@ -14135,17 +13801,17 @@ var ContextMenu = React29.memo(
                       actionManager.executeAction(item, "contextMenu");
                     });
                   },
-                  children: /* @__PURE__ */ jsxs42(
+                  children: /* @__PURE__ */ jsxs36(
                     "button",
                     {
                       type: "button",
-                      className: clsx33("context-menu-item", {
+                      className: clsx29("context-menu-item", {
                         dangerous: actionName === "deleteSelectedElements",
                         checkmark: item.checked?.(appState)
                       }),
                       children: [
-                        /* @__PURE__ */ jsx78("div", { className: "context-menu-item__label", children: label }),
-                        /* @__PURE__ */ jsx78("kbd", { className: "context-menu-item__shortcut", children: actionName ? getShortcutFromShortcutName(actionName) : "" })
+                        /* @__PURE__ */ jsx74("div", { className: "context-menu-item__label", children: label }),
+                        /* @__PURE__ */ jsx74("kbd", { className: "context-menu-item__shortcut", children: actionName ? getShortcutFromShortcutName(actionName) : "" })
                       ]
                     }
                   )
@@ -14161,17 +13827,17 @@ var ContextMenu = React29.memo(
 );
 
 // components/LayerUI.tsx
-import clsx53 from "clsx";
-import React40 from "react";
+import clsx49 from "clsx";
+import React40, { useEffect as useEffect36 } from "react";
 
 // components/ErrorDialog.tsx
-import React30, { useState as useState25 } from "react";
-import { Fragment as Fragment10, jsx as jsx79 } from "react/jsx-runtime";
+import React30, { useState as useState23 } from "react";
+import { Fragment as Fragment9, jsx as jsx75 } from "react/jsx-runtime";
 var ErrorDialog = ({
   children,
   onClose
 }) => {
-  const [modalIsShown, setModalIsShown] = useState25(!!children);
+  const [modalIsShown, setModalIsShown] = useState23(!!children);
   const { container: excalidrawContainer } = useExcalidrawContainer();
   const handleClose = React30.useCallback(() => {
     setModalIsShown(false);
@@ -14180,38 +13846,38 @@ var ErrorDialog = ({
     }
     excalidrawContainer?.focus();
   }, [onClose, excalidrawContainer]);
-  return /* @__PURE__ */ jsx79(Fragment10, { children: modalIsShown && /* @__PURE__ */ jsx79(
+  return /* @__PURE__ */ jsx75(Fragment9, { children: modalIsShown && /* @__PURE__ */ jsx75(
     Dialog,
     {
       size: "small",
       onCloseRequest: handleClose,
       title: t("errorDialog.title"),
-      children: /* @__PURE__ */ jsx79("div", { style: { whiteSpace: "pre-wrap" }, children })
+      children: /* @__PURE__ */ jsx75("div", { style: { whiteSpace: "pre-wrap" }, children })
     }
   ) });
 };
 
 // components/ImageExportDialog.tsx
-import { useEffect as useEffect31, useRef as useRef25, useState as useState28 } from "react";
+import { useEffect as useEffect27, useRef as useRef21, useState as useState26 } from "react";
 
 // components/RadioGroup.tsx
-import clsx34 from "clsx";
-import { jsx as jsx80, jsxs as jsxs43 } from "react/jsx-runtime";
+import clsx30 from "clsx";
+import { jsx as jsx76, jsxs as jsxs37 } from "react/jsx-runtime";
 var RadioGroup = function({
   onChange,
   value,
   choices,
   name
 }) {
-  return /* @__PURE__ */ jsx80("div", { className: "RadioGroup", children: choices.map((choice) => /* @__PURE__ */ jsxs43(
+  return /* @__PURE__ */ jsx76("div", { className: "RadioGroup", children: choices.map((choice) => /* @__PURE__ */ jsxs37(
     "div",
     {
-      className: clsx34("RadioGroup__choice", {
+      className: clsx30("RadioGroup__choice", {
         active: choice.value === value
       }),
       title: choice.ariaLabel,
       children: [
-        /* @__PURE__ */ jsx80(
+        /* @__PURE__ */ jsx76(
           "input",
           {
             name,
@@ -14229,8 +13895,8 @@ var RadioGroup = function({
 };
 
 // components/Switch.tsx
-import clsx35 from "clsx";
-import { jsx as jsx81 } from "react/jsx-runtime";
+import clsx31 from "clsx";
+import { jsx as jsx77 } from "react/jsx-runtime";
 var Switch = ({
   title,
   name,
@@ -14238,7 +13904,7 @@ var Switch = ({
   onChange,
   disabled = false
 }) => {
-  return /* @__PURE__ */ jsx81("div", { className: clsx35("Switch", { toggled: checked, disabled }), children: /* @__PURE__ */ jsx81(
+  return /* @__PURE__ */ jsx77("div", { className: clsx31("Switch", { toggled: checked, disabled }), children: /* @__PURE__ */ jsx77(
     "input",
     {
       name,
@@ -14258,9 +13924,9 @@ var Switch = ({
 };
 
 // components/FilledButton.tsx
-import { forwardRef as forwardRef4, useState as useState26 } from "react";
-import clsx36 from "clsx";
-import { jsx as jsx82, jsxs as jsxs44 } from "react/jsx-runtime";
+import { forwardRef as forwardRef4, useState as useState24 } from "react";
+import clsx32 from "clsx";
+import { jsx as jsx78, jsxs as jsxs38 } from "react/jsx-runtime";
 var FilledButton = forwardRef4(
   ({
     children,
@@ -14274,7 +13940,7 @@ var FilledButton = forwardRef4(
     className,
     status
   }, ref) => {
-    const [isLoading, setIsLoading] = useState26(false);
+    const [isLoading, setIsLoading] = useState24(false);
     const _onClick = async (event) => {
       const ret = onClick?.(event);
       if (isPromiseLike(ret)) {
@@ -14297,10 +13963,10 @@ var FilledButton = forwardRef4(
     };
     const _status = isLoading ? "loading" : status;
     color = _status === "success" ? "success" : color;
-    return /* @__PURE__ */ jsx82(
+    return /* @__PURE__ */ jsx78(
       "button",
       {
-        className: clsx36(
+        className: clsx32(
           "ExcButton",
           `ExcButton--color-${color}`,
           `ExcButton--variant-${variant}`,
@@ -14314,9 +13980,9 @@ var FilledButton = forwardRef4(
         "aria-label": label,
         ref,
         disabled: _status === "loading" || _status === "success",
-        children: /* @__PURE__ */ jsxs44("div", { className: "ExcButton__contents", children: [
-          _status === "loading" ? /* @__PURE__ */ jsx82(Spinner_default, { className: "ExcButton__statusIcon" }) : _status === "success" && /* @__PURE__ */ jsx82("div", { className: "ExcButton__statusIcon", children: tablerCheckIcon }),
-          icon && /* @__PURE__ */ jsx82("div", { className: "ExcButton__icon", "aria-hidden": true, children: icon }),
+        children: /* @__PURE__ */ jsxs38("div", { className: "ExcButton__contents", children: [
+          _status === "loading" ? /* @__PURE__ */ jsx78(Spinner_default, { className: "ExcButton__statusIcon" }) : _status === "success" && /* @__PURE__ */ jsx78("div", { className: "ExcButton__statusIcon", children: tablerCheckIcon }),
+          icon && /* @__PURE__ */ jsx78("div", { className: "ExcButton__icon", "aria-hidden": true, children: icon }),
           variant !== "icon" && (children ?? label)
         ] })
       }
@@ -14325,11 +13991,11 @@ var FilledButton = forwardRef4(
 );
 
 // hooks/useCopiedIndicator.ts
-import { useCallback as useCallback11, useRef as useRef24, useState as useState27 } from "react";
+import { useCallback as useCallback10, useRef as useRef20, useState as useState25 } from "react";
 var TIMEOUT = 2e3;
 var useCopyStatus = () => {
-  const [copyStatus, setCopyStatus] = useState27(null);
-  const timeoutRef = useRef24(0);
+  const [copyStatus, setCopyStatus] = useState25(null);
+  const timeoutRef = useRef20(0);
   const onCopy = () => {
     clearTimeout(timeoutRef.current);
     setCopyStatus("success");
@@ -14337,7 +14003,7 @@ var useCopyStatus = () => {
       setCopyStatus(null);
     }, TIMEOUT);
   };
-  const resetCopyStatus = useCallback11(() => {
+  const resetCopyStatus = useCallback10(() => {
     setCopyStatus(null);
   }, []);
   return {
@@ -14348,13 +14014,13 @@ var useCopyStatus = () => {
 };
 
 // components/ImageExportDialog.tsx
-import { jsx as jsx83, jsxs as jsxs45 } from "react/jsx-runtime";
+import { jsx as jsx79, jsxs as jsxs39 } from "react/jsx-runtime";
 var supportsContextFilters = "filter" in document.createElement("canvas").getContext("2d");
 var ErrorCanvasPreview = () => {
-  return /* @__PURE__ */ jsxs45("div", { children: [
-    /* @__PURE__ */ jsx83("h3", { children: t("canvasError.cannotShowPreview") }),
-    /* @__PURE__ */ jsx83("p", { children: /* @__PURE__ */ jsx83("span", { children: t("canvasError.canvasTooBig") }) }),
-    /* @__PURE__ */ jsxs45("em", { children: [
+  return /* @__PURE__ */ jsxs39("div", { children: [
+    /* @__PURE__ */ jsx79("h3", { children: t("canvasError.cannotShowPreview") }),
+    /* @__PURE__ */ jsx79("p", { children: /* @__PURE__ */ jsx79("span", { children: t("canvasError.canvasTooBig") }) }),
+    /* @__PURE__ */ jsxs39("em", { children: [
       "(",
       t("canvasError.canvasTooBigTip"),
       ")"
@@ -14373,22 +14039,22 @@ var ImageExportModal = ({
     elementsSnapshot,
     appStateSnapshot
   );
-  const [projectName, setProjectName] = useState28(name);
-  const [exportSelectionOnly, setExportSelectionOnly] = useState28(hasSelection);
-  const [exportWithBackground, setExportWithBackground] = useState28(
+  const [projectName, setProjectName] = useState26(name);
+  const [exportSelectionOnly, setExportSelectionOnly] = useState26(hasSelection);
+  const [exportWithBackground, setExportWithBackground] = useState26(
     appStateSnapshot.exportBackground
   );
-  const [exportDarkMode, setExportDarkMode] = useState28(
+  const [exportDarkMode, setExportDarkMode] = useState26(
     appStateSnapshot.exportWithDarkMode
   );
-  const [embedScene, setEmbedScene] = useState28(
+  const [embedScene, setEmbedScene] = useState26(
     appStateSnapshot.exportEmbedScene
   );
-  const [exportScale, setExportScale] = useState28(appStateSnapshot.exportScale);
-  const previewRef = useRef25(null);
-  const [renderError, setRenderError] = useState28(null);
+  const [exportScale, setExportScale] = useState26(appStateSnapshot.exportScale);
+  const previewRef = useRef21(null);
+  const [renderError, setRenderError] = useState26(null);
   const { onCopy, copyStatus, resetCopyStatus } = useCopyStatus();
-  useEffect31(() => {
+  useEffect27(() => {
     resetCopyStatus();
   }, [
     projectName,
@@ -14403,7 +14069,7 @@ var ImageExportModal = ({
     appStateSnapshot,
     exportSelectionOnly
   );
-  useEffect31(() => {
+  useEffect27(() => {
     const previewNode = previewRef.current;
     if (!previewNode) {
       return;
@@ -14452,11 +14118,11 @@ var ImageExportModal = ({
     exportScale,
     embedScene
   ]);
-  return /* @__PURE__ */ jsxs45("div", { className: "ImageExportModal", children: [
-    /* @__PURE__ */ jsx83("h3", { children: t("imageExportDialog.header") }),
-    /* @__PURE__ */ jsxs45("div", { className: "ImageExportModal__preview", children: [
-      /* @__PURE__ */ jsx83("div", { className: "ImageExportModal__preview__canvas", ref: previewRef, children: renderError && /* @__PURE__ */ jsx83(ErrorCanvasPreview, {}) }),
-      /* @__PURE__ */ jsx83("div", { className: "ImageExportModal__preview__filename", children: !nativeFileSystemSupported && /* @__PURE__ */ jsx83(
+  return /* @__PURE__ */ jsxs39("div", { className: "ImageExportModal", children: [
+    /* @__PURE__ */ jsx79("h3", { children: t("imageExportDialog.header") }),
+    /* @__PURE__ */ jsxs39("div", { className: "ImageExportModal__preview", children: [
+      /* @__PURE__ */ jsx79("div", { className: "ImageExportModal__preview__canvas", ref: previewRef, children: renderError && /* @__PURE__ */ jsx79(ErrorCanvasPreview, {}) }),
+      /* @__PURE__ */ jsx79("div", { className: "ImageExportModal__preview__filename", children: !nativeFileSystemSupported && /* @__PURE__ */ jsx79(
         "input",
         {
           type: "text",
@@ -14474,14 +14140,14 @@ var ImageExportModal = ({
         }
       ) })
     ] }),
-    /* @__PURE__ */ jsxs45("div", { className: "ImageExportModal__settings", children: [
-      /* @__PURE__ */ jsx83("h3", { children: t("imageExportDialog.header") }),
-      hasSelection && /* @__PURE__ */ jsx83(
+    /* @__PURE__ */ jsxs39("div", { className: "ImageExportModal__settings", children: [
+      /* @__PURE__ */ jsx79("h3", { children: t("imageExportDialog.header") }),
+      hasSelection && /* @__PURE__ */ jsx79(
         ExportSetting,
         {
           label: t("imageExportDialog.label.onlySelected"),
           name: "exportOnlySelected",
-          children: /* @__PURE__ */ jsx83(
+          children: /* @__PURE__ */ jsx79(
             Switch,
             {
               name: "exportOnlySelected",
@@ -14493,12 +14159,12 @@ var ImageExportModal = ({
           )
         }
       ),
-      /* @__PURE__ */ jsx83(
+      /* @__PURE__ */ jsx79(
         ExportSetting,
         {
           label: t("imageExportDialog.label.withBackground"),
           name: "exportBackgroundSwitch",
-          children: /* @__PURE__ */ jsx83(
+          children: /* @__PURE__ */ jsx79(
             Switch,
             {
               name: "exportBackgroundSwitch",
@@ -14515,12 +14181,12 @@ var ImageExportModal = ({
           )
         }
       ),
-      supportsContextFilters && /* @__PURE__ */ jsx83(
+      supportsContextFilters && /* @__PURE__ */ jsx79(
         ExportSetting,
         {
           label: t("imageExportDialog.label.darkMode"),
           name: "exportDarkModeSwitch",
-          children: /* @__PURE__ */ jsx83(
+          children: /* @__PURE__ */ jsx79(
             Switch,
             {
               name: "exportDarkModeSwitch",
@@ -14537,13 +14203,13 @@ var ImageExportModal = ({
           )
         }
       ),
-      /* @__PURE__ */ jsx83(
+      /* @__PURE__ */ jsx79(
         ExportSetting,
         {
           label: t("imageExportDialog.label.embedScene"),
           tooltip: t("imageExportDialog.tooltip.embedScene"),
           name: "exportEmbedSwitch",
-          children: /* @__PURE__ */ jsx83(
+          children: /* @__PURE__ */ jsx79(
             Switch,
             {
               name: "exportEmbedSwitch",
@@ -14560,12 +14226,12 @@ var ImageExportModal = ({
           )
         }
       ),
-      /* @__PURE__ */ jsx83(
+      /* @__PURE__ */ jsx79(
         ExportSetting,
         {
           label: t("imageExportDialog.label.scale"),
           name: "exportScale",
-          children: /* @__PURE__ */ jsx83(
+          children: /* @__PURE__ */ jsx79(
             RadioGroup,
             {
               name: "exportScale",
@@ -14582,8 +14248,8 @@ var ImageExportModal = ({
           )
         }
       ),
-      /* @__PURE__ */ jsxs45("div", { className: "ImageExportModal__settings__buttons", children: [
-        /* @__PURE__ */ jsx83(
+      /* @__PURE__ */ jsxs39("div", { className: "ImageExportModal__settings__buttons", children: [
+        /* @__PURE__ */ jsx79(
           FilledButton,
           {
             className: "ImageExportModal__settings__buttons__button",
@@ -14595,7 +14261,7 @@ var ImageExportModal = ({
             children: t("imageExportDialog.button.exportToPng")
           }
         ),
-        /* @__PURE__ */ jsx83(
+        /* @__PURE__ */ jsx79(
           FilledButton,
           {
             className: "ImageExportModal__settings__buttons__button",
@@ -14607,7 +14273,7 @@ var ImageExportModal = ({
             children: t("imageExportDialog.button.exportToSvg")
           }
         ),
-        (probablySupportsClipboardBlob || isFirefox) && /* @__PURE__ */ jsx83(
+        (probablySupportsClipboardBlob || isFirefox) && /* @__PURE__ */ jsx79(
           FilledButton,
           {
             className: "ImageExportModal__settings__buttons__button",
@@ -14637,19 +14303,19 @@ var ExportSetting = ({
   tooltip,
   name
 }) => {
-  return /* @__PURE__ */ jsxs45("div", { className: "ImageExportModal__settings__setting", title: label, children: [
-    /* @__PURE__ */ jsxs45(
+  return /* @__PURE__ */ jsxs39("div", { className: "ImageExportModal__settings__setting", title: label, children: [
+    /* @__PURE__ */ jsxs39(
       "label",
       {
         htmlFor: name,
         className: "ImageExportModal__settings__setting__label",
         children: [
           label,
-          tooltip && /* @__PURE__ */ jsx83(Tooltip, { label: tooltip, long: true, children: helpIcon })
+          tooltip && /* @__PURE__ */ jsx79(Tooltip, { label: tooltip, long: true, children: helpIcon })
         ]
       }
     ),
-    /* @__PURE__ */ jsx83("div", { className: "ImageExportModal__settings__setting__content", children })
+    /* @__PURE__ */ jsx79("div", { className: "ImageExportModal__settings__setting__content", children })
   ] });
 };
 var ImageExportDialog = ({
@@ -14661,13 +14327,13 @@ var ImageExportDialog = ({
   onCloseRequest,
   name
 }) => {
-  const [{ appStateSnapshot, elementsSnapshot }] = useState28(() => {
+  const [{ appStateSnapshot, elementsSnapshot }] = useState26(() => {
     return {
       appStateSnapshot: cloneJSON(appState),
       elementsSnapshot: cloneJSON(elements)
     };
   });
-  return /* @__PURE__ */ jsx83(Dialog, { onCloseRequest, size: "wide", title: false, children: /* @__PURE__ */ jsx83(
+  return /* @__PURE__ */ jsx79(Dialog, { onCloseRequest, size: "wide", title: false, children: /* @__PURE__ */ jsx79(
     ImageExportModal,
     {
       elementsSnapshot,
@@ -14681,16 +14347,16 @@ var ImageExportDialog = ({
 };
 
 // components/FixedSideContainer.tsx
-import clsx37 from "clsx";
-import { jsx as jsx84 } from "react/jsx-runtime";
+import clsx33 from "clsx";
+import { jsx as jsx80 } from "react/jsx-runtime";
 var FixedSideContainer = ({
   children,
   side,
   className
-}) => /* @__PURE__ */ jsx84(
+}) => /* @__PURE__ */ jsx80(
   "div",
   {
-    className: clsx37(
+    className: clsx33(
       "FixedSideContainer",
       `FixedSideContainer_side_${side}`,
       className
@@ -15158,145 +14824,23 @@ var FlowChartCreator = class {
     this.numberOfNodes = 0;
   }
 };
-var isNodeInFlowchart = (element, elementsMap) => {
-  for (const [, el] of elementsMap) {
-    if (el.type === "arrow" && (el.startBinding?.elementId === element.id || el.endBinding?.elementId === element.id)) {
-      return true;
-    }
-  }
-  return false;
-};
 
 // components/HintViewer.tsx
-import { jsx as jsx85 } from "react/jsx-runtime";
-var getHints = ({
-  appState,
-  isMobile,
-  device,
-  app
-}) => {
-  const { activeTool, isResizing, isRotating, lastPointerDownWith } = appState;
-  const multiMode = appState.multiElement !== null;
-  if (appState.openSidebar?.name === DEFAULT_SIDEBAR.name && appState.openSidebar.tab === CANVAS_SEARCH_TAB && appState.searchMatches?.length) {
-    return t("hints.dismissSearch");
-  }
-  if (appState.openSidebar && !device.editor.canFitSidebar) {
-    return null;
-  }
-  if (isEraserActive(appState)) {
-    return t("hints.eraserRevert");
-  }
-  if (activeTool.type === "arrow" || activeTool.type === "line") {
-    if (multiMode) {
-      return t("hints.linearElementMulti");
-    }
-    if (activeTool.type === "arrow") {
-      return t("hints.arrowTool", { arrowShortcut: getShortcutKey("A") });
-    }
-    return t("hints.linearElement");
-  }
-  if (activeTool.type === "freedraw") {
-    return t("hints.freeDraw");
-  }
-  if (activeTool.type === "text") {
-    return t("hints.text");
-  }
-  if (activeTool.type === "embeddable") {
-    return t("hints.embeddable");
-  }
-  if (appState.activeTool.type === "image" && appState.pendingImageElementId) {
-    return t("hints.placeImage");
-  }
-  const selectedElements = app.scene.getSelectedElements(appState);
-  if (isResizing && lastPointerDownWith === "mouse" && selectedElements.length === 1) {
-    const targetElement = selectedElements[0];
-    if (isLinearElement(targetElement) && targetElement.points.length === 2) {
-      return t("hints.lockAngle");
-    }
-    return isImageElement(targetElement) ? t("hints.resizeImage") : t("hints.resize");
-  }
-  if (isRotating && lastPointerDownWith === "mouse") {
-    return t("hints.rotate");
-  }
-  if (selectedElements.length === 1 && isTextElement(selectedElements[0])) {
-    return t("hints.text_selected");
-  }
-  if (appState.editingTextElement) {
-    return t("hints.text_editing");
-  }
-  if (appState.croppingElementId) {
-    return t("hints.leaveCropEditor");
-  }
-  if (selectedElements.length === 1 && isImageElement(selectedElements[0])) {
-    return t("hints.enterCropEditor");
-  }
-  if (activeTool.type === "selection") {
-    if (appState.selectionElement && !selectedElements.length && !appState.editingTextElement && !appState.editingLinearElement) {
-      return t("hints.deepBoxSelect");
-    }
-    if (isGridModeEnabled(app) && appState.selectedElementsAreBeingDragged) {
-      return t("hints.disableSnapping");
-    }
-    if (!selectedElements.length && !isMobile) {
-      return t("hints.canvasPanning");
-    }
-    if (selectedElements.length === 1) {
-      if (isLinearElement(selectedElements[0])) {
-        if (appState.editingLinearElement) {
-          return appState.editingLinearElement.selectedPointsIndices ? t("hints.lineEditor_pointSelected") : t("hints.lineEditor_nothingSelected");
-        }
-        return t("hints.lineEditor_info");
-      }
-      if (!appState.newElement && !appState.selectedElementsAreBeingDragged && isTextBindableContainer(selectedElements[0])) {
-        if (isFlowchartNodeElement(selectedElements[0])) {
-          if (isNodeInFlowchart(
-            selectedElements[0],
-            app.scene.getNonDeletedElementsMap()
-          )) {
-            return [t("hints.bindTextToElement"), t("hints.createFlowchart")];
-          }
-          return [t("hints.bindTextToElement"), t("hints.createFlowchart")];
-        }
-        return t("hints.bindTextToElement");
-      }
-    }
-  }
-  return null;
-};
-var HintViewer = ({
-  appState,
-  isMobile,
-  device,
-  app
-}) => {
-  const hints = getHints({
-    appState,
-    isMobile,
-    device,
-    app
-  });
-  if (!hints) {
-    return null;
-  }
-  const hint = Array.isArray(hints) ? hints.map((hint2) => {
-    return getShortcutKey(hint2).replace(/\. ?$/, "");
-  }).join(". ") : getShortcutKey(hints);
-  return /* @__PURE__ */ jsx85("div", { className: "HintViewer", children: /* @__PURE__ */ jsx85("span", { children: hint }) });
-};
+var HintViewer = (_props) => null;
 
 // components/LockButton.tsx
-import clsx38 from "clsx";
-import { jsx as jsx86, jsxs as jsxs46 } from "react/jsx-runtime";
+import clsx34 from "clsx";
+import { jsx as jsx81, jsxs as jsxs40 } from "react/jsx-runtime";
 var DEFAULT_SIZE = "medium";
 var ICONS2 = {
   CHECKED: LockedIcon,
   UNCHECKED: UnlockedIcon
 };
 var LockButton = (props) => {
-  return /* @__PURE__ */ jsxs46(
+  return /* @__PURE__ */ jsxs40(
     "label",
     {
-      className: clsx38(
+      className: clsx34(
         "ToolIcon ToolIcon__lock",
         `ToolIcon_size_${DEFAULT_SIZE}`,
         {
@@ -15305,7 +14849,7 @@ var LockButton = (props) => {
       ),
       title: `${props.title} \u2014 Q`,
       children: [
-        /* @__PURE__ */ jsx86(
+        /* @__PURE__ */ jsx81(
           "input",
           {
             className: "ToolIcon_type_checkbox",
@@ -15317,18 +14861,18 @@ var LockButton = (props) => {
             "data-testid": "toolbar-lock"
           }
         ),
-        /* @__PURE__ */ jsx86("div", { className: "ToolIcon__icon", children: props.checked ? ICONS2.CHECKED : ICONS2.UNCHECKED })
+        /* @__PURE__ */ jsx81("div", { className: "ToolIcon__icon", children: props.checked ? ICONS2.CHECKED : ICONS2.UNCHECKED })
       ]
     }
   );
 };
 
 // components/Section.tsx
-import { Fragment as Fragment11, jsx as jsx87, jsxs as jsxs47 } from "react/jsx-runtime";
+import { Fragment as Fragment10, jsx as jsx82, jsxs as jsxs41 } from "react/jsx-runtime";
 var Section = ({ heading, children, ...props }) => {
   const { id } = useExcalidrawContainer();
-  const header = /* @__PURE__ */ jsx87("h2", { className: "visually-hidden", id: `${id}-${heading}-title`, children: t(`headings.${heading}`) });
-  return /* @__PURE__ */ jsx87("section", { ...props, "aria-labelledby": `${id}-${heading}-title`, children: typeof children === "function" ? children(header) : /* @__PURE__ */ jsxs47(Fragment11, { children: [
+  const header = /* @__PURE__ */ jsx82("h2", { className: "visually-hidden", id: `${id}-${heading}-title`, children: t(`headings.${heading}`) });
+  return /* @__PURE__ */ jsx82("section", { ...props, "aria-labelledby": `${id}-${heading}-title`, children: typeof children === "function" ? children(header) : /* @__PURE__ */ jsxs41(Fragment10, { children: [
     header,
     children
   ] }) });
@@ -15392,17 +14936,17 @@ var isOverScrollBars = (scrollBars, x, y) => {
 };
 
 // components/PenModeButton.tsx
-import clsx39 from "clsx";
-import { jsx as jsx88, jsxs as jsxs48 } from "react/jsx-runtime";
+import clsx35 from "clsx";
+import { jsx as jsx83, jsxs as jsxs42 } from "react/jsx-runtime";
 var DEFAULT_SIZE2 = "medium";
 var PenModeButton = (props) => {
   if (!props.penDetected) {
     return null;
   }
-  return /* @__PURE__ */ jsxs48(
+  return /* @__PURE__ */ jsxs42(
     "label",
     {
-      className: clsx39(
+      className: clsx35(
         "ToolIcon ToolIcon__penMode",
         `ToolIcon_size_${DEFAULT_SIZE2}`,
         {
@@ -15411,7 +14955,7 @@ var PenModeButton = (props) => {
       ),
       title: `${props.title}`,
       children: [
-        /* @__PURE__ */ jsx88(
+        /* @__PURE__ */ jsx83(
           "input",
           {
             className: "ToolIcon_type_checkbox",
@@ -15422,20 +14966,20 @@ var PenModeButton = (props) => {
             "aria-label": props.title
           }
         ),
-        /* @__PURE__ */ jsx88("div", { className: "ToolIcon__icon", children: PenModeIcon })
+        /* @__PURE__ */ jsx83("div", { className: "ToolIcon__icon", children: PenModeIcon })
       ]
     }
   );
 };
 
 // components/HandButton.tsx
-import clsx40 from "clsx";
-import { jsx as jsx89 } from "react/jsx-runtime";
+import clsx36 from "clsx";
+import { jsx as jsx84 } from "react/jsx-runtime";
 var HandButton = (props) => {
-  return /* @__PURE__ */ jsx89(
+  return /* @__PURE__ */ jsx84(
     ToolButton,
     {
-      className: clsx40("Shape", { fillable: false }),
+      className: clsx36("Shape", { fillable: false }),
       type: "radio",
       icon: handIcon,
       name: "editor-current-shape",
@@ -15450,8 +14994,26 @@ var HandButton = (props) => {
   );
 };
 
+// components/CalculatorButton.tsx
+import { jsx as jsx85 } from "react/jsx-runtime";
+var MATHBOOK_TOGGLE_CALC_EVENT = "mathbook:toggle-calc";
+var dispatchToggleCalculator = () => {
+  window.dispatchEvent(new CustomEvent(MATHBOOK_TOGGLE_CALC_EVENT));
+};
+var CalculatorButton = (props) => /* @__PURE__ */ jsx85(
+  "button",
+  {
+    className: props.className ?? "help-icon calc-icon",
+    onClick: props.onClick ?? dispatchToggleCalculator,
+    type: "button",
+    title: "Toggle scientific calculator",
+    "aria-label": "Toggle scientific calculator",
+    children: CalculatorIcon
+  }
+);
+
 // components/MobileMenu.tsx
-import { Fragment as Fragment12, jsx as jsx90, jsxs as jsxs49 } from "react/jsx-runtime";
+import { Fragment as Fragment11, jsx as jsx86, jsxs as jsxs43 } from "react/jsx-runtime";
 var MobileMenu = ({
   appState,
   elements,
@@ -15474,12 +15036,12 @@ var MobileMenu = ({
     DefaultSidebarTriggerTunnel
   } = useTunnels();
   const renderToolbar = () => {
-    return /* @__PURE__ */ jsxs49(FixedSideContainer, { side: "top", className: "App-top-bar", children: [
-      renderWelcomeScreen && /* @__PURE__ */ jsx90(WelcomeScreenCenterTunnel.Out, {}),
-      /* @__PURE__ */ jsx90(Section, { heading: "shapes", children: (heading) => /* @__PURE__ */ jsx90(Stack_default.Col, { gap: 4, align: "center", children: /* @__PURE__ */ jsxs49(Stack_default.Row, { gap: 1, className: "App-toolbar-container", children: [
-        /* @__PURE__ */ jsxs49(Island, { padding: 1, className: "App-toolbar App-toolbar--mobile", children: [
+    return /* @__PURE__ */ jsxs43(FixedSideContainer, { side: "top", className: "App-top-bar", children: [
+      renderWelcomeScreen && /* @__PURE__ */ jsx86(WelcomeScreenCenterTunnel.Out, {}),
+      /* @__PURE__ */ jsx86(Section, { heading: "shapes", children: (heading) => /* @__PURE__ */ jsx86(Stack_default.Col, { gap: 4, align: "center", children: /* @__PURE__ */ jsxs43(Stack_default.Row, { gap: 1, className: "App-toolbar-container", children: [
+        /* @__PURE__ */ jsxs43(Island, { padding: 1, className: "App-toolbar App-toolbar--mobile", children: [
           heading,
-          /* @__PURE__ */ jsx90(Stack_default.Row, { gap: 1, children: /* @__PURE__ */ jsx90(
+          /* @__PURE__ */ jsx86(Stack_default.Row, { gap: 1, children: /* @__PURE__ */ jsx86(
             ShapesSwitcher,
             {
               appState,
@@ -15490,9 +15052,9 @@ var MobileMenu = ({
           ) })
         ] }),
         renderTopRightUI && renderTopRightUI(true, appState),
-        /* @__PURE__ */ jsxs49("div", { className: "mobile-misc-tools-container", children: [
-          !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && /* @__PURE__ */ jsx90(DefaultSidebarTriggerTunnel.Out, {}),
-          /* @__PURE__ */ jsx90(
+        /* @__PURE__ */ jsxs43("div", { className: "mobile-misc-tools-container", children: [
+          !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && /* @__PURE__ */ jsx86(DefaultSidebarTriggerTunnel.Out, {}),
+          /* @__PURE__ */ jsx86(
             PenModeButton,
             {
               checked: appState.penMode,
@@ -15502,7 +15064,7 @@ var MobileMenu = ({
               penDetected: appState.penDetected
             }
           ),
-          /* @__PURE__ */ jsx90(
+          /* @__PURE__ */ jsx86(
             LockButton,
             {
               checked: appState.activeTool.locked,
@@ -15511,7 +15073,7 @@ var MobileMenu = ({
               isMobile: true
             }
           ),
-          /* @__PURE__ */ jsx90(
+          /* @__PURE__ */ jsx86(
             HandButton,
             {
               checked: isHandToolActive(appState),
@@ -15522,7 +15084,7 @@ var MobileMenu = ({
           )
         ] })
       ] }) }) }),
-      /* @__PURE__ */ jsx90(
+      /* @__PURE__ */ jsx86(
         HintViewer,
         {
           appState,
@@ -15535,25 +15097,28 @@ var MobileMenu = ({
   };
   const renderAppToolbar = () => {
     if (appState.viewModeEnabled || appState.openDialog?.name === "elementLinkSelector") {
-      return /* @__PURE__ */ jsx90("div", { className: "App-toolbar-content", children: /* @__PURE__ */ jsx90(MainMenuTunnel.Out, {}) });
+      return /* @__PURE__ */ jsx86("div", { className: "App-toolbar-content", children: /* @__PURE__ */ jsx86(MainMenuTunnel.Out, {}) });
     }
-    return /* @__PURE__ */ jsxs49("div", { className: "App-toolbar-content", children: [
-      /* @__PURE__ */ jsx90(MainMenuTunnel.Out, {}),
-      actionManager.renderAction("toggleEditMenu"),
-      actionManager.renderAction(
-        appState.multiElement ? "finalize" : "duplicateSelection"
-      ),
-      actionManager.renderAction("deleteSelectedElements"),
-      /* @__PURE__ */ jsxs49("div", { children: [
-        actionManager.renderAction("undo"),
-        actionManager.renderAction("redo")
-      ] })
+    return /* @__PURE__ */ jsxs43("div", { className: "App-toolbar-content", children: [
+      /* @__PURE__ */ jsxs43("div", { className: "mathbook-toolbar-leading", children: [
+        /* @__PURE__ */ jsx86(MainMenuTunnel.Out, {}),
+        actionManager.renderAction("toggleEditMenu"),
+        actionManager.renderAction(
+          appState.multiElement ? "finalize" : "duplicateSelection"
+        ),
+        actionManager.renderAction("deleteSelectedElements"),
+        /* @__PURE__ */ jsxs43("div", { className: "mathbook-toolbar-undo-redo", children: [
+          actionManager.renderAction("undo"),
+          actionManager.renderAction("redo")
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx86(CalculatorButton, { className: "help-icon calc-icon mathbook-calc-footer-btn" })
     ] });
   };
-  return /* @__PURE__ */ jsxs49(Fragment12, { children: [
+  return /* @__PURE__ */ jsxs43(Fragment11, { children: [
     renderSidebars(),
     !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && renderToolbar(),
-    /* @__PURE__ */ jsx90(
+    /* @__PURE__ */ jsx86(
       "div",
       {
         className: "App-bottom-bar",
@@ -15562,8 +15127,8 @@ var MobileMenu = ({
           marginLeft: SCROLLBAR_WIDTH + SCROLLBAR_MARGIN * 2,
           marginRight: SCROLLBAR_WIDTH + SCROLLBAR_MARGIN * 2
         },
-        children: /* @__PURE__ */ jsxs49(Island, { padding: 0, children: [
-          appState.openMenu === "shape" && !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && showSelectedShapeActions(appState, elements) ? /* @__PURE__ */ jsx90(Section, { className: "App-mobile-menu", heading: "selectedShapeActions", children: /* @__PURE__ */ jsx90(
+        children: /* @__PURE__ */ jsxs43(Island, { padding: 0, children: [
+          appState.openMenu === "shape" && !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && showSelectedShapeActions(appState, elements) ? /* @__PURE__ */ jsx86(Section, { className: "App-mobile-menu", heading: "selectedShapeActions", children: /* @__PURE__ */ jsx86(
             SelectedShapeActions,
             {
               appState,
@@ -15572,9 +15137,9 @@ var MobileMenu = ({
               app
             }
           ) }) : null,
-          /* @__PURE__ */ jsxs49("footer", { className: "App-toolbar", children: [
+          /* @__PURE__ */ jsxs43("footer", { className: "App-toolbar", children: [
             renderAppToolbar(),
-            appState.scrolledOutside && !appState.openMenu && !appState.openSidebar && /* @__PURE__ */ jsx90(
+            appState.scrolledOutside && !appState.openMenu && !appState.openSidebar && /* @__PURE__ */ jsx86(
               "button",
               {
                 type: "button",
@@ -15596,11 +15161,11 @@ var MobileMenu = ({
 
 // components/PasteChartDialog.tsx
 import oc from "open-color";
-import React33, { useLayoutEffect as useLayoutEffect5, useRef as useRef26, useState as useState29 } from "react";
-import { jsx as jsx91, jsxs as jsxs50 } from "react/jsx-runtime";
+import React33, { useLayoutEffect as useLayoutEffect5, useRef as useRef22, useState as useState27 } from "react";
+import { jsx as jsx87, jsxs as jsxs44 } from "react/jsx-runtime";
 var ChartPreviewBtn = (props) => {
-  const previewRef = useRef26(null);
-  const [chartElements, setChartElements] = useState29(
+  const previewRef = useRef22(null);
+  const [chartElements, setChartElements] = useState27(
     null
   );
   useLayoutEffect5(() => {
@@ -15640,7 +15205,7 @@ var ChartPreviewBtn = (props) => {
       previewNode.replaceChildren();
     };
   }, [props.spreadsheet, props.chartType, props.selected]);
-  return /* @__PURE__ */ jsx91(
+  return /* @__PURE__ */ jsx87(
     "button",
     {
       type: "button",
@@ -15650,7 +15215,7 @@ var ChartPreviewBtn = (props) => {
           props.onClick(props.chartType, chartElements);
         }
       },
-      children: /* @__PURE__ */ jsx91("div", { ref: previewRef })
+      children: /* @__PURE__ */ jsx87("div", { ref: previewRef })
     }
   );
 };
@@ -15676,7 +15241,7 @@ var PasteChartDialog = ({
       }
     });
   };
-  return /* @__PURE__ */ jsx91(
+  return /* @__PURE__ */ jsx87(
     Dialog,
     {
       size: "small",
@@ -15684,8 +15249,8 @@ var PasteChartDialog = ({
       title: t("labels.pasteCharts"),
       className: "PasteChartDialog",
       autofocus: false,
-      children: /* @__PURE__ */ jsxs50("div", { className: "container", children: [
-        /* @__PURE__ */ jsx91(
+      children: /* @__PURE__ */ jsxs44("div", { className: "container", children: [
+        /* @__PURE__ */ jsx87(
           ChartPreviewBtn,
           {
             chartType: "bar",
@@ -15694,7 +15259,7 @@ var PasteChartDialog = ({
             onClick: handleChartClick
           }
         ),
-        /* @__PURE__ */ jsx91(
+        /* @__PURE__ */ jsx87(
           ChartPreviewBtn,
           {
             chartType: "line",
@@ -15710,9 +15275,9 @@ var PasteChartDialog = ({
 
 // components/HelpDialog.tsx
 import React34 from "react";
-import { Fragment as Fragment13, jsx as jsx92, jsxs as jsxs51 } from "react/jsx-runtime";
-var Header = () => /* @__PURE__ */ jsxs51("div", { className: "HelpDialog__header", children: [
-  /* @__PURE__ */ jsxs51(
+import { Fragment as Fragment12, jsx as jsx88, jsxs as jsxs45 } from "react/jsx-runtime";
+var Header = () => /* @__PURE__ */ jsxs45("div", { className: "HelpDialog__header", children: [
+  /* @__PURE__ */ jsxs45(
     "a",
     {
       className: "HelpDialog__btn",
@@ -15720,12 +15285,12 @@ var Header = () => /* @__PURE__ */ jsxs51("div", { className: "HelpDialog__heade
       target: "_blank",
       rel: "noopener noreferrer",
       children: [
-        /* @__PURE__ */ jsx92("div", { className: "HelpDialog__link-icon", children: ExternalLinkIcon }),
+        /* @__PURE__ */ jsx88("div", { className: "HelpDialog__link-icon", children: ExternalLinkIcon }),
         t("helpDialog.documentation")
       ]
     }
   ),
-  /* @__PURE__ */ jsxs51(
+  /* @__PURE__ */ jsxs45(
     "a",
     {
       className: "HelpDialog__btn",
@@ -15733,12 +15298,12 @@ var Header = () => /* @__PURE__ */ jsxs51("div", { className: "HelpDialog__heade
       target: "_blank",
       rel: "noopener noreferrer",
       children: [
-        /* @__PURE__ */ jsx92("div", { className: "HelpDialog__link-icon", children: ExternalLinkIcon }),
+        /* @__PURE__ */ jsx88("div", { className: "HelpDialog__link-icon", children: ExternalLinkIcon }),
         t("helpDialog.blog")
       ]
     }
   ),
-  /* @__PURE__ */ jsxs51(
+  /* @__PURE__ */ jsxs45(
     "a",
     {
       className: "HelpDialog__btn",
@@ -15746,12 +15311,12 @@ var Header = () => /* @__PURE__ */ jsxs51("div", { className: "HelpDialog__heade
       target: "_blank",
       rel: "noopener noreferrer",
       children: [
-        /* @__PURE__ */ jsx92("div", { className: "HelpDialog__link-icon", children: GithubIcon }),
+        /* @__PURE__ */ jsx88("div", { className: "HelpDialog__link-icon", children: GithubIcon }),
         t("helpDialog.github")
       ]
     }
   ),
-  /* @__PURE__ */ jsxs51(
+  /* @__PURE__ */ jsxs45(
     "a",
     {
       className: "HelpDialog__btn",
@@ -15759,19 +15324,19 @@ var Header = () => /* @__PURE__ */ jsxs51("div", { className: "HelpDialog__heade
       target: "_blank",
       rel: "noopener noreferrer",
       children: [
-        /* @__PURE__ */ jsx92("div", { className: "HelpDialog__link-icon", children: youtubeIcon }),
+        /* @__PURE__ */ jsx88("div", { className: "HelpDialog__link-icon", children: youtubeIcon }),
         "YouTube"
       ]
     }
   )
 ] });
-var Section2 = (props) => /* @__PURE__ */ jsxs51(Fragment13, { children: [
-  /* @__PURE__ */ jsx92("h3", { children: props.title }),
-  /* @__PURE__ */ jsx92("div", { className: "HelpDialog__islands-container", children: props.children })
+var Section2 = (props) => /* @__PURE__ */ jsxs45(Fragment12, { children: [
+  /* @__PURE__ */ jsx88("h3", { children: props.title }),
+  /* @__PURE__ */ jsx88("div", { className: "HelpDialog__islands-container", children: props.children })
 ] });
-var ShortcutIsland = (props) => /* @__PURE__ */ jsxs51("div", { className: `HelpDialog__island ${props.className}`, children: [
-  /* @__PURE__ */ jsx92("h4", { className: "HelpDialog__island-title", children: props.caption }),
-  /* @__PURE__ */ jsx92("div", { className: "HelpDialog__island-content", children: props.children })
+var ShortcutIsland = (props) => /* @__PURE__ */ jsxs45("div", { className: `HelpDialog__island ${props.className}`, children: [
+  /* @__PURE__ */ jsx88("h4", { className: "HelpDialog__island-title", children: props.caption }),
+  /* @__PURE__ */ jsx88("div", { className: "HelpDialog__island-content", children: props.children })
 ] });
 function* intersperse(as, delim) {
   let first = true;
@@ -15793,124 +15358,124 @@ var Shortcut = ({
 }) => {
   const splitShortcutKeys = shortcuts.map((shortcut) => {
     const keys = shortcut.endsWith("++") ? [...shortcut.slice(0, -2).split("+"), "+"] : shortcut.split("+");
-    return keys.map((key) => /* @__PURE__ */ jsx92(ShortcutKey, { children: upperCaseSingleChars(key) }, key));
+    return keys.map((key) => /* @__PURE__ */ jsx88(ShortcutKey, { children: upperCaseSingleChars(key) }, key));
   });
-  return /* @__PURE__ */ jsxs51("div", { className: "HelpDialog__shortcut", children: [
-    /* @__PURE__ */ jsx92("div", { children: label }),
-    /* @__PURE__ */ jsx92("div", { className: "HelpDialog__key-container", children: [...intersperse(splitShortcutKeys, isOr ? t("helpDialog.or") : null)] })
+  return /* @__PURE__ */ jsxs45("div", { className: "HelpDialog__shortcut", children: [
+    /* @__PURE__ */ jsx88("div", { children: label }),
+    /* @__PURE__ */ jsx88("div", { className: "HelpDialog__key-container", children: [...intersperse(splitShortcutKeys, isOr ? t("helpDialog.or") : null)] })
   ] });
 };
-var ShortcutKey = (props) => /* @__PURE__ */ jsx92("kbd", { className: "HelpDialog__key", ...props });
+var ShortcutKey = (props) => /* @__PURE__ */ jsx88("kbd", { className: "HelpDialog__key", ...props });
 var HelpDialog = ({ onClose }) => {
   const handleClose = React34.useCallback(() => {
     if (onClose) {
       onClose();
     }
   }, [onClose]);
-  return /* @__PURE__ */ jsx92(Fragment13, { children: /* @__PURE__ */ jsxs51(
+  return /* @__PURE__ */ jsx88(Fragment12, { children: /* @__PURE__ */ jsxs45(
     Dialog,
     {
       onCloseRequest: handleClose,
       title: t("helpDialog.title"),
       className: "HelpDialog",
       children: [
-        /* @__PURE__ */ jsx92(Header, {}),
-        /* @__PURE__ */ jsxs51(Section2, { title: t("helpDialog.shortcuts"), children: [
-          /* @__PURE__ */ jsxs51(
+        /* @__PURE__ */ jsx88(Header, {}),
+        /* @__PURE__ */ jsxs45(Section2, { title: t("helpDialog.shortcuts"), children: [
+          /* @__PURE__ */ jsxs45(
             ShortcutIsland,
             {
               className: "HelpDialog__island--tools",
               caption: t("helpDialog.tools"),
               children: [
-                /* @__PURE__ */ jsx92(Shortcut, { label: t("toolBar.hand"), shortcuts: [KEYS.H] }),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(Shortcut, { label: t("toolBar.hand"), shortcuts: [KEYS.H] }),
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.selection"),
                     shortcuts: [KEYS.V, KEYS["1"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.rectangle"),
                     shortcuts: [KEYS.R, KEYS["2"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.diamond"),
                     shortcuts: [KEYS.D, KEYS["3"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.ellipse"),
                     shortcuts: [KEYS.O, KEYS["4"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.arrow"),
                     shortcuts: [KEYS.A, KEYS["5"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.line"),
                     shortcuts: [KEYS.L, KEYS["6"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.freedraw"),
                     shortcuts: [KEYS.P, KEYS["7"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.text"),
                     shortcuts: [KEYS.T, KEYS["8"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(Shortcut, { label: t("toolBar.image"), shortcuts: [KEYS["9"]] }),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(Shortcut, { label: t("toolBar.image"), shortcuts: [KEYS["9"]] }),
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.eraser"),
                     shortcuts: [KEYS.E, KEYS["0"]]
                   }
                 ),
-                /* @__PURE__ */ jsx92(Shortcut, { label: t("toolBar.frame"), shortcuts: [KEYS.F] }),
-                /* @__PURE__ */ jsx92(Shortcut, { label: t("toolBar.laser"), shortcuts: [KEYS.K] }),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(Shortcut, { label: t("toolBar.frame"), shortcuts: [KEYS.F] }),
+                /* @__PURE__ */ jsx88(Shortcut, { label: t("toolBar.laser"), shortcuts: [KEYS.K] }),
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.eyeDropper"),
                     shortcuts: [KEYS.I, "Shift+S", "Shift+G"]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.editLineArrowPoints"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Enter")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.editText"),
                     shortcuts: [getShortcutKey("Enter")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.textNewLine"),
@@ -15920,7 +15485,7 @@ var HelpDialog = ({ onClose }) => {
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.textFinish"),
@@ -15930,7 +15495,7 @@ var HelpDialog = ({ onClose }) => {
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.curvedArrow"),
@@ -15943,7 +15508,7 @@ var HelpDialog = ({ onClose }) => {
                     isOr: false
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.curvedLine"),
@@ -15956,7 +15521,7 @@ var HelpDialog = ({ onClose }) => {
                     isOr: false
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.cropStart"),
@@ -15964,7 +15529,7 @@ var HelpDialog = ({ onClose }) => {
                     isOr: true
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.cropFinish"),
@@ -15972,15 +15537,15 @@ var HelpDialog = ({ onClose }) => {
                     isOr: true
                   }
                 ),
-                /* @__PURE__ */ jsx92(Shortcut, { label: t("toolBar.lock"), shortcuts: [KEYS.Q] }),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(Shortcut, { label: t("toolBar.lock"), shortcuts: [KEYS.Q] }),
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.preventBinding"),
                     shortcuts: [getShortcutKey("CtrlOrCmd")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("toolBar.link"),
@@ -15990,111 +15555,111 @@ var HelpDialog = ({ onClose }) => {
               ]
             }
           ),
-          /* @__PURE__ */ jsxs51(
+          /* @__PURE__ */ jsxs45(
             ShortcutIsland,
             {
               className: "HelpDialog__island--view",
               caption: t("helpDialog.view"),
               children: [
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.zoomIn"),
                     shortcuts: [getShortcutKey("CtrlOrCmd++")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.zoomOut"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+-")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.resetZoom"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+0")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.zoomToFit"),
                     shortcuts: ["Shift+1"]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.zoomToSelection"),
                     shortcuts: ["Shift+2"]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.movePageUpDown"),
                     shortcuts: ["PgUp/PgDn"]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.movePageLeftRight"),
                     shortcuts: ["Shift+PgUp/PgDn"]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.zenMode"),
                     shortcuts: [getShortcutKey("Alt+Z")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.objectsSnapMode"),
                     shortcuts: [getShortcutKey("Alt+S")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.toggleGrid"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+'")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.viewMode"),
                     shortcuts: [getShortcutKey("Alt+R")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.toggleTheme"),
                     shortcuts: [getShortcutKey("Alt+Shift+D")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("stats.fullTitle"),
                     shortcuts: [getShortcutKey("Alt+/")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("search.title"),
                     shortcuts: [getShortcutFromShortcutName("searchMenu")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("commandPalette.title"),
@@ -16107,13 +15672,13 @@ var HelpDialog = ({ onClose }) => {
               ]
             }
           ),
-          /* @__PURE__ */ jsxs51(
+          /* @__PURE__ */ jsxs45(
             ShortcutIsland,
             {
               className: "HelpDialog__island--editor",
               caption: t("helpDialog.editor"),
               children: [
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.createFlowchart"),
@@ -16121,7 +15686,7 @@ var HelpDialog = ({ onClose }) => {
                     isOr: true
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.navigateFlowchart"),
@@ -16129,7 +15694,7 @@ var HelpDialog = ({ onClose }) => {
                     isOr: true
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.moveCanvas"),
@@ -16140,98 +15705,98 @@ var HelpDialog = ({ onClose }) => {
                     isOr: true
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.clearReset"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Delete")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.delete"),
                     shortcuts: [getShortcutKey("Delete")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.cut"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+X")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.copy"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+C")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.paste"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+V")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.pasteAsPlaintext"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+V")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.selectAll"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+A")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.multiSelect"),
                     shortcuts: [getShortcutKey(`Shift+${t("helpDialog.click")}`)]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.deepSelect"),
                     shortcuts: [getShortcutKey(`CtrlOrCmd+${t("helpDialog.click")}`)]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.deepBoxSelect"),
                     shortcuts: [getShortcutKey(`CtrlOrCmd+${t("helpDialog.drag")}`)]
                   }
                 ),
-                (probablySupportsClipboardBlob || isFirefox) && /* @__PURE__ */ jsx92(
+                (probablySupportsClipboardBlob || isFirefox) && /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.copyAsPng"),
                     shortcuts: [getShortcutKey("Shift+Alt+C")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.copyStyles"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Alt+C")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.pasteStyles"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Alt+V")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.sendToBack"),
@@ -16240,7 +15805,7 @@ var HelpDialog = ({ onClose }) => {
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.bringToFront"),
@@ -16249,49 +15814,49 @@ var HelpDialog = ({ onClose }) => {
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.sendBackward"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+[")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.bringForward"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+]")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.alignTop"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+Up")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.alignBottom"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+Down")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.alignLeft"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+Left")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.alignRight"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+Right")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.duplicateSelection"),
@@ -16301,21 +15866,21 @@ var HelpDialog = ({ onClose }) => {
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("helpDialog.toggleElementLock"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+L")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.undo"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Z")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("buttons.redo"),
@@ -16325,63 +15890,63 @@ var HelpDialog = ({ onClose }) => {
                     ] : [getShortcutKey("CtrlOrCmd+Shift+Z")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.group"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+G")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.ungroup"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+G")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.flipHorizontal"),
                     shortcuts: [getShortcutKey("Shift+H")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.flipVertical"),
                     shortcuts: [getShortcutKey("Shift+V")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.showStroke"),
                     shortcuts: [getShortcutKey("S")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.showBackground"),
                     shortcuts: [getShortcutKey("G")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.showFonts"),
                     shortcuts: [getShortcutKey("Shift+F")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.decreaseFontSize"),
                     shortcuts: [getShortcutKey("CtrlOrCmd+Shift+<")]
                   }
                 ),
-                /* @__PURE__ */ jsx92(
+                /* @__PURE__ */ jsx88(
                   Shortcut,
                   {
                     label: t("labels.increaseFontSize"),
@@ -16399,16 +15964,16 @@ var HelpDialog = ({ onClose }) => {
 
 // components/UserList.tsx
 import React35, { useLayoutEffect as useLayoutEffect6 } from "react";
-import clsx41 from "clsx";
+import clsx37 from "clsx";
 import * as Popover7 from "@radix-ui/react-popover";
-import { Fragment as Fragment14, jsx as jsx93, jsxs as jsxs52 } from "react/jsx-runtime";
+import { Fragment as Fragment13, jsx as jsx89, jsxs as jsxs46 } from "react/jsx-runtime";
 var DEFAULT_MAX_AVATARS = 4;
 var SHOW_COLLABORATORS_FILTER_AT = 8;
 var ConditionalTooltipWrapper = ({
   shouldWrap,
   children,
   username
-}) => shouldWrap ? /* @__PURE__ */ jsx93(Tooltip, { label: username || "Unknown user", children }) : /* @__PURE__ */ jsx93(Fragment14, { children });
+}) => shouldWrap ? /* @__PURE__ */ jsx89(Tooltip, { label: username || "Unknown user", children }) : /* @__PURE__ */ jsx89(Fragment13, { children });
 var renderCollaborator = ({
   actionManager,
   collaborator,
@@ -16424,7 +15989,7 @@ var renderCollaborator = ({
     isBeingFollowed
   };
   const avatarJSX = actionManager.renderAction("goToCollaborator", data);
-  return /* @__PURE__ */ jsx93(
+  return /* @__PURE__ */ jsx89(
     ConditionalTooltipWrapper,
     {
       username: collaborator.username,
@@ -16499,7 +16064,7 @@ var UserList = React35.memo(
         isBeingFollowed: collaborator.socketId === userToFollow
       })
     );
-    return mobile ? /* @__PURE__ */ jsx93("div", { className: clsx41("UserList UserList_mobile", className), children: uniqueCollaboratorsArray.map(
+    return mobile ? /* @__PURE__ */ jsx89("div", { className: clsx37("UserList UserList_mobile", className), children: uniqueCollaboratorsArray.map(
       (collaborator) => renderCollaborator({
         actionManager,
         collaborator,
@@ -16507,19 +16072,19 @@ var UserList = React35.memo(
         shouldWrapWithTooltip: true,
         isBeingFollowed: collaborator.socketId === userToFollow
       })
-    ) }) : /* @__PURE__ */ jsx93("div", { className: "UserList__wrapper", ref: userListWrapper, children: /* @__PURE__ */ jsxs52(
+    ) }) : /* @__PURE__ */ jsx89("div", { className: "UserList__wrapper", ref: userListWrapper, children: /* @__PURE__ */ jsxs46(
       "div",
       {
-        className: clsx41("UserList", className),
+        className: clsx37("UserList", className),
         style: { [`--max-avatars`]: maxAvatars },
         children: [
           firstNAvatarsJSX,
-          uniqueCollaboratorsArray.length > maxAvatars - 1 && /* @__PURE__ */ jsxs52(Popover7.Root, { children: [
-            /* @__PURE__ */ jsxs52(Popover7.Trigger, { className: "UserList__more", children: [
+          uniqueCollaboratorsArray.length > maxAvatars - 1 && /* @__PURE__ */ jsxs46(Popover7.Root, { children: [
+            /* @__PURE__ */ jsxs46(Popover7.Trigger, { className: "UserList__more", children: [
               "+",
               uniqueCollaboratorsArray.length - maxAvatars + 1
             ] }),
-            /* @__PURE__ */ jsx93(
+            /* @__PURE__ */ jsx89(
               Popover7.Content,
               {
                 style: {
@@ -16529,21 +16094,21 @@ var UserList = React35.memo(
                 },
                 align: "end",
                 sideOffset: 10,
-                children: /* @__PURE__ */ jsxs52(Island, { padding: 2, children: [
-                  uniqueCollaboratorsArray.length >= SHOW_COLLABORATORS_FILTER_AT && /* @__PURE__ */ jsx93(
+                children: /* @__PURE__ */ jsxs46(Island, { padding: 2, children: [
+                  uniqueCollaboratorsArray.length >= SHOW_COLLABORATORS_FILTER_AT && /* @__PURE__ */ jsx89(
                     QuickSearch,
                     {
                       placeholder: t("quickSearch.placeholder"),
                       onChange: setSearchTerm
                     }
                   ),
-                  /* @__PURE__ */ jsx93(
+                  /* @__PURE__ */ jsx89(
                     ScrollableList,
                     {
                       className: "dropdown-menu UserList__collaborators",
                       placeholder: t("userList.empty"),
                       children: filteredCollaborators.length > 0 ? [
-                        /* @__PURE__ */ jsx93("div", { className: "hint", children: t("userList.hint.text") }),
+                        /* @__PURE__ */ jsx89("div", { className: "hint", children: t("userList.hint.text") }),
                         filteredCollaborators.map(
                           (collaborator) => renderCollaborator({
                             actionManager,
@@ -16556,7 +16121,7 @@ var UserList = React35.memo(
                       ] : []
                     }
                   ),
-                  /* @__PURE__ */ jsx93(
+                  /* @__PURE__ */ jsx89(
                     Popover7.Arrow,
                     {
                       width: 20,
@@ -16601,9 +16166,9 @@ import React36 from "react";
 
 // components/Card.tsx
 import OpenColor2 from "open-color";
-import { jsx as jsx94 } from "react/jsx-runtime";
+import { jsx as jsx90 } from "react/jsx-runtime";
 var Card = ({ children, color }) => {
-  return /* @__PURE__ */ jsx94(
+  return /* @__PURE__ */ jsx90(
     "div",
     {
       className: "Card",
@@ -16618,7 +16183,7 @@ var Card = ({ children, color }) => {
 };
 
 // components/JSONExportDialog.tsx
-import { Fragment as Fragment15, jsx as jsx95, jsxs as jsxs53 } from "react/jsx-runtime";
+import { Fragment as Fragment14, jsx as jsx91, jsxs as jsxs47 } from "react/jsx-runtime";
 var JSONExportModal = ({
   elements,
   appState,
@@ -16630,15 +16195,15 @@ var JSONExportModal = ({
   onCloseRequest
 }) => {
   const { onExportToBackend } = exportOpts;
-  return /* @__PURE__ */ jsx95("div", { className: "ExportDialog ExportDialog--json", children: /* @__PURE__ */ jsxs53("div", { className: "ExportDialog-cards", children: [
-    exportOpts.saveFileToDisk && /* @__PURE__ */ jsxs53(Card, { color: "lime", children: [
-      /* @__PURE__ */ jsx95("div", { className: "Card-icon", children: exportToFileIcon }),
-      /* @__PURE__ */ jsx95("h2", { children: t("exportDialog.disk_title") }),
-      /* @__PURE__ */ jsxs53("div", { className: "Card-details", children: [
+  return /* @__PURE__ */ jsx91("div", { className: "ExportDialog ExportDialog--json", children: /* @__PURE__ */ jsxs47("div", { className: "ExportDialog-cards", children: [
+    exportOpts.saveFileToDisk && /* @__PURE__ */ jsxs47(Card, { color: "lime", children: [
+      /* @__PURE__ */ jsx91("div", { className: "Card-icon", children: exportToFileIcon }),
+      /* @__PURE__ */ jsx91("h2", { children: t("exportDialog.disk_title") }),
+      /* @__PURE__ */ jsxs47("div", { className: "Card-details", children: [
         t("exportDialog.disk_details"),
         !nativeFileSystemSupported && actionManager.renderAction("changeProjectName")
       ] }),
-      /* @__PURE__ */ jsx95(
+      /* @__PURE__ */ jsx91(
         ToolButton,
         {
           className: "Card-button",
@@ -16652,11 +16217,11 @@ var JSONExportModal = ({
         }
       )
     ] }),
-    onExportToBackend && /* @__PURE__ */ jsxs53(Card, { color: "pink", children: [
-      /* @__PURE__ */ jsx95("div", { className: "Card-icon", children: LinkIcon }),
-      /* @__PURE__ */ jsx95("h2", { children: t("exportDialog.link_title") }),
-      /* @__PURE__ */ jsx95("div", { className: "Card-details", children: t("exportDialog.link_details") }),
-      /* @__PURE__ */ jsx95(
+    onExportToBackend && /* @__PURE__ */ jsxs47(Card, { color: "pink", children: [
+      /* @__PURE__ */ jsx91("div", { className: "Card-icon", children: LinkIcon }),
+      /* @__PURE__ */ jsx91("h2", { children: t("exportDialog.link_title") }),
+      /* @__PURE__ */ jsx91("div", { className: "Card-details", children: t("exportDialog.link_details") }),
+      /* @__PURE__ */ jsx91(
         ToolButton,
         {
           className: "Card-button",
@@ -16691,7 +16256,7 @@ var JSONExportDialog = ({
   const handleClose = React36.useCallback(() => {
     setAppState({ openDialog: null });
   }, [setAppState]);
-  return /* @__PURE__ */ jsx95(Fragment15, { children: appState.openDialog?.name === "jsonExport" && /* @__PURE__ */ jsx95(Dialog, { onCloseRequest: handleClose, title: t("buttons.export"), children: /* @__PURE__ */ jsx95(
+  return /* @__PURE__ */ jsx91(Fragment14, { children: appState.openDialog?.name === "jsonExport" && /* @__PURE__ */ jsx91(Dialog, { onCloseRequest: handleClose, title: t("buttons.export"), children: /* @__PURE__ */ jsx91(
     JSONExportModal,
     {
       elements,
@@ -16707,24 +16272,8 @@ var JSONExportDialog = ({
 };
 
 // components/footer/Footer.tsx
-import clsx42 from "clsx";
-
-// components/HelpButton.tsx
-import { jsx as jsx96 } from "react/jsx-runtime";
-var HelpButton = (props) => /* @__PURE__ */ jsx96(
-  "button",
-  {
-    className: "help-icon",
-    onClick: props.onClick,
-    type: "button",
-    title: `${t("helpDialog.title")} \u2014 ?`,
-    "aria-label": t("helpDialog.title"),
-    children: HelpIcon
-  }
-);
-
-// components/footer/Footer.tsx
-import { jsx as jsx97, jsxs as jsxs54 } from "react/jsx-runtime";
+import clsx38 from "clsx";
+import { jsx as jsx92, jsxs as jsxs48 } from "react/jsx-runtime";
 var Footer = ({
   appState,
   actionManager,
@@ -16734,40 +16283,40 @@ var Footer = ({
   const { FooterCenterTunnel, WelcomeScreenHelpHintTunnel } = useTunnels();
   const device = useDevice();
   const showFinalize = !appState.viewModeEnabled && appState.multiElement && device.isTouchScreen;
-  return /* @__PURE__ */ jsxs54(
+  return /* @__PURE__ */ jsxs48(
     "footer",
     {
       role: "contentinfo",
       className: "layer-ui__wrapper__footer App-menu App-menu_bottom",
       children: [
-        /* @__PURE__ */ jsx97(
+        /* @__PURE__ */ jsx92(
           "div",
           {
-            className: clsx42("layer-ui__wrapper__footer-left zen-mode-transition", {
+            className: clsx38("layer-ui__wrapper__footer-left zen-mode-transition", {
               "layer-ui__wrapper__footer-left--transition-left": appState.zenModeEnabled
             }),
-            children: /* @__PURE__ */ jsx97(Stack_default.Col, { gap: 2, children: /* @__PURE__ */ jsxs54(Section, { heading: "canvasActions", children: [
-              /* @__PURE__ */ jsx97(
+            children: /* @__PURE__ */ jsx92(Stack_default.Col, { gap: 2, children: /* @__PURE__ */ jsxs48(Section, { heading: "canvasActions", children: [
+              /* @__PURE__ */ jsx92(
                 ZoomActions,
                 {
                   renderAction: actionManager.renderAction,
                   zoom: appState.zoom
                 }
               ),
-              !appState.viewModeEnabled && /* @__PURE__ */ jsx97(
+              !appState.viewModeEnabled && /* @__PURE__ */ jsx92(
                 UndoRedoActions,
                 {
                   renderAction: actionManager.renderAction,
-                  className: clsx42("zen-mode-transition", {
+                  className: clsx38("zen-mode-transition", {
                     "layer-ui__wrapper__footer-left--transition-bottom": appState.zenModeEnabled
                   })
                 }
               ),
-              showFinalize && /* @__PURE__ */ jsx97(
+              showFinalize && /* @__PURE__ */ jsx92(
                 FinalizeAction,
                 {
                   renderAction: actionManager.renderAction,
-                  className: clsx42("zen-mode-transition", {
+                  className: clsx38("zen-mode-transition", {
                     "layer-ui__wrapper__footer-left--transition-left": appState.zenModeEnabled
                   })
                 }
@@ -16775,25 +16324,20 @@ var Footer = ({
             ] }) })
           }
         ),
-        /* @__PURE__ */ jsx97(FooterCenterTunnel.Out, {}),
-        /* @__PURE__ */ jsx97(
+        /* @__PURE__ */ jsx92(FooterCenterTunnel.Out, {}),
+        /* @__PURE__ */ jsx92(
           "div",
           {
-            className: clsx42("layer-ui__wrapper__footer-right zen-mode-transition", {
+            className: clsx38("layer-ui__wrapper__footer-right zen-mode-transition", {
               "transition-right": appState.zenModeEnabled
             }),
-            children: /* @__PURE__ */ jsxs54("div", { style: { position: "relative" }, children: [
-              renderWelcomeScreen && /* @__PURE__ */ jsx97(WelcomeScreenHelpHintTunnel.Out, {}),
-              /* @__PURE__ */ jsx97(
-                HelpButton,
-                {
-                  onClick: () => actionManager.executeAction(actionShortcuts)
-                }
-              )
+            children: /* @__PURE__ */ jsxs48("div", { style: { position: "relative" }, children: [
+              renderWelcomeScreen && /* @__PURE__ */ jsx92(WelcomeScreenHelpHintTunnel.Out, {}),
+              /* @__PURE__ */ jsx92(CalculatorButton, {})
             ] })
           }
         ),
-        /* @__PURE__ */ jsx97(
+        /* @__PURE__ */ jsx92(
           ExitZenModeAction,
           {
             actionManager,
@@ -16809,13 +16353,13 @@ Footer.displayName = "Footer";
 
 // components/Sidebar/Sidebar.tsx
 import {
-  useEffect as useEffect32,
+  useEffect as useEffect28,
   useLayoutEffect as useLayoutEffect7,
-  useRef as useRef27,
-  useState as useState30,
+  useRef as useRef23,
+  useState as useState28,
   forwardRef as forwardRef5,
   useImperativeHandle as useImperativeHandle2,
-  useCallback as useCallback12
+  useCallback as useCallback11
 } from "react";
 
 // components/Sidebar/common.ts
@@ -16823,9 +16367,9 @@ import React37 from "react";
 var SidebarPropsContext = React37.createContext({});
 
 // components/Sidebar/SidebarHeader.tsx
-import clsx43 from "clsx";
+import clsx39 from "clsx";
 import { useContext as useContext2 } from "react";
-import { jsx as jsx98, jsxs as jsxs55 } from "react/jsx-runtime";
+import { jsx as jsx93, jsxs as jsxs49 } from "react/jsx-runtime";
 var SidebarHeader = ({
   children,
   className
@@ -16833,15 +16377,15 @@ var SidebarHeader = ({
   const device = useDevice();
   const props = useContext2(SidebarPropsContext);
   const renderDockButton = !!(device.editor.canFitSidebar && props.shouldRenderDockButton);
-  return /* @__PURE__ */ jsxs55(
+  return /* @__PURE__ */ jsxs49(
     "div",
     {
-      className: clsx43("sidebar__header", className),
+      className: clsx39("sidebar__header", className),
       "data-testid": "sidebar-header",
       children: [
         children,
-        /* @__PURE__ */ jsxs55("div", { className: "sidebar__header__buttons", children: [
-          renderDockButton && /* @__PURE__ */ jsx98(Tooltip, { label: t("labels.sidebarLock"), children: /* @__PURE__ */ jsx98(
+        /* @__PURE__ */ jsxs49("div", { className: "sidebar__header__buttons", children: [
+          renderDockButton && /* @__PURE__ */ jsx93(Tooltip, { label: t("labels.sidebarLock"), children: /* @__PURE__ */ jsx93(
             Button,
             {
               onSelect: () => props.onDock?.(!props.docked),
@@ -16852,7 +16396,7 @@ var SidebarHeader = ({
               children: PinIcon
             }
           ) }),
-          /* @__PURE__ */ jsx98(
+          /* @__PURE__ */ jsx93(
             Button,
             {
               "data-testid": "sidebar-close",
@@ -16870,11 +16414,11 @@ var SidebarHeader = ({
 SidebarHeader.displayName = "SidebarHeader";
 
 // components/Sidebar/Sidebar.tsx
-import clsx45 from "clsx";
+import clsx41 from "clsx";
 
 // components/Sidebar/SidebarTrigger.tsx
-import clsx44 from "clsx";
-import { jsx as jsx99, jsxs as jsxs56 } from "react/jsx-runtime";
+import clsx40 from "clsx";
+import { jsx as jsx94, jsxs as jsxs50 } from "react/jsx-runtime";
 var SidebarTrigger = ({
   name,
   tab,
@@ -16887,8 +16431,8 @@ var SidebarTrigger = ({
 }) => {
   const setAppState = useExcalidrawSetAppState();
   const appState = useUIAppState();
-  return /* @__PURE__ */ jsxs56("label", { title, className: "sidebar-trigger__label-element", children: [
-    /* @__PURE__ */ jsx99(
+  return /* @__PURE__ */ jsxs50("label", { title, className: "sidebar-trigger__label-element", children: [
+    /* @__PURE__ */ jsx94(
       "input",
       {
         className: "ToolIcon_type_checkbox",
@@ -16904,9 +16448,9 @@ var SidebarTrigger = ({
         "aria-keyshortcuts": "0"
       }
     ),
-    /* @__PURE__ */ jsxs56("div", { className: clsx44("sidebar-trigger", className), style, children: [
-      icon && /* @__PURE__ */ jsx99("div", { children: icon }),
-      children && /* @__PURE__ */ jsx99("div", { className: "sidebar-trigger__label", children })
+    /* @__PURE__ */ jsxs50("div", { className: clsx40("sidebar-trigger", className), style, children: [
+      icon && /* @__PURE__ */ jsx94("div", { children: icon }),
+      children && /* @__PURE__ */ jsx94("div", { className: "sidebar-trigger__label", children })
     ] })
   ] });
 };
@@ -16914,25 +16458,25 @@ SidebarTrigger.displayName = "SidebarTrigger";
 
 // components/Sidebar/SidebarTabTriggers.tsx
 import * as RadixTabs from "@radix-ui/react-tabs";
-import { jsx as jsx100 } from "react/jsx-runtime";
+import { jsx as jsx95 } from "react/jsx-runtime";
 var SidebarTabTriggers = ({
   children,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx100(RadixTabs.List, { className: "sidebar-triggers", ...rest, children });
+  return /* @__PURE__ */ jsx95(RadixTabs.List, { className: "sidebar-triggers", ...rest, children });
 };
 SidebarTabTriggers.displayName = "SidebarTabTriggers";
 
 // components/Sidebar/SidebarTabTrigger.tsx
 import * as RadixTabs2 from "@radix-ui/react-tabs";
-import { jsx as jsx101 } from "react/jsx-runtime";
+import { jsx as jsx96 } from "react/jsx-runtime";
 var SidebarTabTrigger = ({
   children,
   tab,
   onSelect,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx101(RadixTabs2.Trigger, { value: tab, asChild: true, onSelect, children: /* @__PURE__ */ jsx101(
+  return /* @__PURE__ */ jsx96(RadixTabs2.Trigger, { value: tab, asChild: true, onSelect, children: /* @__PURE__ */ jsx96(
     "button",
     {
       type: "button",
@@ -16946,7 +16490,7 @@ SidebarTabTrigger.displayName = "SidebarTabTrigger";
 
 // components/Sidebar/SidebarTabs.tsx
 import * as RadixTabs3 from "@radix-ui/react-tabs";
-import { jsx as jsx102 } from "react/jsx-runtime";
+import { jsx as jsx97 } from "react/jsx-runtime";
 var SidebarTabs = ({
   children,
   ...rest
@@ -16957,7 +16501,7 @@ var SidebarTabs = ({
     return null;
   }
   const { name } = appState.openSidebar;
-  return /* @__PURE__ */ jsx102(
+  return /* @__PURE__ */ jsx97(
     RadixTabs3.Root,
     {
       className: "sidebar-tabs-root",
@@ -16975,18 +16519,18 @@ SidebarTabs.displayName = "SidebarTabs";
 
 // components/Sidebar/SidebarTab.tsx
 import * as RadixTabs4 from "@radix-ui/react-tabs";
-import { jsx as jsx103 } from "react/jsx-runtime";
+import { jsx as jsx98 } from "react/jsx-runtime";
 var SidebarTab = ({
   tab,
   children,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx103(RadixTabs4.Content, { ...rest, value: tab, "data-testid": tab, children });
+  return /* @__PURE__ */ jsx98(RadixTabs4.Content, { ...rest, value: tab, "data-testid": tab, children });
 };
 SidebarTab.displayName = "SidebarTab";
 
 // components/Sidebar/Sidebar.tsx
-import { jsx as jsx104 } from "react/jsx-runtime";
+import { jsx as jsx99 } from "react/jsx-runtime";
 import { createElement } from "react";
 var isSidebarDockedAtom = atom(false);
 var SidebarInner = forwardRef5(
@@ -17011,7 +16555,7 @@ var SidebarInner = forwardRef5(
         setIsSidebarDockedAtom(false);
       };
     }, [setIsSidebarDockedAtom, docked]);
-    const headerPropsRef = useRef27(
+    const headerPropsRef = useRef23(
       {}
     );
     headerPropsRef.current.onCloseRequest = () => {
@@ -17023,12 +16567,12 @@ var SidebarInner = forwardRef5(
       // explicit prop to rerender on update
       shouldRenderDockButton: !!onDock && docked != null
     });
-    const islandRef = useRef27(null);
+    const islandRef = useRef23(null);
     useImperativeHandle2(ref, () => {
       return islandRef.current;
     });
     const device = useDevice();
-    const closeLibrary = useCallback12(() => {
+    const closeLibrary = useCallback11(() => {
       const isDialogOpen = !!document.querySelector(".Dialog");
       if (isDialogOpen) {
         return;
@@ -17037,7 +16581,7 @@ var SidebarInner = forwardRef5(
     }, [setAppState]);
     useOutsideClick(
       islandRef,
-      useCallback12(
+      useCallback11(
         (event) => {
           if (event.target.closest(".sidebar-trigger")) {
             return;
@@ -17049,7 +16593,7 @@ var SidebarInner = forwardRef5(
         [closeLibrary, docked, device.editor.canFitSidebar]
       )
     );
-    useEffect32(() => {
+    useEffect28(() => {
       const handleKeyDown = (event) => {
         if (event.key === KEYS.ESCAPE && (!docked || !device.editor.canFitSidebar)) {
           closeLibrary();
@@ -17060,13 +16604,13 @@ var SidebarInner = forwardRef5(
         document.removeEventListener("keydown" /* KEYDOWN */, handleKeyDown);
       };
     }, [closeLibrary, docked, device.editor.canFitSidebar]);
-    return /* @__PURE__ */ jsx104(
+    return /* @__PURE__ */ jsx99(
       Island,
       {
         ...rest,
-        className: clsx45("sidebar", { "sidebar--docked": docked }, className),
+        className: clsx41("sidebar", { "sidebar--docked": docked }, className),
         ref: islandRef,
-        children: /* @__PURE__ */ jsx104(SidebarPropsContext.Provider, { value: headerPropsRef.current, children })
+        children: /* @__PURE__ */ jsx99(SidebarPropsContext.Provider, { value: headerPropsRef.current, children })
       }
     );
   }
@@ -17076,8 +16620,8 @@ var Sidebar = Object.assign(
   forwardRef5((props, ref) => {
     const appState = useUIAppState();
     const { onStateChange } = props;
-    const refPrevOpenSidebar = useRef27(appState.openSidebar);
-    useEffect32(() => {
+    const refPrevOpenSidebar = useRef23(appState.openSidebar);
+    useEffect28(() => {
       if (
         // closing sidebar
         (!appState.openSidebar && refPrevOpenSidebar?.current?.name === props.name || // opening current sidebar
@@ -17090,7 +16634,7 @@ var Sidebar = Object.assign(
       }
       refPrevOpenSidebar.current = appState.openSidebar;
     }, [appState.openSidebar, onStateChange, props.name]);
-    const [mounted, setMounted] = useState30(false);
+    const [mounted, setMounted] = useState28(false);
     useLayoutEffect7(() => {
       setMounted(true);
       return () => setMounted(false);
@@ -17128,7 +16672,7 @@ __export(DefaultItems_exports, {
   Socials: () => Socials,
   ToggleTheme: () => ToggleTheme
 });
-import clsx46 from "clsx";
+import clsx42 from "clsx";
 
 // components/OverwriteConfirm/OverwriteConfirmState.ts
 var overwriteConfirmStateAtom = atom({
@@ -17155,7 +16699,7 @@ async function openConfirmModal({
 }
 
 // components/dropdownMenu/DropdownMenuItemContentRadio.tsx
-import { Fragment as Fragment16, jsx as jsx105, jsxs as jsxs57 } from "react/jsx-runtime";
+import { Fragment as Fragment15, jsx as jsx100, jsxs as jsxs51 } from "react/jsx-runtime";
 var DropdownMenuItemContentRadio = ({
   value,
   shortcut,
@@ -17165,10 +16709,10 @@ var DropdownMenuItemContentRadio = ({
   name
 }) => {
   const device = useDevice();
-  return /* @__PURE__ */ jsxs57(Fragment16, { children: [
-    /* @__PURE__ */ jsxs57("div", { className: "dropdown-menu-item-base dropdown-menu-item-bare", children: [
-      /* @__PURE__ */ jsx105("label", { className: "dropdown-menu-item__text", htmlFor: name, children }),
-      /* @__PURE__ */ jsx105(
+  return /* @__PURE__ */ jsxs51(Fragment15, { children: [
+    /* @__PURE__ */ jsxs51("div", { className: "dropdown-menu-item-base dropdown-menu-item-bare", children: [
+      /* @__PURE__ */ jsx100("label", { className: "dropdown-menu-item__text", htmlFor: name, children }),
+      /* @__PURE__ */ jsx100(
         RadioGroup,
         {
           name,
@@ -17178,14 +16722,14 @@ var DropdownMenuItemContentRadio = ({
         }
       )
     ] }),
-    shortcut && !device.editor.isMobile && /* @__PURE__ */ jsx105("div", { className: "dropdown-menu-item__shortcut dropdown-menu-item__shortcut--orphaned", children: shortcut })
+    shortcut && !device.editor.isMobile && /* @__PURE__ */ jsx100("div", { className: "dropdown-menu-item__shortcut dropdown-menu-item__shortcut--orphaned", children: shortcut })
   ] });
 };
 DropdownMenuItemContentRadio.displayName = "DropdownMenuItemContentRadio";
 var DropdownMenuItemContentRadio_default = DropdownMenuItemContentRadio;
 
 // components/main-menu/DefaultItems.tsx
-import { Fragment as Fragment17, jsx as jsx106, jsxs as jsxs58 } from "react/jsx-runtime";
+import { Fragment as Fragment16, jsx as jsx101, jsxs as jsxs52 } from "react/jsx-runtime";
 var LoadScene = () => {
   const { t: t2 } = useI18n();
   const actionManager = useExcalidrawActionManager();
@@ -17198,19 +16742,19 @@ var LoadScene = () => {
       title: t2("overwriteConfirm.modal.loadFromFile.title"),
       actionLabel: t2("overwriteConfirm.modal.loadFromFile.button"),
       color: "warning",
-      description: /* @__PURE__ */ jsx106(
+      description: /* @__PURE__ */ jsx101(
         Trans_default,
         {
           i18nKey: "overwriteConfirm.modal.loadFromFile.description",
-          bold: (text) => /* @__PURE__ */ jsx106("strong", { children: text }),
-          br: () => /* @__PURE__ */ jsx106("br", {})
+          bold: (text) => /* @__PURE__ */ jsx101("strong", { children: text }),
+          br: () => /* @__PURE__ */ jsx101("br", {})
         }
       )
     })) {
       actionManager.executeAction(actionLoadScene);
     }
   };
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       icon: LoadIcon,
@@ -17229,7 +16773,7 @@ var SaveToActiveFile = () => {
   if (!actionManager.isActionEnabled(actionSaveToActiveFile)) {
     return null;
   }
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       shortcut: getShortcutFromShortcutName("saveScene"),
@@ -17245,7 +16789,7 @@ SaveToActiveFile.displayName = "SaveToActiveFile";
 var SaveAsImage = () => {
   const setAppState = useExcalidrawSetAppState();
   const { t: t2 } = useI18n();
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       icon: ExportImageIcon,
@@ -17261,7 +16805,7 @@ SaveAsImage.displayName = "SaveAsImage";
 var CommandPalette2 = (opts) => {
   const setAppState = useExcalidrawSetAppState();
   const { t: t2 } = useI18n();
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       icon: boltIcon,
@@ -17281,7 +16825,7 @@ CommandPalette2.displayName = "CommandPalette";
 var SearchMenu = (opts) => {
   const { t: t2 } = useI18n();
   const actionManager = useExcalidrawActionManager();
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       icon: searchIcon,
@@ -17300,7 +16844,7 @@ SearchMenu.displayName = "SearchMenu";
 var Help = () => {
   const { t: t2 } = useI18n();
   const actionManager = useExcalidrawActionManager();
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       "data-testid": "help-menu-item",
@@ -17320,7 +16864,7 @@ var ClearCanvas = () => {
   if (!actionManager.isActionEnabled(actionClearCanvas)) {
     return null;
   }
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       icon: TrashIcon,
@@ -17341,7 +16885,7 @@ var ToggleTheme = (props) => {
     return null;
   }
   if (props?.allowSystemTheme) {
-    return /* @__PURE__ */ jsx106(
+    return /* @__PURE__ */ jsx101(
       DropdownMenuItemContentRadio_default,
       {
         name: "theme",
@@ -17368,7 +16912,7 @@ var ToggleTheme = (props) => {
       }
     );
   }
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       onSelect: (event) => {
@@ -17398,8 +16942,8 @@ var ChangeCanvasBackground = () => {
   if (appState.viewModeEnabled || !appProps.UIOptions.canvasActions.changeViewBackgroundColor) {
     return null;
   }
-  return /* @__PURE__ */ jsxs58("div", { style: { marginTop: "0.5rem" }, children: [
-    /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsxs52("div", { style: { marginTop: "0.5rem" }, children: [
+    /* @__PURE__ */ jsx101(
       "div",
       {
         "data-testid": "canvas-background-label",
@@ -17407,14 +16951,14 @@ var ChangeCanvasBackground = () => {
         children: t2("labels.canvasBackground")
       }
     ),
-    /* @__PURE__ */ jsx106("div", { style: { padding: "0 0.625rem" }, children: actionManager.renderAction("changeViewBackgroundColor") })
+    /* @__PURE__ */ jsx101("div", { style: { padding: "0 0.625rem" }, children: actionManager.renderAction("changeViewBackgroundColor") })
   ] });
 };
 ChangeCanvasBackground.displayName = "ChangeCanvasBackground";
 var Export = () => {
   const { t: t2 } = useI18n();
   const setAppState = useExcalidrawSetAppState();
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       icon: ExportIcon,
@@ -17430,8 +16974,8 @@ var Export = () => {
 Export.displayName = "Export";
 var Socials = () => {
   const { t: t2 } = useI18n();
-  return /* @__PURE__ */ jsxs58(Fragment17, { children: [
-    /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsxs52(Fragment16, { children: [
+    /* @__PURE__ */ jsx101(
       DropdownMenuItemLink_default,
       {
         icon: GithubIcon,
@@ -17440,7 +16984,7 @@ var Socials = () => {
         children: "GitHub"
       }
     ),
-    /* @__PURE__ */ jsx106(
+    /* @__PURE__ */ jsx101(
       DropdownMenuItemLink_default,
       {
         icon: XBrandIcon,
@@ -17449,7 +16993,7 @@ var Socials = () => {
         children: t2("labels.followUs")
       }
     ),
-    /* @__PURE__ */ jsx106(
+    /* @__PURE__ */ jsx101(
       DropdownMenuItemLink_default,
       {
         icon: DiscordIcon,
@@ -17466,12 +17010,12 @@ var LiveCollaborationTrigger = ({
   isCollaborating
 }) => {
   const { t: t2 } = useI18n();
-  return /* @__PURE__ */ jsx106(
+  return /* @__PURE__ */ jsx101(
     DropdownMenuItem_default,
     {
       "data-testid": "collab-button",
       icon: usersIcon,
-      className: clsx46({
+      className: clsx42({
         "active-collab": isCollaborating
       }),
       onSelect,
@@ -17482,8 +17026,8 @@ var LiveCollaborationTrigger = ({
 LiveCollaborationTrigger.displayName = "LiveCollaborationTrigger";
 
 // components/hoc/withInternalFallback.tsx
-import { useLayoutEffect as useLayoutEffect8, useRef as useRef28 } from "react";
-import { jsx as jsx107 } from "react/jsx-runtime";
+import { useLayoutEffect as useLayoutEffect8, useRef as useRef24 } from "react";
+import { jsx as jsx102 } from "react/jsx-runtime";
 var withInternalFallback = (componentName, Component) => {
   const renderAtom = atom(0);
   const WrapperComponent = (props) => {
@@ -17491,7 +17035,7 @@ var withInternalFallback = (componentName, Component) => {
       tunnelsJotai: { useAtom: useAtom2 }
     } = useTunnels();
     const [, setCounter] = useAtom2(renderAtom);
-    const metaRef = useRef28({
+    const metaRef = useRef24({
       // flag set on initial render to tell the fallback component to skip the
       // render until mount counter are initialized. This is because the counter
       // is initialized in an effect, and thus we could end rendering both
@@ -17528,14 +17072,14 @@ var withInternalFallback = (componentName, Component) => {
     ) {
       return null;
     }
-    return /* @__PURE__ */ jsx107(Component, { ...props });
+    return /* @__PURE__ */ jsx102(Component, { ...props });
   };
   WrapperComponent.displayName = componentName;
   return WrapperComponent;
 };
 
 // components/main-menu/MainMenu.tsx
-import { jsx as jsx108, jsxs as jsxs59 } from "react/jsx-runtime";
+import { jsx as jsx103, jsxs as jsxs53 } from "react/jsx-runtime";
 var MainMenu = Object.assign(
   withInternalFallback(
     "MainMenu",
@@ -17548,8 +17092,8 @@ var MainMenu = Object.assign(
       const appState = useUIAppState();
       const setAppState = useExcalidrawSetAppState();
       const onClickOutside = device.editor.isMobile ? void 0 : () => setAppState({ openMenu: null });
-      return /* @__PURE__ */ jsx108(MainMenuTunnel.In, { children: /* @__PURE__ */ jsxs59(DropdownMenu_default, { open: appState.openMenu === "canvas", children: [
-        /* @__PURE__ */ jsx108(
+      return /* @__PURE__ */ jsx103(MainMenuTunnel.In, { children: /* @__PURE__ */ jsxs53(DropdownMenu_default, { open: appState.openMenu === "canvas", children: [
+        /* @__PURE__ */ jsx103(
           DropdownMenu_default.Trigger,
           {
             onToggle: () => {
@@ -17562,7 +17106,7 @@ var MainMenu = Object.assign(
             children: HamburgerMenuIcon
           }
         ),
-        /* @__PURE__ */ jsxs59(
+        /* @__PURE__ */ jsxs53(
           DropdownMenu_default.Content,
           {
             onClickOutside,
@@ -17571,9 +17115,9 @@ var MainMenu = Object.assign(
             }),
             children: [
               children,
-              device.editor.isMobile && appState.collaborators.size > 0 && /* @__PURE__ */ jsxs59("fieldset", { className: "UserList-Wrapper", children: [
-                /* @__PURE__ */ jsx108("legend", { children: t("labels.collaborators") }),
-                /* @__PURE__ */ jsx108(
+              device.editor.isMobile && appState.collaborators.size > 0 && /* @__PURE__ */ jsxs53("fieldset", { className: "UserList-Wrapper", children: [
+                /* @__PURE__ */ jsx103("legend", { children: t("labels.collaborators") }),
+                /* @__PURE__ */ jsx103(
                   UserList,
                   {
                     mobile: true,
@@ -17601,17 +17145,17 @@ var MainMenu = Object.assign(
 var MainMenu_default = MainMenu;
 
 // components/OverwriteConfirm/OverwriteConfirmActions.tsx
-import { jsx as jsx109, jsxs as jsxs60 } from "react/jsx-runtime";
+import { jsx as jsx104, jsxs as jsxs54 } from "react/jsx-runtime";
 var Action = ({
   title,
   children,
   actionLabel,
   onClick
 }) => {
-  return /* @__PURE__ */ jsxs60("div", { className: "OverwriteConfirm__Actions__Action", children: [
-    /* @__PURE__ */ jsx109("h4", { children: title }),
-    /* @__PURE__ */ jsx109("div", { className: "OverwriteConfirm__Actions__Action__content", children }),
-    /* @__PURE__ */ jsx109(
+  return /* @__PURE__ */ jsxs54("div", { className: "OverwriteConfirm__Actions__Action", children: [
+    /* @__PURE__ */ jsx104("h4", { children: title }),
+    /* @__PURE__ */ jsx104("div", { className: "OverwriteConfirm__Actions__Action__content", children }),
+    /* @__PURE__ */ jsx104(
       FilledButton,
       {
         variant: "outlined",
@@ -17628,7 +17172,7 @@ var ExportToImage = () => {
   const { t: t2 } = useI18n();
   const actionManager = useExcalidrawActionManager();
   const setAppState = useExcalidrawSetAppState();
-  return /* @__PURE__ */ jsx109(
+  return /* @__PURE__ */ jsx104(
     Action,
     {
       title: t2("overwriteConfirm.action.exportToImage.title"),
@@ -17644,7 +17188,7 @@ var ExportToImage = () => {
 var SaveToDisk = () => {
   const { t: t2 } = useI18n();
   const actionManager = useExcalidrawActionManager();
-  return /* @__PURE__ */ jsx109(
+  return /* @__PURE__ */ jsx104(
     Action,
     {
       title: t2("overwriteConfirm.action.saveToDisk.title"),
@@ -17658,7 +17202,7 @@ var SaveToDisk = () => {
 };
 var Actions = Object.assign(
   ({ children }) => {
-    return /* @__PURE__ */ jsx109("div", { className: "OverwriteConfirm__Actions", children });
+    return /* @__PURE__ */ jsx104("div", { className: "OverwriteConfirm__Actions", children });
   },
   {
     ExportToImage,
@@ -17667,7 +17211,7 @@ var Actions = Object.assign(
 );
 
 // components/OverwriteConfirm/OverwriteConfirm.tsx
-import { jsx as jsx110, jsxs as jsxs61 } from "react/jsx-runtime";
+import { jsx as jsx105, jsxs as jsxs55 } from "react/jsx-runtime";
 var OverwriteConfirmDialog = Object.assign(
   withInternalFallback(
     "OverwriteConfirmDialog",
@@ -17687,17 +17231,17 @@ var OverwriteConfirmDialog = Object.assign(
         overwriteConfirmState.onConfirm();
         setState((state) => ({ ...state, active: false }));
       };
-      return /* @__PURE__ */ jsx110(OverwriteConfirmDialogTunnel.In, { children: /* @__PURE__ */ jsx110(Dialog, { onCloseRequest: handleClose, title: false, size: 916, children: /* @__PURE__ */ jsxs61("div", { className: "OverwriteConfirm", children: [
-        /* @__PURE__ */ jsx110("h3", { children: overwriteConfirmState.title }),
-        /* @__PURE__ */ jsxs61(
+      return /* @__PURE__ */ jsx105(OverwriteConfirmDialogTunnel.In, { children: /* @__PURE__ */ jsx105(Dialog, { onCloseRequest: handleClose, title: false, size: 916, children: /* @__PURE__ */ jsxs55("div", { className: "OverwriteConfirm", children: [
+        /* @__PURE__ */ jsx105("h3", { children: overwriteConfirmState.title }),
+        /* @__PURE__ */ jsxs55(
           "div",
           {
             className: `OverwriteConfirm__Description OverwriteConfirm__Description--color-${overwriteConfirmState.color}`,
             children: [
-              /* @__PURE__ */ jsx110("div", { className: "OverwriteConfirm__Description__icon", children: alertTriangleIcon }),
-              /* @__PURE__ */ jsx110("div", { children: overwriteConfirmState.description }),
-              /* @__PURE__ */ jsx110("div", { className: "OverwriteConfirm__Description__spacer" }),
-              /* @__PURE__ */ jsx110(
+              /* @__PURE__ */ jsx105("div", { className: "OverwriteConfirm__Description__icon", children: alertTriangleIcon }),
+              /* @__PURE__ */ jsx105("div", { children: overwriteConfirmState.description }),
+              /* @__PURE__ */ jsx105("div", { className: "OverwriteConfirm__Description__spacer" }),
+              /* @__PURE__ */ jsx105(
                 FilledButton,
                 {
                   color: overwriteConfirmState.color,
@@ -17709,7 +17253,7 @@ var OverwriteConfirmDialog = Object.assign(
             ]
           }
         ),
-        /* @__PURE__ */ jsx110(Actions, { children })
+        /* @__PURE__ */ jsx105(Actions, { children })
       ] }) }) });
     }
   ),
@@ -17720,32 +17264,32 @@ var OverwriteConfirmDialog = Object.assign(
 );
 
 // components/DefaultSidebar.tsx
-import clsx48 from "clsx";
+import clsx44 from "clsx";
 
 // components/SearchMenu.tsx
-import { Fragment as Fragment18, memo as memo4, useEffect as useEffect33, useRef as useRef29, useState as useState31 } from "react";
+import { Fragment as Fragment17, memo as memo4, useEffect as useEffect29, useRef as useRef25, useState as useState29 } from "react";
 import debounce2 from "lodash.debounce";
-import clsx47 from "clsx";
-import { Fragment as Fragment19, jsx as jsx111, jsxs as jsxs62 } from "react/jsx-runtime";
+import clsx43 from "clsx";
+import { Fragment as Fragment18, jsx as jsx106, jsxs as jsxs56 } from "react/jsx-runtime";
 var searchQueryAtom = atom("");
 var searchItemInFocusAtom = atom(null);
 var SEARCH_DEBOUNCE = 350;
 var SearchMenu2 = () => {
   const app = useApp();
   const setAppState = useExcalidrawSetAppState();
-  const searchInputRef = useRef29(null);
+  const searchInputRef = useRef25(null);
   const [inputValue, setInputValue] = useAtom(searchQueryAtom);
   const searchQuery = inputValue.trim();
-  const [isSearching, setIsSearching] = useState31(false);
-  const [searchMatches, setSearchMatches] = useState31({
+  const [isSearching, setIsSearching] = useState29(false);
+  const [searchMatches, setSearchMatches] = useState29({
     nonce: null,
     items: []
   });
-  const searchedQueryRef = useRef29(null);
-  const lastSceneNonceRef = useRef29(void 0);
+  const searchedQueryRef = useRef25(null);
+  const lastSceneNonceRef = useRef25(void 0);
   const [focusIndex, setFocusIndex] = useAtom(searchItemInFocusAtom);
   const elementsMap = app.scene.getNonDeletedElementsMap();
-  useEffect33(() => {
+  useEffect29(() => {
     if (isSearching) {
       return;
     }
@@ -17796,7 +17340,7 @@ var SearchMenu2 = () => {
       });
     }
   };
-  useEffect33(() => {
+  useEffect29(() => {
     setAppState((state) => {
       return {
         searchMatches: state.searchMatches.map((match, index) => {
@@ -17808,7 +17352,7 @@ var SearchMenu2 = () => {
       };
     });
   }, [focusIndex, setAppState]);
-  useEffect33(() => {
+  useEffect29(() => {
     if (searchMatches.items.length > 0 && focusIndex !== null) {
       const match = searchMatches.items[focusIndex];
       if (match) {
@@ -17863,7 +17407,7 @@ var SearchMenu2 = () => {
       }
     }
   }, [focusIndex, searchMatches, app]);
-  useEffect33(() => {
+  useEffect29(() => {
     return () => {
       setFocusIndex(null);
       searchedQueryRef.current = null;
@@ -17879,7 +17423,7 @@ var SearchMenu2 = () => {
     goToPreviousItem,
     searchMatches
   });
-  useEffect33(() => {
+  useEffect29(() => {
     const eventHandler = (event) => {
       if (event.key === KEYS.ESCAPE && !app.state.openDialog && !app.state.openPopup) {
         event.preventDefault();
@@ -17928,8 +17472,8 @@ var SearchMenu2 = () => {
     });
   }, [setAppState, stableState, app]);
   const matchCount = `${searchMatches.items.length} ${searchMatches.items.length === 1 ? t("search.singleResult") : t("search.multipleResults")}`;
-  return /* @__PURE__ */ jsxs62("div", { className: "layer-ui__search", children: [
-    /* @__PURE__ */ jsx111("div", { className: "layer-ui__search-header", children: /* @__PURE__ */ jsx111(
+  return /* @__PURE__ */ jsxs56("div", { className: "layer-ui__search", children: [
+    /* @__PURE__ */ jsx106("div", { className: "layer-ui__search-header", children: /* @__PURE__ */ jsx106(
       TextField,
       {
         className: CLASSES.SEARCH_MENU_INPUT_WRAPPER,
@@ -17962,15 +17506,15 @@ var SearchMenu2 = () => {
         selectOnRender: true
       }
     ) }),
-    /* @__PURE__ */ jsxs62("div", { className: "layer-ui__search-count", children: [
-      searchMatches.items.length > 0 && /* @__PURE__ */ jsxs62(Fragment19, { children: [
-        focusIndex !== null && focusIndex > -1 ? /* @__PURE__ */ jsxs62("div", { children: [
+    /* @__PURE__ */ jsxs56("div", { className: "layer-ui__search-count", children: [
+      searchMatches.items.length > 0 && /* @__PURE__ */ jsxs56(Fragment18, { children: [
+        focusIndex !== null && focusIndex > -1 ? /* @__PURE__ */ jsxs56("div", { children: [
           focusIndex + 1,
           " / ",
           matchCount
-        ] }) : /* @__PURE__ */ jsx111("div", { children: matchCount }),
-        /* @__PURE__ */ jsxs62("div", { className: "result-nav", children: [
-          /* @__PURE__ */ jsx111(
+        ] }) : /* @__PURE__ */ jsx106("div", { children: matchCount }),
+        /* @__PURE__ */ jsxs56("div", { className: "result-nav", children: [
+          /* @__PURE__ */ jsx106(
             Button,
             {
               onSelect: () => {
@@ -17980,7 +17524,7 @@ var SearchMenu2 = () => {
               children: collapseDownIcon
             }
           ),
-          /* @__PURE__ */ jsx111(
+          /* @__PURE__ */ jsx106(
             Button,
             {
               onSelect: () => {
@@ -17992,9 +17536,9 @@ var SearchMenu2 = () => {
           )
         ] })
       ] }),
-      searchMatches.items.length === 0 && searchQuery && searchedQueryRef.current && /* @__PURE__ */ jsx111("div", { style: { margin: "1rem auto" }, children: t("search.noMatch") })
+      searchMatches.items.length === 0 && searchQuery && searchedQueryRef.current && /* @__PURE__ */ jsx106("div", { style: { margin: "1rem auto" }, children: t("search.noMatch") })
     ] }),
-    /* @__PURE__ */ jsx111(
+    /* @__PURE__ */ jsx106(
       MatchList,
       {
         matches: searchMatches,
@@ -18018,11 +17562,11 @@ var ListItem = (props) => {
     ),
     props.preview.moreAfter ? "..." : ""
   ];
-  return /* @__PURE__ */ jsx111(
+  return /* @__PURE__ */ jsx106(
     "div",
     {
       tabIndex: -1,
-      className: clsx47("layer-ui__result-item", {
+      className: clsx43("layer-ui__result-item", {
         active: props.highlighted
       }),
       onClick: props.onClick,
@@ -18031,12 +17575,12 @@ var ListItem = (props) => {
           ref?.scrollIntoView({ behavior: "auto", block: "nearest" });
         }
       },
-      children: /* @__PURE__ */ jsx111("div", { className: "preview-text", children: preview.flatMap((text, idx) => /* @__PURE__ */ jsx111(Fragment18, { children: idx === 2 ? /* @__PURE__ */ jsx111("b", { children: text }) : text }, idx)) })
+      children: /* @__PURE__ */ jsx106("div", { className: "preview-text", children: preview.flatMap((text, idx) => /* @__PURE__ */ jsx106(Fragment17, { children: idx === 2 ? /* @__PURE__ */ jsx106("b", { children: text }) : text }, idx)) })
     }
   );
 };
 var MatchListBase = (props) => {
-  return /* @__PURE__ */ jsx111("div", { className: "layer-ui__search-result-container", children: props.matches.items.map((searchMatch, index) => /* @__PURE__ */ jsx111(
+  return /* @__PURE__ */ jsx106("div", { className: "layer-ui__search-result-container", children: props.matches.items.map((searchMatch, index) => /* @__PURE__ */ jsx106(
     ListItem,
     {
       searchQuery: props.searchQuery,
@@ -18217,13 +17761,13 @@ var handleSearch = debounce2(
 );
 
 // components/DefaultSidebar.tsx
-import { jsx as jsx112, jsxs as jsxs63 } from "react/jsx-runtime";
+import { jsx as jsx107, jsxs as jsxs57 } from "react/jsx-runtime";
 import { createElement as createElement2 } from "react";
 var DefaultSidebarTrigger = withInternalFallback(
   "DefaultSidebarTrigger",
   (props) => {
     const { DefaultSidebarTriggerTunnel } = useTunnels();
-    return /* @__PURE__ */ jsx112(DefaultSidebarTriggerTunnel.In, { children: /* @__PURE__ */ jsx112(
+    return /* @__PURE__ */ jsx107(DefaultSidebarTriggerTunnel.In, { children: /* @__PURE__ */ jsx107(
       Sidebar.Trigger,
       {
         ...props,
@@ -18236,7 +17780,7 @@ var DefaultSidebarTrigger = withInternalFallback(
 DefaultSidebarTrigger.displayName = "DefaultSidebarTrigger";
 var DefaultTabTriggers = ({ children }) => {
   const { DefaultSidebarTabTriggersTunnel } = useTunnels();
-  return /* @__PURE__ */ jsx112(DefaultSidebarTabTriggersTunnel.In, { children });
+  return /* @__PURE__ */ jsx107(DefaultSidebarTabTriggersTunnel.In, { children });
 };
 DefaultTabTriggers.displayName = "DefaultTabTriggers";
 var DefaultSidebar = Object.assign(
@@ -18259,7 +17803,7 @@ var DefaultSidebar = Object.assign(
           ...rest,
           name: "default",
           key: "default",
-          className: clsx48("default-sidebar", className),
+          className: clsx44("default-sidebar", className),
           docked: isForceDocked || (docked ?? appState.defaultSidebarDockedPreference),
           onDock: (
             // `onDock=false` disables docking.
@@ -18272,14 +17816,14 @@ var DefaultSidebar = Object.assign(
             )
           )
         },
-        /* @__PURE__ */ jsxs63(Sidebar.Tabs, { children: [
-          /* @__PURE__ */ jsx112(Sidebar.Header, { children: /* @__PURE__ */ jsxs63(Sidebar.TabTriggers, { children: [
-            /* @__PURE__ */ jsx112(Sidebar.TabTrigger, { tab: CANVAS_SEARCH_TAB, children: searchIcon }),
-            /* @__PURE__ */ jsx112(Sidebar.TabTrigger, { tab: LIBRARY_SIDEBAR_TAB, children: LibraryIcon }),
-            /* @__PURE__ */ jsx112(DefaultSidebarTabTriggersTunnel.Out, {})
+        /* @__PURE__ */ jsxs57(Sidebar.Tabs, { children: [
+          /* @__PURE__ */ jsx107(Sidebar.Header, { children: /* @__PURE__ */ jsxs57(Sidebar.TabTriggers, { children: [
+            /* @__PURE__ */ jsx107(Sidebar.TabTrigger, { tab: CANVAS_SEARCH_TAB, children: searchIcon }),
+            /* @__PURE__ */ jsx107(Sidebar.TabTrigger, { tab: LIBRARY_SIDEBAR_TAB, children: LibraryIcon }),
+            /* @__PURE__ */ jsx107(DefaultSidebarTabTriggersTunnel.Out, {})
           ] }) }),
-          /* @__PURE__ */ jsx112(Sidebar.Tab, { tab: LIBRARY_SIDEBAR_TAB, children: /* @__PURE__ */ jsx112(LibraryMenu, {}) }),
-          /* @__PURE__ */ jsx112(Sidebar.Tab, { tab: CANVAS_SEARCH_TAB, children: /* @__PURE__ */ jsx112(SearchMenu2, {}) }),
+          /* @__PURE__ */ jsx107(Sidebar.Tab, { tab: LIBRARY_SIDEBAR_TAB, children: /* @__PURE__ */ jsx107(LibraryMenu, {}) }),
+          /* @__PURE__ */ jsx107(Sidebar.Tab, { tab: CANVAS_SEARCH_TAB, children: /* @__PURE__ */ jsx107(SearchMenu2, {}) }),
           children
         ] })
       );
@@ -18292,14 +17836,14 @@ var DefaultSidebar = Object.assign(
 );
 
 // components/LaserPointerButton.tsx
-import clsx49 from "clsx";
-import { jsx as jsx113, jsxs as jsxs64 } from "react/jsx-runtime";
+import clsx45 from "clsx";
+import { jsx as jsx108, jsxs as jsxs58 } from "react/jsx-runtime";
 var DEFAULT_SIZE3 = "small";
 var LaserPointerButton = (props) => {
-  return /* @__PURE__ */ jsxs64(
+  return /* @__PURE__ */ jsxs58(
     "label",
     {
-      className: clsx49(
+      className: clsx45(
         "ToolIcon ToolIcon__LaserPointer",
         `ToolIcon_size_${DEFAULT_SIZE3}`,
         {
@@ -18308,7 +17852,7 @@ var LaserPointerButton = (props) => {
       ),
       title: `${props.title}`,
       children: [
-        /* @__PURE__ */ jsx113(
+        /* @__PURE__ */ jsx108(
           "input",
           {
             className: "ToolIcon_type_checkbox",
@@ -18320,14 +17864,14 @@ var LaserPointerButton = (props) => {
             "data-testid": "toolbar-LaserPointer"
           }
         ),
-        /* @__PURE__ */ jsx113("div", { className: "ToolIcon__icon", children: laserPointerToolIcon })
+        /* @__PURE__ */ jsx108("div", { className: "ToolIcon__icon", children: laserPointerToolIcon })
       ]
     }
   );
 };
 
 // components/TTDDialog/MermaidToExcalidraw.tsx
-import { useState as useState32, useRef as useRef31, useEffect as useEffect35, useDeferredValue } from "react";
+import { useState as useState30, useRef as useRef27, useEffect as useEffect31, useDeferredValue } from "react";
 
 // components/TTDDialog/common.ts
 var resetPreview = ({
@@ -18433,14 +17977,14 @@ var insertToEditor = ({
 };
 
 // components/TTDDialog/TTDDialogPanels.tsx
-import { jsx as jsx114 } from "react/jsx-runtime";
+import { jsx as jsx109 } from "react/jsx-runtime";
 var TTDDialogPanels = ({ children }) => {
-  return /* @__PURE__ */ jsx114("div", { className: "ttd-dialog-panels", children });
+  return /* @__PURE__ */ jsx109("div", { className: "ttd-dialog-panels", children });
 };
 
 // components/TTDDialog/TTDDialogPanel.tsx
-import clsx50 from "clsx";
-import { jsx as jsx115, jsxs as jsxs65 } from "react/jsx-runtime";
+import clsx46 from "clsx";
+import { jsx as jsx110, jsxs as jsxs59 } from "react/jsx-runtime";
 var TTDDialogPanel = ({
   label,
   children,
@@ -18451,21 +17995,21 @@ var TTDDialogPanel = ({
   renderSubmitShortcut,
   renderBottomRight
 }) => {
-  return /* @__PURE__ */ jsxs65("div", { className: "ttd-dialog-panel", children: [
-    /* @__PURE__ */ jsxs65("div", { className: "ttd-dialog-panel__header", children: [
-      /* @__PURE__ */ jsx115("label", { children: label }),
+  return /* @__PURE__ */ jsxs59("div", { className: "ttd-dialog-panel", children: [
+    /* @__PURE__ */ jsxs59("div", { className: "ttd-dialog-panel__header", children: [
+      /* @__PURE__ */ jsx110("label", { children: label }),
       renderTopRight?.()
     ] }),
     children,
-    /* @__PURE__ */ jsxs65(
+    /* @__PURE__ */ jsxs59(
       "div",
       {
-        className: clsx50("ttd-dialog-panel-button-container", {
+        className: clsx46("ttd-dialog-panel-button-container", {
           invisible: !panelAction
         }),
         style: { display: "flex", alignItems: "center" },
         children: [
-          /* @__PURE__ */ jsxs65(
+          /* @__PURE__ */ jsxs59(
             Button,
             {
               className: "ttd-dialog-panel-button",
@@ -18473,11 +18017,11 @@ var TTDDialogPanel = ({
               },
               disabled: panelActionDisabled || onTextSubmitInProgess,
               children: [
-                /* @__PURE__ */ jsxs65("div", { className: clsx50({ invisible: onTextSubmitInProgess }), children: [
+                /* @__PURE__ */ jsxs59("div", { className: clsx46({ invisible: onTextSubmitInProgess }), children: [
                   panelAction?.label,
-                  panelAction?.icon && /* @__PURE__ */ jsx115("span", { children: panelAction.icon })
+                  panelAction?.icon && /* @__PURE__ */ jsx110("span", { children: panelAction.icon })
                 ] }),
-                onTextSubmitInProgess && /* @__PURE__ */ jsx115(Spinner_default, {})
+                onTextSubmitInProgess && /* @__PURE__ */ jsx110(Spinner_default, {})
               ]
             }
           ),
@@ -18490,18 +18034,18 @@ var TTDDialogPanel = ({
 };
 
 // components/TTDDialog/TTDDialogInput.tsx
-import { useEffect as useEffect34, useRef as useRef30 } from "react";
-import { jsx as jsx116 } from "react/jsx-runtime";
+import { useEffect as useEffect30, useRef as useRef26 } from "react";
+import { jsx as jsx111 } from "react/jsx-runtime";
 var TTDDialogInput = ({
   input,
   placeholder,
   onChange,
   onKeyboardSubmit
 }) => {
-  const ref = useRef30(null);
-  const callbackRef = useRef30(onKeyboardSubmit);
+  const ref = useRef26(null);
+  const callbackRef = useRef26(onKeyboardSubmit);
   callbackRef.current = onKeyboardSubmit;
-  useEffect34(() => {
+  useEffect30(() => {
     if (!callbackRef.current) {
       return;
     }
@@ -18519,7 +18063,7 @@ var TTDDialogInput = ({
       };
     }
   }, []);
-  return /* @__PURE__ */ jsx116(
+  return /* @__PURE__ */ jsx111(
     "textarea",
     {
       className: "ttd-dialog-input",
@@ -18533,16 +18077,16 @@ var TTDDialogInput = ({
 };
 
 // components/TTDDialog/TTDDialogOutput.tsx
-import { jsx as jsx117, jsxs as jsxs66 } from "react/jsx-runtime";
+import { jsx as jsx112, jsxs as jsxs60 } from "react/jsx-runtime";
 var ErrorComp = ({ error }) => {
-  return /* @__PURE__ */ jsxs66(
+  return /* @__PURE__ */ jsxs60(
     "div",
     {
       "data-testid": "ttd-dialog-output-error",
       className: "ttd-dialog-output-error",
       children: [
         "Error! ",
-        /* @__PURE__ */ jsx117("p", { children: error })
+        /* @__PURE__ */ jsx112("p", { children: error })
       ]
     }
   );
@@ -18552,44 +18096,44 @@ var TTDDialogOutput = ({
   canvasRef,
   loaded
 }) => {
-  return /* @__PURE__ */ jsxs66("div", { className: "ttd-dialog-output-wrapper", children: [
-    error && /* @__PURE__ */ jsx117(ErrorComp, { error: error.message }),
-    loaded ? /* @__PURE__ */ jsx117(
+  return /* @__PURE__ */ jsxs60("div", { className: "ttd-dialog-output-wrapper", children: [
+    error && /* @__PURE__ */ jsx112(ErrorComp, { error: error.message }),
+    loaded ? /* @__PURE__ */ jsx112(
       "div",
       {
         ref: canvasRef,
         style: { opacity: error ? "0.15" : 1 },
         className: "ttd-dialog-output-canvas-container"
       }
-    ) : /* @__PURE__ */ jsx117(Spinner_default, { size: "2rem" })
+    ) : /* @__PURE__ */ jsx112(Spinner_default, { size: "2rem" })
   ] });
 };
 
 // components/TTDDialog/TTDDialogSubmitShortcut.tsx
-import { jsx as jsx118, jsxs as jsxs67 } from "react/jsx-runtime";
+import { jsx as jsx113, jsxs as jsxs61 } from "react/jsx-runtime";
 var TTDDialogSubmitShortcut = () => {
-  return /* @__PURE__ */ jsxs67("div", { className: "ttd-dialog-submit-shortcut", children: [
-    /* @__PURE__ */ jsx118("div", { className: "ttd-dialog-submit-shortcut__key", children: getShortcutKey("CtrlOrCmd") }),
-    /* @__PURE__ */ jsx118("div", { className: "ttd-dialog-submit-shortcut__key", children: getShortcutKey("Enter") })
+  return /* @__PURE__ */ jsxs61("div", { className: "ttd-dialog-submit-shortcut", children: [
+    /* @__PURE__ */ jsx113("div", { className: "ttd-dialog-submit-shortcut__key", children: getShortcutKey("CtrlOrCmd") }),
+    /* @__PURE__ */ jsx113("div", { className: "ttd-dialog-submit-shortcut__key", children: getShortcutKey("Enter") })
   ] });
 };
 
 // components/TTDDialog/MermaidToExcalidraw.tsx
-import { Fragment as Fragment20, jsx as jsx119, jsxs as jsxs68 } from "react/jsx-runtime";
+import { Fragment as Fragment19, jsx as jsx114, jsxs as jsxs62 } from "react/jsx-runtime";
 var MERMAID_EXAMPLE = "flowchart TD\n A[Christmas] -->|Get money| B(Go shopping)\n B --> C{Let me think}\n C -->|One| D[Laptop]\n C -->|Two| E[iPhone]\n C -->|Three| F[Car]";
 var debouncedSaveMermaidDefinition = debounce(saveMermaidDataToStorage, 300);
 var MermaidToExcalidraw = ({
   mermaidToExcalidrawLib
 }) => {
-  const [text, setText] = useState32(
+  const [text, setText] = useState30(
     () => EditorLocalStorage.get(EDITOR_LS_KEYS.MERMAID_TO_EXCALIDRAW) || MERMAID_EXAMPLE
   );
   const deferredText = useDeferredValue(text.trim());
-  const [error, setError] = useState32(null);
-  const canvasRef = useRef31(null);
-  const data = useRef31({ elements: [], files: null });
+  const [error, setError] = useState30(null);
+  const canvasRef = useRef27(null);
+  const data = useRef27({ elements: [], files: null });
   const app = useApp();
-  useEffect35(() => {
+  useEffect31(() => {
     convertMermaidToExcalidraw({
       canvasRef,
       data,
@@ -18603,7 +18147,7 @@ var MermaidToExcalidraw = ({
     });
     debouncedSaveMermaidDefinition(deferredText);
   }, [deferredText, mermaidToExcalidrawLib]);
-  useEffect35(
+  useEffect31(
     () => () => {
       debouncedSaveMermaidDefinition.flush();
     },
@@ -18617,18 +18161,18 @@ var MermaidToExcalidraw = ({
       shouldSaveMermaidDataToStorage: true
     });
   };
-  return /* @__PURE__ */ jsxs68(Fragment20, { children: [
-    /* @__PURE__ */ jsx119("div", { className: "ttd-dialog-desc", children: /* @__PURE__ */ jsx119(
+  return /* @__PURE__ */ jsxs62(Fragment19, { children: [
+    /* @__PURE__ */ jsx114("div", { className: "ttd-dialog-desc", children: /* @__PURE__ */ jsx114(
       Trans_default,
       {
         i18nKey: "mermaid.description",
-        flowchartLink: (el) => /* @__PURE__ */ jsx119("a", { href: "https://mermaid.js.org/syntax/flowchart.html", children: el }),
-        sequenceLink: (el) => /* @__PURE__ */ jsx119("a", { href: "https://mermaid.js.org/syntax/sequenceDiagram.html", children: el }),
-        classLink: (el) => /* @__PURE__ */ jsx119("a", { href: "https://mermaid.js.org/syntax/classDiagram.html", children: el })
+        flowchartLink: (el) => /* @__PURE__ */ jsx114("a", { href: "https://mermaid.js.org/syntax/flowchart.html", children: el }),
+        sequenceLink: (el) => /* @__PURE__ */ jsx114("a", { href: "https://mermaid.js.org/syntax/sequenceDiagram.html", children: el }),
+        classLink: (el) => /* @__PURE__ */ jsx114("a", { href: "https://mermaid.js.org/syntax/classDiagram.html", children: el })
       }
     ) }),
-    /* @__PURE__ */ jsxs68(TTDDialogPanels, { children: [
-      /* @__PURE__ */ jsx119(TTDDialogPanel, { label: t("mermaid.syntax"), children: /* @__PURE__ */ jsx119(
+    /* @__PURE__ */ jsxs62(TTDDialogPanels, { children: [
+      /* @__PURE__ */ jsx114(TTDDialogPanel, { label: t("mermaid.syntax"), children: /* @__PURE__ */ jsx114(
         TTDDialogInput,
         {
           input: text,
@@ -18639,7 +18183,7 @@ var MermaidToExcalidraw = ({
           }
         }
       ) }),
-      /* @__PURE__ */ jsx119(
+      /* @__PURE__ */ jsx114(
         TTDDialogPanel,
         {
           label: t("mermaid.preview"),
@@ -18650,8 +18194,8 @@ var MermaidToExcalidraw = ({
             label: t("mermaid.button"),
             icon: ArrowRightIcon
           },
-          renderSubmitShortcut: () => /* @__PURE__ */ jsx119(TTDDialogSubmitShortcut, {}),
-          children: /* @__PURE__ */ jsx119(
+          renderSubmitShortcut: () => /* @__PURE__ */ jsx114(TTDDialogSubmitShortcut, {}),
+          children: /* @__PURE__ */ jsx114(
             TTDDialogOutput,
             {
               canvasRef,
@@ -18668,13 +18212,13 @@ var MermaidToExcalidraw_default = MermaidToExcalidraw;
 
 // components/TTDDialog/TTDDialogTabs.tsx
 import * as RadixTabs5 from "@radix-ui/react-tabs";
-import { useRef as useRef32 } from "react";
-import { jsx as jsx120 } from "react/jsx-runtime";
+import { useRef as useRef28 } from "react";
+import { jsx as jsx115 } from "react/jsx-runtime";
 var TTDDialogTabs = (props) => {
   const setAppState = useExcalidrawSetAppState();
-  const rootRef = useRef32(null);
-  const minHeightRef = useRef32(0);
-  return /* @__PURE__ */ jsx120(
+  const rootRef = useRef28(null);
+  const minHeightRef = useRef28(0);
+  return /* @__PURE__ */ jsx115(
     RadixTabs5.Root,
     {
       ref: rootRef,
@@ -18706,46 +18250,46 @@ TTDDialogTabs.displayName = "TTDDialogTabs";
 var TTDDialogTabs_default = TTDDialogTabs;
 
 // components/TTDDialog/TTDDialog.tsx
-import { useEffect as useEffect36, useRef as useRef33, useState as useState33 } from "react";
+import { useEffect as useEffect32, useRef as useRef29, useState as useState31 } from "react";
 
 // components/TTDDialog/TTDDialogTabTriggers.tsx
 import * as RadixTabs6 from "@radix-ui/react-tabs";
-import { jsx as jsx121 } from "react/jsx-runtime";
+import { jsx as jsx116 } from "react/jsx-runtime";
 var TTDDialogTabTriggers = ({
   children,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx121(RadixTabs6.List, { className: "ttd-dialog-triggers", ...rest, children });
+  return /* @__PURE__ */ jsx116(RadixTabs6.List, { className: "ttd-dialog-triggers", ...rest, children });
 };
 TTDDialogTabTriggers.displayName = "TTDDialogTabTriggers";
 
 // components/TTDDialog/TTDDialogTabTrigger.tsx
 import * as RadixTabs7 from "@radix-ui/react-tabs";
-import { jsx as jsx122 } from "react/jsx-runtime";
+import { jsx as jsx117 } from "react/jsx-runtime";
 var TTDDialogTabTrigger = ({
   children,
   tab,
   onSelect,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx122(RadixTabs7.Trigger, { value: tab, asChild: true, onSelect, children: /* @__PURE__ */ jsx122("button", { type: "button", className: "ttd-dialog-tab-trigger", ...rest, children }) });
+  return /* @__PURE__ */ jsx117(RadixTabs7.Trigger, { value: tab, asChild: true, onSelect, children: /* @__PURE__ */ jsx117("button", { type: "button", className: "ttd-dialog-tab-trigger", ...rest, children }) });
 };
 TTDDialogTabTrigger.displayName = "TTDDialogTabTrigger";
 
 // components/TTDDialog/TTDDialogTab.tsx
 import * as RadixTabs8 from "@radix-ui/react-tabs";
-import { jsx as jsx123 } from "react/jsx-runtime";
+import { jsx as jsx118 } from "react/jsx-runtime";
 var TTDDialogTab = ({
   tab,
   children,
   ...rest
 }) => {
-  return /* @__PURE__ */ jsx123(RadixTabs8.Content, { ...rest, value: tab, children });
+  return /* @__PURE__ */ jsx118(RadixTabs8.Content, { ...rest, value: tab, children });
 };
 TTDDialogTab.displayName = "TTDDialogTab";
 
 // components/TTDDialog/TTDDialog.tsx
-import { jsx as jsx124, jsxs as jsxs69 } from "react/jsx-runtime";
+import { jsx as jsx119, jsxs as jsxs63 } from "react/jsx-runtime";
 var MIN_PROMPT_LENGTH = 3;
 var MAX_PROMPT_LENGTH = 1e3;
 var rateLimitsAtom = atom(null);
@@ -18755,7 +18299,7 @@ var TTDDialog = (props) => {
   if (appState.openDialog?.name !== "ttd") {
     return null;
   }
-  return /* @__PURE__ */ jsx124(TTDDialogBase, { ...props, tab: appState.openDialog.tab });
+  return /* @__PURE__ */ jsx119(TTDDialogBase, { ...props, tab: appState.openDialog.tab });
 };
 var TTDDialogBase = withInternalFallback(
   "TTDDialogBase",
@@ -18765,9 +18309,9 @@ var TTDDialogBase = withInternalFallback(
   }) => {
     const app = useApp();
     const setAppState = useExcalidrawSetAppState();
-    const someRandomDivRef = useRef33(null);
+    const someRandomDivRef = useRef29(null);
     const [ttdGeneration, setTtdGeneration] = useAtom(ttdGenerationAtom);
-    const [text, setText] = useState33(ttdGeneration?.prompt ?? "");
+    const [text, setText] = useState31(ttdGeneration?.prompt ?? "");
     const prompt = text.trim();
     const handleTextChange = (event) => {
       setText(event.target.value);
@@ -18776,7 +18320,7 @@ var TTDDialogBase = withInternalFallback(
         prompt: event.target.value
       }));
     };
-    const [onTextSubmitInProgess, setOnTextSubmitInProgess] = useState33(false);
+    const [onTextSubmitInProgess, setOnTextSubmitInProgess] = useState31(false);
     const [rateLimits, setRateLimits] = useAtom(rateLimitsAtom);
     const onGenerate = async () => {
       if (prompt.length > MAX_PROMPT_LENGTH || prompt.length < MIN_PROMPT_LENGTH || onTextSubmitInProgess || rateLimits?.rateLimitRemaining === 0 || // means this is not a text-to-diagram dialog (needed for TS only)
@@ -18854,22 +18398,22 @@ TTD mermaid definition render errror: ${error3.message}`,
         setOnTextSubmitInProgess(false);
       }
     };
-    const refOnGenerate = useRef33(onGenerate);
+    const refOnGenerate = useRef29(onGenerate);
     refOnGenerate.current = onGenerate;
-    const [mermaidToExcalidrawLib, setMermaidToExcalidrawLib] = useState33({
+    const [mermaidToExcalidrawLib, setMermaidToExcalidrawLib] = useState31({
       loaded: false,
       api: import("@excalidraw/mermaid-to-excalidraw")
     });
-    useEffect36(() => {
+    useEffect32(() => {
       const fn = async () => {
         await mermaidToExcalidrawLib.api;
         setMermaidToExcalidrawLib((prev) => ({ ...prev, loaded: true }));
       };
       fn();
     }, [mermaidToExcalidrawLib.api]);
-    const data = useRef33({ elements: [], files: null });
-    const [error, setError] = useState33(null);
-    return /* @__PURE__ */ jsx124(
+    const data = useRef29({ elements: [], files: null });
+    const [error, setError] = useState31(null);
+    return /* @__PURE__ */ jsx119(
       Dialog,
       {
         className: "ttd-dialog",
@@ -18880,11 +18424,11 @@ TTD mermaid definition render errror: ${error3.message}`,
         title: false,
         ...rest,
         autofocus: false,
-        children: /* @__PURE__ */ jsxs69(TTDDialogTabs_default, { dialog: "ttd", tab, children: [
-          "__fallback" in rest && rest.__fallback ? /* @__PURE__ */ jsx124("p", { className: "dialog-mermaid-title", children: t("mermaid.title") }) : /* @__PURE__ */ jsxs69(TTDDialogTabTriggers, { children: [
-            /* @__PURE__ */ jsx124(TTDDialogTabTrigger, { tab: "text-to-diagram", children: /* @__PURE__ */ jsxs69("div", { style: { display: "flex", alignItems: "center" }, children: [
+        children: /* @__PURE__ */ jsxs63(TTDDialogTabs_default, { dialog: "ttd", tab, children: [
+          "__fallback" in rest && rest.__fallback ? /* @__PURE__ */ jsx119("p", { className: "dialog-mermaid-title", children: t("mermaid.title") }) : /* @__PURE__ */ jsxs63(TTDDialogTabTriggers, { children: [
+            /* @__PURE__ */ jsx119(TTDDialogTabTrigger, { tab: "text-to-diagram", children: /* @__PURE__ */ jsxs63("div", { style: { display: "flex", alignItems: "center" }, children: [
               t("labels.textToDiagram"),
-              /* @__PURE__ */ jsx124(
+              /* @__PURE__ */ jsx119(
                 "div",
                 {
                   style: {
@@ -18902,18 +18446,18 @@ TTD mermaid definition render errror: ${error3.message}`,
                 }
               )
             ] }) }),
-            /* @__PURE__ */ jsx124(TTDDialogTabTrigger, { tab: "mermaid", children: "Mermaid" })
+            /* @__PURE__ */ jsx119(TTDDialogTabTrigger, { tab: "mermaid", children: "Mermaid" })
           ] }),
-          /* @__PURE__ */ jsx124(TTDDialogTab, { className: "ttd-dialog-content", tab: "mermaid", children: /* @__PURE__ */ jsx124(
+          /* @__PURE__ */ jsx119(TTDDialogTab, { className: "ttd-dialog-content", tab: "mermaid", children: /* @__PURE__ */ jsx119(
             MermaidToExcalidraw_default,
             {
               mermaidToExcalidrawLib
             }
           ) }),
-          !("__fallback" in rest) && /* @__PURE__ */ jsxs69(TTDDialogTab, { className: "ttd-dialog-content", tab: "text-to-diagram", children: [
-            /* @__PURE__ */ jsx124("div", { className: "ttd-dialog-desc", children: "Currently we use Mermaid as a middle step, so you'll get best results if you describe a diagram, workflow, flow chart, and similar." }),
-            /* @__PURE__ */ jsxs69(TTDDialogPanels, { children: [
-              /* @__PURE__ */ jsx124(
+          !("__fallback" in rest) && /* @__PURE__ */ jsxs63(TTDDialogTab, { className: "ttd-dialog-content", tab: "text-to-diagram", children: [
+            /* @__PURE__ */ jsx119("div", { className: "ttd-dialog-desc", children: "Currently we use Mermaid as a middle step, so you'll get best results if you describe a diagram, workflow, flow chart, and similar." }),
+            /* @__PURE__ */ jsxs63(TTDDialogPanels, { children: [
+              /* @__PURE__ */ jsx119(
                 TTDDialogPanel,
                 {
                   label: t("labels.prompt"),
@@ -18928,7 +18472,7 @@ TTD mermaid definition render errror: ${error3.message}`,
                     if (!rateLimits) {
                       return null;
                     }
-                    return /* @__PURE__ */ jsxs69(
+                    return /* @__PURE__ */ jsxs63(
                       "div",
                       {
                         className: "ttd-dialog-rate-limit",
@@ -18944,10 +18488,10 @@ TTD mermaid definition render errror: ${error3.message}`,
                       }
                     );
                   },
-                  renderSubmitShortcut: () => /* @__PURE__ */ jsx124(TTDDialogSubmitShortcut, {}),
+                  renderSubmitShortcut: () => /* @__PURE__ */ jsx119(TTDDialogSubmitShortcut, {}),
                   renderBottomRight: () => {
                     if (typeof ttdGeneration?.generatedResponse === "string") {
-                      return /* @__PURE__ */ jsxs69(
+                      return /* @__PURE__ */ jsxs63(
                         "div",
                         {
                           className: "excalidraw-link",
@@ -18964,14 +18508,14 @@ TTD mermaid definition render errror: ${error3.message}`,
                           },
                           children: [
                             "View as Mermaid",
-                            /* @__PURE__ */ jsx124(InlineIcon, { icon: ArrowRightIcon })
+                            /* @__PURE__ */ jsx119(InlineIcon, { icon: ArrowRightIcon })
                           ]
                         }
                       );
                     }
                     const ratio = prompt.length / MAX_PROMPT_LENGTH;
                     if (ratio > 0.8) {
-                      return /* @__PURE__ */ jsxs69(
+                      return /* @__PURE__ */ jsxs63(
                         "div",
                         {
                           style: {
@@ -18991,7 +18535,7 @@ TTD mermaid definition render errror: ${error3.message}`,
                     }
                     return null;
                   },
-                  children: /* @__PURE__ */ jsx124(
+                  children: /* @__PURE__ */ jsx119(
                     TTDDialogInput,
                     {
                       onChange: handleTextChange,
@@ -19004,7 +18548,7 @@ TTD mermaid definition render errror: ${error3.message}`,
                   )
                 }
               ),
-              /* @__PURE__ */ jsx124(
+              /* @__PURE__ */ jsx119(
                 TTDDialogPanel,
                 {
                   label: "Preview",
@@ -19016,7 +18560,7 @@ TTD mermaid definition render errror: ${error3.message}`,
                     label: "Insert",
                     icon: ArrowRightIcon
                   },
-                  children: /* @__PURE__ */ jsx124(
+                  children: /* @__PURE__ */ jsx119(
                     TTDDialogOutput,
                     {
                       canvasRef: someRandomDivRef,
@@ -19035,12 +18579,12 @@ TTD mermaid definition render errror: ${error3.message}`,
 );
 
 // components/Stats/index.tsx
-import { useEffect as useEffect38, useMemo as useMemo9, useState as useState35, memo as memo5 } from "react";
+import { useEffect as useEffect34, useMemo as useMemo9, useState as useState33, memo as memo5 } from "react";
 import throttle2 from "lodash.throttle";
 
 // components/Stats/DragInput.tsx
-import { useEffect as useEffect37, useRef as useRef34, useState as useState34 } from "react";
-import clsx51 from "clsx";
+import { useEffect as useEffect33, useRef as useRef30, useState as useState32 } from "react";
+import clsx47 from "clsx";
 
 // components/Stats/utils.ts
 var SMALLEST_DELTA = 0.01;
@@ -19144,7 +18688,7 @@ var updateBindings = (latestElement, elementsMap, elements, scene, options) => {
 };
 
 // components/Stats/DragInput.tsx
-import { jsx as jsx125, jsxs as jsxs70 } from "react/jsx-runtime";
+import { jsx as jsx120, jsxs as jsxs64 } from "react/jsx-runtime";
 var StatsDragInput = ({
   label,
   icon,
@@ -19159,10 +18703,10 @@ var StatsDragInput = ({
   sensitivity = 1
 }) => {
   const app = useApp();
-  const inputRef = useRef34(null);
-  const labelRef = useRef34(null);
-  const [inputValue, setInputValue] = useState34(value.toString());
-  const stateRef = useRef34(null);
+  const inputRef = useRef30(null);
+  const labelRef = useRef30(null);
+  const [inputValue, setInputValue] = useState32(value.toString());
+  const stateRef = useRef30(null);
   if (!stateRef.current) {
     stateRef.current = {
       originalAppState: cloneJSON(appState),
@@ -19171,7 +18715,7 @@ var StatsDragInput = ({
       updatePending: false
     };
   }
-  useEffect37(() => {
+  useEffect33(() => {
     const inputValue2 = value.toString();
     setInputValue(inputValue2);
     stateRef.current.lastUpdatedValue = inputValue2;
@@ -19208,9 +18752,9 @@ var StatsDragInput = ({
       });
     }
   };
-  const callbacksRef = useRef34({});
+  const callbacksRef = useRef30({});
   callbacksRef.current.handleInputValue = handleInputValue;
-  useEffect37(() => {
+  useEffect33(() => {
     const input = inputRef.current;
     const callbacks = callbacksRef.current;
     return () => {
@@ -19245,13 +18789,13 @@ var StatsDragInput = ({
   if (!editable) {
     return null;
   }
-  return /* @__PURE__ */ jsxs70(
+  return /* @__PURE__ */ jsxs64(
     "div",
     {
-      className: clsx51("drag-input-container", !editable && "disabled"),
+      className: clsx47("drag-input-container", !editable && "disabled"),
       "data-testid": label,
       children: [
-        /* @__PURE__ */ jsx125(
+        /* @__PURE__ */ jsx120(
           "div",
           {
             className: "drag-input-label",
@@ -19331,10 +18875,10 @@ var StatsDragInput = ({
                 labelRef.current.style.cursor = "ew-resize";
               }
             },
-            children: icon ? /* @__PURE__ */ jsx125(InlineIcon, { icon }) : label
+            children: icon ? /* @__PURE__ */ jsx120(InlineIcon, { icon }) : label
           }
         ),
-        /* @__PURE__ */ jsx125(
+        /* @__PURE__ */ jsx120(
           "input",
           {
             className: "drag-input",
@@ -19381,7 +18925,7 @@ var StatsDragInput = ({
 var DragInput_default = StatsDragInput;
 
 // components/Stats/Dimension.tsx
-import { jsx as jsx126 } from "react/jsx-runtime";
+import { jsx as jsx121 } from "react/jsx-runtime";
 var STEP_SIZE = 10;
 var _shouldKeepAspectRatio = (element) => {
   return element.type === "image";
@@ -19561,7 +19105,7 @@ var DimensionDragInput = ({
       value = round(element.crop.height * ratio, 2);
     }
   }
-  return /* @__PURE__ */ jsx126(
+  return /* @__PURE__ */ jsx121(
     DragInput_default,
     {
       label: property === "width" ? "W" : "H",
@@ -19578,7 +19122,7 @@ var DimensionDragInput = ({
 var Dimension_default = DimensionDragInput;
 
 // components/Stats/Angle.tsx
-import { jsx as jsx127 } from "react/jsx-runtime";
+import { jsx as jsx122 } from "react/jsx-runtime";
 var STEP_SIZE2 = 15;
 var handleDegreeChange = ({
   accumulatedChange,
@@ -19626,7 +19170,7 @@ var handleDegreeChange = ({
   }
 };
 var Angle = ({ element, scene, appState, property }) => {
-  return /* @__PURE__ */ jsx127(
+  return /* @__PURE__ */ jsx122(
     DragInput_default,
     {
       label: "A",
@@ -19644,7 +19188,7 @@ var Angle = ({ element, scene, appState, property }) => {
 var Angle_default = Angle;
 
 // components/Stats/FontSize.tsx
-import { jsx as jsx128 } from "react/jsx-runtime";
+import { jsx as jsx123 } from "react/jsx-runtime";
 var MIN_FONT_SIZE = 4;
 var STEP_SIZE3 = 4;
 var handleFontSizeChange = ({
@@ -19692,7 +19236,7 @@ var FontSize = ({ element, scene, appState, property }) => {
   if (!_element) {
     return null;
   }
-  return /* @__PURE__ */ jsx128(
+  return /* @__PURE__ */ jsx123(
     DragInput_default,
     {
       label: "F",
@@ -19710,7 +19254,7 @@ var FontSize_default = FontSize;
 
 // components/Stats/MultiDimension.tsx
 import { useMemo as useMemo7 } from "react";
-import { jsx as jsx129 } from "react/jsx-runtime";
+import { jsx as jsx124 } from "react/jsx-runtime";
 var STEP_SIZE4 = 10;
 var getResizedUpdates = (anchorX, anchorY, scale, origElement) => {
   const offsetX = origElement.x - anchorX;
@@ -19978,7 +19522,7 @@ var MultiDimension = ({
   );
   const value = new Set(sizes).size === 1 ? Math.round(sizes[0] * 100) / 100 : "Mixed";
   const editable = sizes.length > 0;
-  return /* @__PURE__ */ jsx129(
+  return /* @__PURE__ */ jsx124(
     DragInput_default,
     {
       label: property === "width" ? "W" : "H",
@@ -19995,7 +19539,7 @@ var MultiDimension = ({
 var MultiDimension_default = MultiDimension;
 
 // components/Stats/MultiAngle.tsx
-import { jsx as jsx130 } from "react/jsx-runtime";
+import { jsx as jsx125 } from "react/jsx-runtime";
 var STEP_SIZE5 = 15;
 var handleDegreeChange2 = ({
   accumulatedChange,
@@ -20075,7 +19619,7 @@ var MultiAngle = ({
   const editable = editableLatestIndividualElements.some(
     (el) => isPropertyEditable(el, "angle")
   );
-  return /* @__PURE__ */ jsx130(
+  return /* @__PURE__ */ jsx125(
     DragInput_default,
     {
       label: "A",
@@ -20093,7 +19637,7 @@ var MultiAngle = ({
 var MultiAngle_default = MultiAngle;
 
 // components/Stats/MultiFontSize.tsx
-import { jsx as jsx131 } from "react/jsx-runtime";
+import { jsx as jsx126 } from "react/jsx-runtime";
 var MIN_FONT_SIZE2 = 4;
 var STEP_SIZE6 = 4;
 var getApplicableTextElements = (elements, elementsMap) => elements.reduce(
@@ -20193,7 +19737,7 @@ var MultiFontSize = ({
   );
   const value = new Set(fontSizes).size === 1 ? fontSizes[0] : "Mixed";
   const editable = fontSizes.length > 0;
-  return /* @__PURE__ */ jsx131(
+  return /* @__PURE__ */ jsx126(
     DragInput_default,
     {
       label: "F",
@@ -20211,7 +19755,7 @@ var MultiFontSize = ({
 var MultiFontSize_default = MultiFontSize;
 
 // components/Stats/Position.tsx
-import { jsx as jsx132 } from "react/jsx-runtime";
+import { jsx as jsx127 } from "react/jsx-runtime";
 var STEP_SIZE7 = 10;
 var handlePositionChange = ({
   accumulatedChange,
@@ -20350,7 +19894,7 @@ var Position = ({
       );
     }
   }
-  return /* @__PURE__ */ jsx132(
+  return /* @__PURE__ */ jsx127(
     DragInput_default,
     {
       label: property === "x" ? "X" : "Y",
@@ -20367,7 +19911,7 @@ var Position_default = Position;
 
 // components/Stats/MultiPosition.tsx
 import { useMemo as useMemo8 } from "react";
-import { jsx as jsx133 } from "react/jsx-runtime";
+import { jsx as jsx128 } from "react/jsx-runtime";
 var STEP_SIZE8 = 10;
 var moveElements = (property, changeInTopX, changeInTopY, elements, originalElements, elementsMap, originalElementsMap, scene) => {
   for (let i = 0; i < elements.length; i++) {
@@ -20538,7 +20082,7 @@ var MultiPosition = ({
     [atomicUnits, elementsMap, property]
   );
   const value = new Set(positions).size === 1 ? positions[0] : "Mixed";
-  return /* @__PURE__ */ jsx133(
+  return /* @__PURE__ */ jsx128(
     DragInput_default,
     {
       label: property === "x" ? "X" : "Y",
@@ -20554,7 +20098,7 @@ var MultiPosition = ({
 var MultiPosition_default = MultiPosition;
 
 // components/Stats/CanvasGrid.tsx
-import { jsx as jsx134 } from "react/jsx-runtime";
+import { jsx as jsx129, jsxs as jsxs65 } from "react/jsx-runtime";
 var STEP_SIZE9 = 5;
 var CanvasGrid = ({
   property,
@@ -20562,51 +20106,122 @@ var CanvasGrid = ({
   appState,
   setAppState
 }) => {
-  return /* @__PURE__ */ jsx134(
-    DragInput_default,
-    {
-      label: "Grid step",
-      sensitivity: 8,
-      elements: [],
-      dragInputCallback: ({
-        nextValue,
-        instantChange,
-        shouldChangeByStepSize,
-        setInputValue
-      }) => {
-        setAppState((state) => {
-          let nextGridStep;
-          if (nextValue) {
-            nextGridStep = nextValue;
-          } else if (instantChange) {
-            nextGridStep = shouldChangeByStepSize ? getStepSizedValue(
-              state.gridStep + STEP_SIZE9 * Math.sign(instantChange),
-              STEP_SIZE9
-            ) : state.gridStep + instantChange;
-          }
-          if (!nextGridStep) {
-            setInputValue(state.gridStep);
-            return null;
-          }
-          nextGridStep = getNormalizedGridStep(nextGridStep);
-          setInputValue(nextGridStep);
-          return {
-            gridStep: nextGridStep
-          };
-        });
-      },
-      scene,
-      value: appState.gridStep,
-      property,
-      appState
-    }
-  );
+  return /* @__PURE__ */ jsxs65("div", { style: { display: "flex", flexDirection: "column", gap: "6px", width: "100%" }, children: [
+    /* @__PURE__ */ jsx129(
+      DragInput_default,
+      {
+        label: "Grid step",
+        sensitivity: 8,
+        elements: [],
+        dragInputCallback: ({
+          nextValue,
+          instantChange,
+          shouldChangeByStepSize,
+          setInputValue
+        }) => {
+          setAppState((state) => {
+            let nextGridStep;
+            if (nextValue) {
+              nextGridStep = nextValue;
+            } else if (instantChange) {
+              nextGridStep = shouldChangeByStepSize ? getStepSizedValue(
+                state.gridStep + STEP_SIZE9 * Math.sign(instantChange),
+                STEP_SIZE9
+              ) : state.gridStep + instantChange;
+            }
+            if (!nextGridStep) {
+              setInputValue(state.gridStep);
+              return null;
+            }
+            nextGridStep = getNormalizedGridStep(nextGridStep);
+            setInputValue(nextGridStep);
+            return {
+              gridStep: nextGridStep
+            };
+          });
+        },
+        scene,
+        value: appState.gridStep,
+        property,
+        appState
+      }
+    ),
+    /* @__PURE__ */ jsxs65(
+      "div",
+      {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "4px"
+        },
+        children: [
+          /* @__PURE__ */ jsx129("span", { style: { fontSize: "12px", whiteSpace: "nowrap" }, children: "Grid color" }),
+          /* @__PURE__ */ jsx129(
+            "input",
+            {
+              type: "color",
+              value: appState.gridColor,
+              onChange: (e) => {
+                const color = getNormalizedGridColor(e.target.value);
+                setAppState({ gridColor: color });
+              },
+              style: {
+                width: "32px",
+                height: "20px",
+                padding: "1px",
+                border: "1px solid var(--color-border)",
+                borderRadius: "4px",
+                cursor: "pointer",
+                background: "none"
+              },
+              title: "Grid color"
+            }
+          )
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxs65(
+      "div",
+      {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "4px"
+        },
+        children: [
+          /* @__PURE__ */ jsxs65("span", { style: { fontSize: "12px", whiteSpace: "nowrap" }, children: [
+            "Opacity ",
+            appState.gridOpacity,
+            "%"
+          ] }),
+          /* @__PURE__ */ jsx129(
+            "input",
+            {
+              type: "range",
+              min: 0,
+              max: 100,
+              step: 1,
+              value: appState.gridOpacity,
+              onChange: (e) => {
+                const opacity = getNormalizedGridOpacity(Number(e.target.value));
+                setAppState({ gridOpacity: opacity });
+              },
+              style: { flex: 1, maxWidth: "80px" },
+              title: "Grid opacity"
+            }
+          )
+        ]
+      }
+    )
+  ] });
 };
 var CanvasGrid_default = CanvasGrid;
 
 // components/Stats/index.tsx
-import clsx52 from "clsx";
-import { Fragment as Fragment21, jsx as jsx135, jsxs as jsxs71 } from "react/jsx-runtime";
+import clsx48 from "clsx";
+import { Fragment as Fragment20, jsx as jsx130, jsxs as jsxs66 } from "react/jsx-runtime";
 var STATS_TIMEOUT = 50;
 var Stats = (props) => {
   const appState = useExcalidrawAppState();
@@ -20616,7 +20231,7 @@ var Stats = (props) => {
     includeBoundTextElement: false
   });
   const gridModeEnabled = isGridModeEnabled(props.app);
-  return /* @__PURE__ */ jsx135(
+  return /* @__PURE__ */ jsx130(
     StatsInner,
     {
       ...props,
@@ -20633,10 +20248,10 @@ var StatsRow = ({
   heading,
   style,
   ...rest
-}) => /* @__PURE__ */ jsx135(
+}) => /* @__PURE__ */ jsx130(
   "div",
   {
-    className: clsx52("exc-stats__row", { "exc-stats__row--heading": heading }),
+    className: clsx48("exc-stats__row", { "exc-stats__row--heading": heading }),
     style: {
       gridTemplateColumns: `repeat(${columns}, 1fr)`,
       ...style
@@ -20651,7 +20266,7 @@ var StatsRows = ({
   order,
   style,
   ...rest
-}) => /* @__PURE__ */ jsx135("div", { className: "exc-stats__rows", style: { order, ...style }, ...rest, children });
+}) => /* @__PURE__ */ jsx130("div", { className: "exc-stats__rows", style: { order, ...style }, ...rest, children });
 StatsRows.displayName = "StatsRows";
 Stats.StatsRow = StatsRow;
 Stats.StatsRows = StatsRows;
@@ -20673,7 +20288,7 @@ var StatsInner = memo5(
     const multipleElements = selectedElements.length > 1 ? selectedElements : null;
     const cropMode = appState.croppingElementId && isImageElement(singleElement);
     const unCroppedDimension = cropMode ? getUncroppedWidthAndHeight(singleElement) : null;
-    const [sceneDimension, setSceneDimension] = useState35({
+    const [sceneDimension, setSceneDimension] = useState33({
       width: 0,
       height: 0
     });
@@ -20687,10 +20302,10 @@ var StatsInner = memo5(
       }, STATS_TIMEOUT),
       []
     );
-    useEffect38(() => {
+    useEffect34(() => {
       throttledSetSceneDimension(elements);
     }, [sceneNonce, elements, throttledSetSceneDimension]);
-    useEffect38(
+    useEffect34(
       () => () => throttledSetSceneDimension.cancel(),
       [throttledSetSceneDimension]
     );
@@ -20700,15 +20315,15 @@ var StatsInner = memo5(
     const _frameAndChildrenSelectedTogether = useMemo9(() => {
       return frameAndChildrenSelectedTogether(selectedElements);
     }, [selectedElements]);
-    return /* @__PURE__ */ jsx135("div", { className: "exc-stats", children: /* @__PURE__ */ jsxs71(Island, { padding: 3, children: [
-      /* @__PURE__ */ jsxs71("div", { className: "title", children: [
-        /* @__PURE__ */ jsx135("h2", { children: t("stats.title") }),
-        /* @__PURE__ */ jsx135("div", { className: "close", onClick: onClose, children: CloseIcon })
+    return /* @__PURE__ */ jsx130("div", { className: "exc-stats", children: /* @__PURE__ */ jsxs66(Island, { padding: 3, children: [
+      /* @__PURE__ */ jsxs66("div", { className: "title", children: [
+        /* @__PURE__ */ jsx130("h2", { children: t("stats.title") }),
+        /* @__PURE__ */ jsx130("div", { className: "close", onClick: onClose, children: CloseIcon })
       ] }),
-      /* @__PURE__ */ jsxs71(
+      /* @__PURE__ */ jsxs66(
         Collapsible_default,
         {
-          label: /* @__PURE__ */ jsx135("h3", { children: t("stats.generalStats") }),
+          label: /* @__PURE__ */ jsx130("h3", { children: t("stats.generalStats") }),
           open: !!(appState.stats.panels & STATS_PANELS.generalStats),
           openTrigger: () => setAppState((state) => {
             return {
@@ -20719,23 +20334,23 @@ var StatsInner = memo5(
             };
           }),
           children: [
-            /* @__PURE__ */ jsxs71(StatsRows, { children: [
-              /* @__PURE__ */ jsx135(StatsRow, { heading: true, children: t("stats.scene") }),
-              /* @__PURE__ */ jsxs71(StatsRow, { columns: 2, children: [
-                /* @__PURE__ */ jsx135("div", { children: t("stats.shapes") }),
-                /* @__PURE__ */ jsx135("div", { children: elements.length })
+            /* @__PURE__ */ jsxs66(StatsRows, { children: [
+              /* @__PURE__ */ jsx130(StatsRow, { heading: true, children: t("stats.scene") }),
+              /* @__PURE__ */ jsxs66(StatsRow, { columns: 2, children: [
+                /* @__PURE__ */ jsx130("div", { children: t("stats.shapes") }),
+                /* @__PURE__ */ jsx130("div", { children: elements.length })
               ] }),
-              /* @__PURE__ */ jsxs71(StatsRow, { columns: 2, children: [
-                /* @__PURE__ */ jsx135("div", { children: t("stats.width") }),
-                /* @__PURE__ */ jsx135("div", { children: sceneDimension.width })
+              /* @__PURE__ */ jsxs66(StatsRow, { columns: 2, children: [
+                /* @__PURE__ */ jsx130("div", { children: t("stats.width") }),
+                /* @__PURE__ */ jsx130("div", { children: sceneDimension.width })
               ] }),
-              /* @__PURE__ */ jsxs71(StatsRow, { columns: 2, children: [
-                /* @__PURE__ */ jsx135("div", { children: t("stats.height") }),
-                /* @__PURE__ */ jsx135("div", { children: sceneDimension.height })
+              /* @__PURE__ */ jsxs66(StatsRow, { columns: 2, children: [
+                /* @__PURE__ */ jsx130("div", { children: t("stats.height") }),
+                /* @__PURE__ */ jsx130("div", { children: sceneDimension.height })
               ] }),
-              gridModeEnabled && /* @__PURE__ */ jsxs71(Fragment21, { children: [
-                /* @__PURE__ */ jsx135(StatsRow, { heading: true, children: "Canvas" }),
-                /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+              gridModeEnabled && /* @__PURE__ */ jsxs66(Fragment20, { children: [
+                /* @__PURE__ */ jsx130(StatsRow, { heading: true, children: "Canvas" }),
+                /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                   CanvasGrid_default,
                   {
                     property: "gridStep",
@@ -20750,17 +20365,17 @@ var StatsInner = memo5(
           ]
         }
       ),
-      !_frameAndChildrenSelectedTogether && selectedElements.length > 0 && /* @__PURE__ */ jsx135(
+      !_frameAndChildrenSelectedTogether && selectedElements.length > 0 && /* @__PURE__ */ jsx130(
         "div",
         {
           id: "elementStats",
           style: {
             marginTop: 12
           },
-          children: /* @__PURE__ */ jsx135(
+          children: /* @__PURE__ */ jsx130(
             Collapsible_default,
             {
-              label: /* @__PURE__ */ jsx135("h3", { children: t("stats.elementProperties") }),
+              label: /* @__PURE__ */ jsx130("h3", { children: t("stats.elementProperties") }),
               open: !!(appState.stats.panels & STATS_PANELS.elementProperties),
               openTrigger: () => setAppState((state) => {
                 return {
@@ -20770,19 +20385,19 @@ var StatsInner = memo5(
                   }
                 };
               }),
-              children: /* @__PURE__ */ jsxs71(StatsRows, { children: [
-                singleElement && /* @__PURE__ */ jsxs71(Fragment21, { children: [
-                  cropMode && /* @__PURE__ */ jsx135(StatsRow, { heading: true, children: t("labels.unCroppedDimension") }),
-                  appState.croppingElementId && isImageElement(singleElement) && unCroppedDimension && /* @__PURE__ */ jsxs71(StatsRow, { columns: 2, children: [
-                    /* @__PURE__ */ jsx135("div", { children: t("stats.width") }),
-                    /* @__PURE__ */ jsx135("div", { children: round(unCroppedDimension.width, 2) })
+              children: /* @__PURE__ */ jsxs66(StatsRows, { children: [
+                singleElement && /* @__PURE__ */ jsxs66(Fragment20, { children: [
+                  cropMode && /* @__PURE__ */ jsx130(StatsRow, { heading: true, children: t("labels.unCroppedDimension") }),
+                  appState.croppingElementId && isImageElement(singleElement) && unCroppedDimension && /* @__PURE__ */ jsxs66(StatsRow, { columns: 2, children: [
+                    /* @__PURE__ */ jsx130("div", { children: t("stats.width") }),
+                    /* @__PURE__ */ jsx130("div", { children: round(unCroppedDimension.width, 2) })
                   ] }),
-                  appState.croppingElementId && isImageElement(singleElement) && unCroppedDimension && /* @__PURE__ */ jsxs71(StatsRow, { columns: 2, children: [
-                    /* @__PURE__ */ jsx135("div", { children: t("stats.height") }),
-                    /* @__PURE__ */ jsx135("div", { children: round(unCroppedDimension.height, 2) })
+                  appState.croppingElementId && isImageElement(singleElement) && unCroppedDimension && /* @__PURE__ */ jsxs66(StatsRow, { columns: 2, children: [
+                    /* @__PURE__ */ jsx130("div", { children: t("stats.height") }),
+                    /* @__PURE__ */ jsx130("div", { children: round(unCroppedDimension.height, 2) })
                   ] }),
-                  /* @__PURE__ */ jsx135(StatsRow, { heading: true, "data-testid": "stats-element-type", children: appState.croppingElementId ? t("labels.imageCropping") : t(`element.${singleElement.type}`) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { heading: true, "data-testid": "stats-element-type", children: appState.croppingElementId ? t("labels.imageCropping") : t(`element.${singleElement.type}`) }),
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     Position_default,
                     {
                       element: singleElement,
@@ -20792,7 +20407,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     Position_default,
                     {
                       element: singleElement,
@@ -20802,7 +20417,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     Dimension_default,
                     {
                       property: "width",
@@ -20811,7 +20426,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     Dimension_default,
                     {
                       property: "height",
@@ -20820,7 +20435,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  !isElbowArrow(singleElement) && /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  !isElbowArrow(singleElement) && /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     Angle_default,
                     {
                       property: "angle",
@@ -20829,7 +20444,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     FontSize_default,
                     {
                       property: "fontSize",
@@ -20839,13 +20454,13 @@ var StatsInner = memo5(
                     }
                   ) })
                 ] }),
-                multipleElements && /* @__PURE__ */ jsxs71(Fragment21, { children: [
-                  elementsAreInSameGroup(multipleElements) && /* @__PURE__ */ jsx135(StatsRow, { heading: true, children: t("element.group") }),
-                  /* @__PURE__ */ jsxs71(StatsRow, { columns: 2, style: { margin: "0.3125rem 0" }, children: [
-                    /* @__PURE__ */ jsx135("div", { children: t("stats.shapes") }),
-                    /* @__PURE__ */ jsx135("div", { children: selectedElements.length })
+                multipleElements && /* @__PURE__ */ jsxs66(Fragment20, { children: [
+                  elementsAreInSameGroup(multipleElements) && /* @__PURE__ */ jsx130(StatsRow, { heading: true, children: t("element.group") }),
+                  /* @__PURE__ */ jsxs66(StatsRow, { columns: 2, style: { margin: "0.3125rem 0" }, children: [
+                    /* @__PURE__ */ jsx130("div", { children: t("stats.shapes") }),
+                    /* @__PURE__ */ jsx130("div", { children: selectedElements.length })
                   ] }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     MultiPosition_default,
                     {
                       property: "x",
@@ -20856,7 +20471,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     MultiPosition_default,
                     {
                       property: "y",
@@ -20867,7 +20482,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     MultiDimension_default,
                     {
                       property: "width",
@@ -20878,7 +20493,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     MultiDimension_default,
                     {
                       property: "height",
@@ -20889,7 +20504,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     MultiAngle_default,
                     {
                       property: "angle",
@@ -20898,7 +20513,7 @@ var StatsInner = memo5(
                       appState
                     }
                   ) }),
-                  /* @__PURE__ */ jsx135(StatsRow, { children: /* @__PURE__ */ jsx135(
+                  /* @__PURE__ */ jsx130(StatsRow, { children: /* @__PURE__ */ jsx130(
                     MultiFontSize_default,
                     {
                       property: "fontSize",
@@ -20917,13 +20532,13 @@ var StatsInner = memo5(
     ] }) });
   },
   (prev, next) => {
-    return prev.sceneNonce === next.sceneNonce && prev.selectedElements === next.selectedElements && prev.appState.stats.panels === next.appState.stats.panels && prev.gridModeEnabled === next.gridModeEnabled && prev.appState.gridStep === next.appState.gridStep && prev.appState.croppingElementId === next.appState.croppingElementId;
+    return prev.sceneNonce === next.sceneNonce && prev.selectedElements === next.selectedElements && prev.appState.stats.panels === next.appState.stats.panels && prev.gridModeEnabled === next.gridModeEnabled && prev.appState.gridStep === next.appState.gridStep && prev.appState.gridColor === next.appState.gridColor && prev.appState.gridOpacity === next.appState.gridOpacity && prev.appState.croppingElementId === next.appState.croppingElementId;
   }
 );
 
 // components/ElementLinkDialog.tsx
-import { useCallback as useCallback13, useEffect as useEffect39, useState as useState36 } from "react";
-import { jsx as jsx136, jsxs as jsxs72 } from "react/jsx-runtime";
+import { useCallback as useCallback12, useEffect as useEffect35, useState as useState34 } from "react";
+import { jsx as jsx131, jsxs as jsxs67 } from "react/jsx-runtime";
 var ElementLinkDialog = ({
   sourceElementId,
   onClose,
@@ -20932,9 +20547,9 @@ var ElementLinkDialog = ({
   generateLinkForSelection = defaultGetElementLinkFromSelection
 }) => {
   const originalLink = elementsMap.get(sourceElementId)?.link ?? null;
-  const [nextLink, setNextLink] = useState36(originalLink);
-  const [linkEdited, setLinkEdited] = useState36(false);
-  useEffect39(() => {
+  const [nextLink, setNextLink] = useState34(originalLink);
+  const [linkEdited, setLinkEdited] = useState34(false);
+  useEffect35(() => {
     const selectedElements = getSelectedElements(elementsMap, appState);
     let nextLink2 = originalLink;
     if (selectedElements.length > 0 && generateLinkForSelection) {
@@ -20956,7 +20571,7 @@ var ElementLinkDialog = ({
     originalLink,
     generateLinkForSelection
   ]);
-  const handleConfirm = useCallback13(() => {
+  const handleConfirm = useCallback12(() => {
     if (nextLink && nextLink !== elementsMap.get(sourceElementId)?.link) {
       const elementToLink = elementsMap.get(sourceElementId);
       elementToLink && mutateElement(elementToLink, {
@@ -20971,7 +20586,7 @@ var ElementLinkDialog = ({
     }
     onClose?.();
   }, [sourceElementId, nextLink, elementsMap, linkEdited, onClose]);
-  useEffect39(() => {
+  useEffect35(() => {
     const handleKeyDown = (event) => {
       if (appState.openDialog?.name === "elementLinkSelector" && event.key === KEYS.ENTER) {
         handleConfirm();
@@ -20985,13 +20600,13 @@ var ElementLinkDialog = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [appState, onClose, handleConfirm]);
-  return /* @__PURE__ */ jsxs72("div", { className: "ElementLinkDialog", children: [
-    /* @__PURE__ */ jsxs72("div", { className: "ElementLinkDialog__header", children: [
-      /* @__PURE__ */ jsx136("h2", { children: t("elementLink.title") }),
-      /* @__PURE__ */ jsx136("p", { children: t("elementLink.desc") })
+  return /* @__PURE__ */ jsxs67("div", { className: "ElementLinkDialog", children: [
+    /* @__PURE__ */ jsxs67("div", { className: "ElementLinkDialog__header", children: [
+      /* @__PURE__ */ jsx131("h2", { children: t("elementLink.title") }),
+      /* @__PURE__ */ jsx131("p", { children: t("elementLink.desc") })
     ] }),
-    /* @__PURE__ */ jsxs72("div", { className: "ElementLinkDialog__input", children: [
-      /* @__PURE__ */ jsx136(
+    /* @__PURE__ */ jsxs67("div", { className: "ElementLinkDialog__input", children: [
+      /* @__PURE__ */ jsx131(
         TextField,
         {
           value: nextLink ?? "",
@@ -21010,7 +20625,7 @@ var ElementLinkDialog = ({
           selectOnRender: true
         }
       ),
-      originalLink && nextLink && /* @__PURE__ */ jsx136(
+      originalLink && nextLink && /* @__PURE__ */ jsx131(
         ToolButton,
         {
           type: "button",
@@ -21026,8 +20641,8 @@ var ElementLinkDialog = ({
         }
       )
     ] }),
-    /* @__PURE__ */ jsxs72("div", { className: "ElementLinkDialog__actions", children: [
-      /* @__PURE__ */ jsx136(
+    /* @__PURE__ */ jsxs67("div", { className: "ElementLinkDialog__actions", children: [
+      /* @__PURE__ */ jsx131(
         DialogActionButton_default,
         {
           label: t("buttons.cancel"),
@@ -21039,7 +20654,7 @@ var ElementLinkDialog = ({
           }
         }
       ),
-      /* @__PURE__ */ jsx136(
+      /* @__PURE__ */ jsx131(
         DialogActionButton_default,
         {
           label: t("buttons.confirm"),
@@ -21053,27 +20668,27 @@ var ElementLinkDialog = ({
 var ElementLinkDialog_default = ElementLinkDialog;
 
 // components/LayerUI.tsx
-import { Fragment as Fragment22, jsx as jsx137, jsxs as jsxs73 } from "react/jsx-runtime";
+import { Fragment as Fragment21, jsx as jsx132, jsxs as jsxs68 } from "react/jsx-runtime";
 var DefaultMainMenu = ({ UIOptions }) => {
-  return /* @__PURE__ */ jsxs73(MainMenu_default, { __fallback: true, children: [
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.LoadScene, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.SaveToActiveFile, {}),
-    UIOptions.canvasActions.export && /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.Export, {}),
-    UIOptions.canvasActions.saveAsImage && /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.SaveAsImage, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.SearchMenu, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.Help, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.ClearCanvas, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.Separator, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.Group, { title: "Excalidraw links", children: /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.Socials, {}) }),
-    /* @__PURE__ */ jsx137(MainMenu_default.Separator, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.ToggleTheme, {}),
-    /* @__PURE__ */ jsx137(MainMenu_default.DefaultItems.ChangeCanvasBackground, {})
+  return /* @__PURE__ */ jsxs68(MainMenu_default, { __fallback: true, children: [
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.LoadScene, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.SaveToActiveFile, {}),
+    UIOptions.canvasActions.export && /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.Export, {}),
+    UIOptions.canvasActions.saveAsImage && /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.SaveAsImage, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.SearchMenu, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.Help, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.ClearCanvas, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.Separator, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.Group, { title: "Excalidraw links", children: /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.Socials, {}) }),
+    /* @__PURE__ */ jsx132(MainMenu_default.Separator, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.ToggleTheme, {}),
+    /* @__PURE__ */ jsx132(MainMenu_default.DefaultItems.ChangeCanvasBackground, {})
   ] });
 };
 var DefaultOverwriteConfirmDialog = () => {
-  return /* @__PURE__ */ jsxs73(OverwriteConfirmDialog, { __fallback: true, children: [
-    /* @__PURE__ */ jsx137(OverwriteConfirmDialog.Actions.SaveToDisk, {}),
-    /* @__PURE__ */ jsx137(OverwriteConfirmDialog.Actions.ExportToImage, {})
+  return /* @__PURE__ */ jsxs68(OverwriteConfirmDialog, { __fallback: true, children: [
+    /* @__PURE__ */ jsx132(OverwriteConfirmDialog.Actions.SaveToDisk, {}),
+    /* @__PURE__ */ jsx132(OverwriteConfirmDialog.Actions.ExportToImage, {})
   ] });
 };
 var LayerUI = ({
@@ -21099,13 +20714,22 @@ var LayerUI = ({
 }) => {
   const device = useDevice();
   const tunnels = useInitializeTunnels();
+  const shouldRenderSelectedShapeActions = showSelectedShapeActions(
+    appState,
+    elements
+  );
+  useEffect36(() => {
+    if (!shouldRenderSelectedShapeActions && appState.openMenu === "shape") {
+      setAppState({ openMenu: null });
+    }
+  }, [appState.openMenu, setAppState, shouldRenderSelectedShapeActions]);
   const TunnelsJotaiProvider = tunnels.tunnelsJotai.Provider;
   const [eyeDropperState, setEyeDropperState] = useAtom(activeEyeDropperAtom);
   const renderJSONExportDialog = () => {
     if (!UIOptions.canvasActions.export) {
       return null;
     }
-    return /* @__PURE__ */ jsx137(
+    return /* @__PURE__ */ jsx132(
       JSONExportDialog,
       {
         elements,
@@ -21122,7 +20746,7 @@ var LayerUI = ({
     if (!UIOptions.canvasActions.saveAsImage || appState.openDialog?.name !== "imageExport") {
       return null;
     }
-    return /* @__PURE__ */ jsx137(
+    return /* @__PURE__ */ jsx132(
       ImageExportDialog,
       {
         elements,
@@ -21135,28 +20759,23 @@ var LayerUI = ({
       }
     );
   };
-  const renderCanvasActions = () => /* @__PURE__ */ jsxs73("div", { style: { position: "relative" }, children: [
-    /* @__PURE__ */ jsx137(tunnels.MainMenuTunnel.Out, {}),
-    renderWelcomeScreen && /* @__PURE__ */ jsx137(tunnels.WelcomeScreenMenuHintTunnel.Out, {})
+  const renderCanvasActions = () => /* @__PURE__ */ jsxs68("div", { style: { position: "relative" }, children: [
+    /* @__PURE__ */ jsx132(tunnels.MainMenuTunnel.Out, {}),
+    renderWelcomeScreen && /* @__PURE__ */ jsx132(tunnels.WelcomeScreenMenuHintTunnel.Out, {})
   ] });
-  const renderSelectedShapeActions = () => /* @__PURE__ */ jsx137(
+  const renderSelectedShapeActions = () => /* @__PURE__ */ jsx132(
     Section,
     {
       heading: "selectedShapeActions",
-      className: clsx53("selected-shape-actions zen-mode-transition", {
+      className: clsx49("selected-shape-actions zen-mode-transition", {
         "transition-left": appState.zenModeEnabled
       }),
-      children: /* @__PURE__ */ jsx137(
+      children: /* @__PURE__ */ jsx132(
         Island,
         {
-          className: CLASSES.SHAPE_ACTIONS_MENU,
-          padding: 2,
-          style: {
-            // we want to make sure this doesn't overflow so subtracting the
-            // approximate height of hamburgerMenu + footer
-            maxHeight: `${appState.height - 166}px`
-          },
-          children: /* @__PURE__ */ jsx137(
+          className: clsx49(CLASSES.SHAPE_ACTIONS_MENU, "mathbook-shape-actions-menu"),
+          padding: 1,
+          children: /* @__PURE__ */ jsx132(
             SelectedShapeActions,
             {
               appState,
@@ -21170,120 +20789,116 @@ var LayerUI = ({
     }
   );
   const renderFixedSideContainer = () => {
-    const shouldRenderSelectedShapeActions = showSelectedShapeActions(
-      appState,
-      elements
-    );
     const shouldShowStats = appState.stats.open && !appState.zenModeEnabled && !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector";
-    return /* @__PURE__ */ jsx137(FixedSideContainer, { side: "top", children: /* @__PURE__ */ jsxs73("div", { className: "App-menu App-menu_top", children: [
-      /* @__PURE__ */ jsxs73(Stack_default.Col, { gap: 6, className: clsx53("App-menu_top__left"), children: [
-        renderCanvasActions(),
-        shouldRenderSelectedShapeActions && renderSelectedShapeActions()
-      ] }),
-      !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && /* @__PURE__ */ jsx137(Section, { heading: "shapes", className: "shapes-section", children: (heading) => /* @__PURE__ */ jsxs73("div", { style: { position: "relative" }, children: [
-        renderWelcomeScreen && /* @__PURE__ */ jsx137(tunnels.WelcomeScreenToolbarHintTunnel.Out, {}),
-        /* @__PURE__ */ jsx137(Stack_default.Col, { gap: 4, align: "start", children: /* @__PURE__ */ jsxs73(
-          Stack_default.Row,
-          {
-            gap: 1,
-            className: clsx53("App-toolbar-container", {
-              "zen-mode": appState.zenModeEnabled
-            }),
-            children: [
-              /* @__PURE__ */ jsxs73(
-                Island,
-                {
-                  padding: 1,
-                  className: clsx53("App-toolbar", {
-                    "zen-mode": appState.zenModeEnabled
-                  }),
-                  children: [
-                    /* @__PURE__ */ jsx137(
-                      HintViewer,
-                      {
-                        appState,
-                        isMobile: device.editor.isMobile,
-                        device,
-                        app
-                      }
-                    ),
-                    heading,
-                    /* @__PURE__ */ jsxs73(Stack_default.Row, { gap: 1, children: [
-                      /* @__PURE__ */ jsx137(
-                        PenModeButton,
-                        {
-                          zenModeEnabled: appState.zenModeEnabled,
-                          checked: appState.penMode,
-                          onChange: () => onPenModeToggle(null),
-                          title: t("toolBar.penMode"),
-                          penDetected: appState.penDetected
-                        }
-                      ),
-                      /* @__PURE__ */ jsx137(
-                        LockButton,
-                        {
-                          checked: appState.activeTool.locked,
-                          onChange: onLockToggle,
-                          title: t("toolBar.lock")
-                        }
-                      ),
-                      /* @__PURE__ */ jsx137("div", { className: "App-toolbar__divider" }),
-                      /* @__PURE__ */ jsx137(
-                        HandButton,
-                        {
-                          checked: isHandToolActive(appState),
-                          onChange: () => onHandToolToggle(),
-                          title: t("toolBar.hand"),
-                          isMobile: true
-                        }
-                      ),
-                      /* @__PURE__ */ jsx137(
-                        ShapesSwitcher,
+    return /* @__PURE__ */ jsx132(FixedSideContainer, { side: "top", children: /* @__PURE__ */ jsxs68("div", { className: "App-menu App-menu_top", children: [
+      /* @__PURE__ */ jsx132(Stack_default.Col, { gap: 6, className: clsx49("App-menu_top__left"), children: renderCanvasActions() }),
+      !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && /* @__PURE__ */ jsx132(Section, { heading: "shapes", className: "shapes-section", children: (heading) => /* @__PURE__ */ jsxs68("div", { style: { position: "relative" }, children: [
+        renderWelcomeScreen && /* @__PURE__ */ jsx132(tunnels.WelcomeScreenToolbarHintTunnel.Out, {}),
+        /* @__PURE__ */ jsxs68(Stack_default.Col, { gap: 4, align: "center", children: [
+          /* @__PURE__ */ jsxs68(
+            Stack_default.Row,
+            {
+              gap: 1,
+              className: clsx49("App-toolbar-container", {
+                "zen-mode": appState.zenModeEnabled
+              }),
+              children: [
+                /* @__PURE__ */ jsxs68(
+                  Island,
+                  {
+                    padding: 1,
+                    className: clsx49("App-toolbar", {
+                      "zen-mode": appState.zenModeEnabled
+                    }),
+                    children: [
+                      /* @__PURE__ */ jsx132(
+                        HintViewer,
                         {
                           appState,
-                          activeTool: appState.activeTool,
-                          UIOptions,
+                          isMobile: device.editor.isMobile,
+                          device,
                           app
                         }
-                      )
-                    ] })
-                  ]
-                }
-              ),
-              isCollaborating && /* @__PURE__ */ jsx137(
-                Island,
-                {
-                  style: {
-                    marginLeft: 8,
-                    alignSelf: "center",
-                    height: "fit-content"
-                  },
-                  children: /* @__PURE__ */ jsx137(
-                    LaserPointerButton,
-                    {
-                      title: t("toolBar.laser"),
-                      checked: appState.activeTool.type === TOOL_TYPE.laser,
-                      onChange: () => app.setActiveTool({ type: TOOL_TYPE.laser }),
-                      isMobile: true
-                    }
-                  )
-                }
-              )
-            ]
-          }
-        ) })
+                      ),
+                      heading,
+                      /* @__PURE__ */ jsxs68(Stack_default.Row, { gap: 1, children: [
+                        /* @__PURE__ */ jsx132(
+                          PenModeButton,
+                          {
+                            zenModeEnabled: appState.zenModeEnabled,
+                            checked: appState.penMode,
+                            onChange: () => onPenModeToggle(null),
+                            title: t("toolBar.penMode"),
+                            penDetected: appState.penDetected
+                          }
+                        ),
+                        /* @__PURE__ */ jsx132(
+                          LockButton,
+                          {
+                            checked: appState.activeTool.locked,
+                            onChange: onLockToggle,
+                            title: t("toolBar.lock")
+                          }
+                        ),
+                        /* @__PURE__ */ jsx132("div", { className: "App-toolbar__divider" }),
+                        /* @__PURE__ */ jsx132(
+                          HandButton,
+                          {
+                            checked: isHandToolActive(appState),
+                            onChange: () => onHandToolToggle(),
+                            title: t("toolBar.hand"),
+                            isMobile: true
+                          }
+                        ),
+                        /* @__PURE__ */ jsx132(
+                          ShapesSwitcher,
+                          {
+                            appState,
+                            activeTool: appState.activeTool,
+                            UIOptions,
+                            app
+                          }
+                        )
+                      ] })
+                    ]
+                  }
+                ),
+                isCollaborating && /* @__PURE__ */ jsx132(
+                  Island,
+                  {
+                    style: {
+                      marginLeft: 8,
+                      alignSelf: "center",
+                      height: "fit-content"
+                    },
+                    children: /* @__PURE__ */ jsx132(
+                      LaserPointerButton,
+                      {
+                        title: t("toolBar.laser"),
+                        checked: appState.activeTool.type === TOOL_TYPE.laser,
+                        onChange: () => app.setActiveTool({ type: TOOL_TYPE.laser }),
+                        isMobile: true
+                      }
+                    )
+                  }
+                )
+              ]
+            }
+          ),
+          shouldRenderSelectedShapeActions && !device.editor.isMobile && appState.openMenu === "shape" && /* @__PURE__ */ jsx132("div", { className: "mathbook-shape-actions-slot", children: renderSelectedShapeActions() })
+        ] })
       ] }) }),
-      /* @__PURE__ */ jsxs73(
+      /* @__PURE__ */ jsxs68(
         "div",
         {
-          className: clsx53(
+          className: clsx49(
             "layer-ui__wrapper__top-right zen-mode-transition",
             {
               "transition-right": appState.zenModeEnabled
             }
           ),
           children: [
-            appState.collaborators.size > 0 && /* @__PURE__ */ jsx137(
+            appState.collaborators.size > 0 && /* @__PURE__ */ jsx132(
               UserList,
               {
                 collaborators: appState.collaborators,
@@ -21292,8 +20907,8 @@ var LayerUI = ({
             ),
             renderTopRightUI?.(device.editor.isMobile, appState),
             !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && // hide button when sidebar docked
-            (!isSidebarDocked || appState.openSidebar?.name !== DEFAULT_SIDEBAR.name) && /* @__PURE__ */ jsx137(tunnels.DefaultSidebarTriggerTunnel.Out, {}),
-            shouldShowStats && /* @__PURE__ */ jsx137(
+            (!isSidebarDocked || appState.openSidebar?.name !== DEFAULT_SIDEBAR.name) && /* @__PURE__ */ jsx132(tunnels.DefaultSidebarTriggerTunnel.Out, {}),
+            shouldShowStats && /* @__PURE__ */ jsx132(
               Stats,
               {
                 app,
@@ -21309,7 +20924,7 @@ var LayerUI = ({
     ] }) });
   };
   const renderSidebars = () => {
-    return /* @__PURE__ */ jsx137(
+    return /* @__PURE__ */ jsx132(
       DefaultSidebar,
       {
         __fallback: true,
@@ -21324,10 +20939,10 @@ var LayerUI = ({
     );
   };
   const isSidebarDocked = useAtomValue(isSidebarDockedAtom);
-  const layerUIJSX = /* @__PURE__ */ jsxs73(Fragment22, { children: [
+  const layerUIJSX = /* @__PURE__ */ jsxs68(Fragment21, { children: [
     children,
-    /* @__PURE__ */ jsx137(DefaultMainMenu, { UIOptions }),
-    /* @__PURE__ */ jsx137(
+    /* @__PURE__ */ jsx132(DefaultMainMenu, { UIOptions }),
+    /* @__PURE__ */ jsx132(
       DefaultSidebar.Trigger,
       {
         __fallback: true,
@@ -21346,11 +20961,11 @@ var LayerUI = ({
         children: t("toolBar.library")
       }
     ),
-    /* @__PURE__ */ jsx137(DefaultOverwriteConfirmDialog, {}),
-    appState.openDialog?.name === "ttd" && /* @__PURE__ */ jsx137(TTDDialog, { __fallback: true }),
-    appState.isLoading && /* @__PURE__ */ jsx137(LoadingMessage, { delay: 250 }),
-    appState.errorMessage && /* @__PURE__ */ jsx137(ErrorDialog, { onClose: () => setAppState({ errorMessage: null }), children: appState.errorMessage }),
-    eyeDropperState && !device.editor.isMobile && /* @__PURE__ */ jsx137(
+    /* @__PURE__ */ jsx132(DefaultOverwriteConfirmDialog, {}),
+    appState.openDialog?.name === "ttd" && /* @__PURE__ */ jsx132(TTDDialog, { __fallback: true }),
+    appState.isLoading && /* @__PURE__ */ jsx132(LoadingMessage, { delay: 250 }),
+    appState.errorMessage && /* @__PURE__ */ jsx132(ErrorDialog, { onClose: () => setAppState({ errorMessage: null }), children: appState.errorMessage }),
+    eyeDropperState && !device.editor.isMobile && /* @__PURE__ */ jsx132(
       EyeDropper,
       {
         colorPickerType: eyeDropperState.colorPickerType,
@@ -21389,7 +21004,7 @@ var LayerUI = ({
         }
       }
     ),
-    appState.openDialog?.name === "help" && /* @__PURE__ */ jsx137(
+    appState.openDialog?.name === "help" && /* @__PURE__ */ jsx132(
       HelpDialog,
       {
         onClose: () => {
@@ -21397,8 +21012,8 @@ var LayerUI = ({
         }
       }
     ),
-    /* @__PURE__ */ jsx137(ActiveConfirmDialog, {}),
-    appState.openDialog?.name === "elementLinkSelector" && /* @__PURE__ */ jsx137(
+    /* @__PURE__ */ jsx132(ActiveConfirmDialog, {}),
+    appState.openDialog?.name === "elementLinkSelector" && /* @__PURE__ */ jsx132(
       ElementLinkDialog_default,
       {
         sourceElementId: appState.openDialog.sourceElementId,
@@ -21412,10 +21027,10 @@ var LayerUI = ({
         generateLinkForSelection
       }
     ),
-    /* @__PURE__ */ jsx137(tunnels.OverwriteConfirmDialogTunnel.Out, {}),
+    /* @__PURE__ */ jsx132(tunnels.OverwriteConfirmDialogTunnel.Out, {}),
     renderImageExportDialog(),
     renderJSONExportDialog(),
-    appState.pasteDialog.shown && /* @__PURE__ */ jsx137(
+    appState.pasteDialog.shown && /* @__PURE__ */ jsx132(
       PasteChartDialog,
       {
         setAppState,
@@ -21425,7 +21040,7 @@ var LayerUI = ({
         })
       }
     ),
-    device.editor.isMobile && /* @__PURE__ */ jsx137(
+    device.editor.isMobile && /* @__PURE__ */ jsx132(
       MobileMenu,
       {
         app,
@@ -21446,16 +21061,16 @@ var LayerUI = ({
         UIOptions
       }
     ),
-    !device.editor.isMobile && /* @__PURE__ */ jsxs73(Fragment22, { children: [
-      /* @__PURE__ */ jsxs73(
+    !device.editor.isMobile && /* @__PURE__ */ jsxs68(Fragment21, { children: [
+      /* @__PURE__ */ jsxs68(
         "div",
         {
           className: "layer-ui__wrapper",
           style: appState.openSidebar && isSidebarDocked && device.editor.canFitSidebar ? { width: `calc(100% - var(--right-sidebar-width))` } : {},
           children: [
-            renderWelcomeScreen && /* @__PURE__ */ jsx137(tunnels.WelcomeScreenCenterTunnel.Out, {}),
+            renderWelcomeScreen && /* @__PURE__ */ jsx132(tunnels.WelcomeScreenCenterTunnel.Out, {}),
             renderFixedSideContainer(),
-            /* @__PURE__ */ jsx137(
+            /* @__PURE__ */ jsx132(
               Footer_default,
               {
                 appState,
@@ -21464,7 +21079,7 @@ var LayerUI = ({
                 renderWelcomeScreen
               }
             ),
-            appState.scrolledOutside && /* @__PURE__ */ jsx137(
+            appState.scrolledOutside && /* @__PURE__ */ jsx132(
               "button",
               {
                 type: "button",
@@ -21483,7 +21098,7 @@ var LayerUI = ({
       renderSidebars()
     ] })
   ] });
-  return /* @__PURE__ */ jsx137(UIAppStateContext.Provider, { value: appState, children: /* @__PURE__ */ jsx137(TunnelsJotaiProvider, { children: /* @__PURE__ */ jsx137(TunnelsContext.Provider, { value: tunnels, children: layerUIJSX }) }) });
+  return /* @__PURE__ */ jsx132(UIAppStateContext.Provider, { value: appState, children: /* @__PURE__ */ jsx132(TunnelsJotaiProvider, { children: /* @__PURE__ */ jsx132(TunnelsContext.Provider, { value: tunnels, children: layerUIJSX }) }) });
 };
 var stripIrrelevantAppStateProps = (appState) => {
   const {
@@ -21516,8 +21131,8 @@ var areEqual2 = (prevProps, nextProps) => {
 var LayerUI_default = React40.memo(LayerUI, areEqual2);
 
 // components/Toast.tsx
-import { useCallback as useCallback14, useEffect as useEffect40, useRef as useRef35 } from "react";
-import { jsx as jsx138, jsxs as jsxs74 } from "react/jsx-runtime";
+import { useCallback as useCallback13, useEffect as useEffect37, useRef as useRef31 } from "react";
+import { jsx as jsx133, jsxs as jsxs69 } from "react/jsx-runtime";
 var DEFAULT_TOAST_TIMEOUT = 5e3;
 var Toast = ({
   message,
@@ -21527,15 +21142,15 @@ var Toast = ({
   duration = DEFAULT_TOAST_TIMEOUT,
   style
 }) => {
-  const timerRef = useRef35(0);
+  const timerRef = useRef31(0);
   const shouldAutoClose = duration !== Infinity;
-  const scheduleTimeout = useCallback14(() => {
+  const scheduleTimeout = useCallback13(() => {
     if (!shouldAutoClose) {
       return;
     }
     timerRef.current = window.setTimeout(() => onClose(), duration);
   }, [onClose, duration, shouldAutoClose]);
-  useEffect40(() => {
+  useEffect37(() => {
     if (!shouldAutoClose) {
       return;
     }
@@ -21544,7 +21159,7 @@ var Toast = ({
   }, [scheduleTimeout, message, duration, shouldAutoClose]);
   const onMouseEnter = shouldAutoClose ? () => clearTimeout(timerRef?.current) : void 0;
   const onMouseLeave = shouldAutoClose ? scheduleTimeout : void 0;
-  return /* @__PURE__ */ jsxs74(
+  return /* @__PURE__ */ jsxs69(
     "div",
     {
       className: "Toast",
@@ -21552,8 +21167,8 @@ var Toast = ({
       onMouseLeave,
       style,
       children: [
-        /* @__PURE__ */ jsx138("p", { className: "Toast__message", children: message }),
-        closable && /* @__PURE__ */ jsx138(
+        /* @__PURE__ */ jsx133("p", { className: "Toast__message", children: message }),
+        closable && /* @__PURE__ */ jsx133(
           ToolButton,
           {
             icon: CloseIcon,
@@ -21761,36 +21376,36 @@ var actionWrapSelectionInFrame = register({
 });
 
 // components/BraveMeasureTextError.tsx
-import { jsx as jsx139, jsxs as jsxs75 } from "react/jsx-runtime";
+import { jsx as jsx134, jsxs as jsxs70 } from "react/jsx-runtime";
 var BraveMeasureTextError = () => {
-  return /* @__PURE__ */ jsxs75("div", { "data-testid": "brave-measure-text-error", children: [
-    /* @__PURE__ */ jsx139("p", { children: /* @__PURE__ */ jsx139(
+  return /* @__PURE__ */ jsxs70("div", { "data-testid": "brave-measure-text-error", children: [
+    /* @__PURE__ */ jsx134("p", { children: /* @__PURE__ */ jsx134(
       Trans_default,
       {
         i18nKey: "errors.brave_measure_text_error.line1",
-        bold: (el) => /* @__PURE__ */ jsx139("span", { style: { fontWeight: 600 }, children: el })
+        bold: (el) => /* @__PURE__ */ jsx134("span", { style: { fontWeight: 600 }, children: el })
       }
     ) }),
-    /* @__PURE__ */ jsx139("p", { children: /* @__PURE__ */ jsx139(
+    /* @__PURE__ */ jsx134("p", { children: /* @__PURE__ */ jsx134(
       Trans_default,
       {
         i18nKey: "errors.brave_measure_text_error.line2",
-        bold: (el) => /* @__PURE__ */ jsx139("span", { style: { fontWeight: 600 }, children: el })
+        bold: (el) => /* @__PURE__ */ jsx134("span", { style: { fontWeight: 600 }, children: el })
       }
     ) }),
-    /* @__PURE__ */ jsx139("p", { children: /* @__PURE__ */ jsx139(
+    /* @__PURE__ */ jsx134("p", { children: /* @__PURE__ */ jsx134(
       Trans_default,
       {
         i18nKey: "errors.brave_measure_text_error.line3",
-        link: (el) => /* @__PURE__ */ jsx139("a", { href: "http://docs.excalidraw.com/docs/@excalidraw/excalidraw/faq#turning-off-aggresive-block-fingerprinting-in-brave-browser", children: el })
+        link: (el) => /* @__PURE__ */ jsx134("a", { href: "http://docs.excalidraw.com/docs/@excalidraw/excalidraw/faq#turning-off-aggresive-block-fingerprinting-in-brave-browser", children: el })
       }
     ) }),
-    /* @__PURE__ */ jsx139("p", { children: /* @__PURE__ */ jsx139(
+    /* @__PURE__ */ jsx134("p", { children: /* @__PURE__ */ jsx134(
       Trans_default,
       {
         i18nKey: "errors.brave_measure_text_error.line4",
-        issueLink: (el) => /* @__PURE__ */ jsx139("a", { href: "https://github.com/excalidraw/excalidraw/issues/new", children: el }),
-        discordLink: (el) => /* @__PURE__ */ jsxs75("a", { href: "https://discord.gg/UexuTaE", children: [
+        issueLink: (el) => /* @__PURE__ */ jsx134("a", { href: "https://github.com/excalidraw/excalidraw/issues/new", children: el }),
+        discordLink: (el) => /* @__PURE__ */ jsxs70("a", { href: "https://discord.gg/UexuTaE", children: [
           el,
           "."
         ] })
@@ -22283,7 +21898,7 @@ var convertToExcalidrawElements = (elementsSkeleton, opts) => {
 };
 
 // components/canvases/InteractiveCanvas.tsx
-import React41, { useEffect as useEffect41, useRef as useRef36 } from "react";
+import React41, { useEffect as useEffect38, useRef as useRef32 } from "react";
 
 // reactUtils.ts
 import { unstable_batchedUpdates as unstable_batchedUpdates2 } from "react-dom";
@@ -23279,10 +22894,10 @@ var renderInteractiveScene = (renderConfig, throttle5) => {
 };
 
 // components/canvases/InteractiveCanvas.tsx
-import { jsx as jsx140 } from "react/jsx-runtime";
+import { jsx as jsx135 } from "react/jsx-runtime";
 var InteractiveCanvas = (props) => {
-  const isComponentMounted = useRef36(false);
-  useEffect41(() => {
+  const isComponentMounted = useRef32(false);
+  useEffect38(() => {
     if (!isComponentMounted.current) {
       isComponentMounted.current = true;
       return;
@@ -23349,7 +22964,7 @@ var InteractiveCanvas = (props) => {
       isRenderThrottlingEnabled()
     );
   });
-  return /* @__PURE__ */ jsx140(
+  return /* @__PURE__ */ jsx135(
     "canvas",
     {
       className: "excalidraw__canvas interactive",
@@ -23423,12 +23038,12 @@ var areEqual3 = (prevProps, nextProps) => {
 var InteractiveCanvas_default = React41.memo(InteractiveCanvas, areEqual3);
 
 // components/canvases/StaticCanvas.tsx
-import React42, { useEffect as useEffect42, useRef as useRef37 } from "react";
-import { jsx as jsx141 } from "react/jsx-runtime";
+import React42, { useEffect as useEffect39, useRef as useRef33 } from "react";
+import { jsx as jsx136 } from "react/jsx-runtime";
 var StaticCanvas = (props) => {
-  const wrapperRef = useRef37(null);
-  const isComponentMounted = useRef37(false);
-  useEffect42(() => {
+  const wrapperRef = useRef33(null);
+  const isComponentMounted = useRef33(false);
+  useEffect39(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) {
       return;
@@ -23469,7 +23084,7 @@ var StaticCanvas = (props) => {
       isRenderThrottlingEnabled()
     );
   });
-  return /* @__PURE__ */ jsx141("div", { className: "excalidraw__canvas-wrapper", ref: wrapperRef });
+  return /* @__PURE__ */ jsx136("div", { className: "excalidraw__canvas-wrapper", ref: wrapperRef });
 };
 var getRelevantAppStateProps2 = (appState) => ({
   zoom: appState.zoom,
@@ -23491,6 +23106,8 @@ var getRelevantAppStateProps2 = (appState) => ({
   gridSize: appState.gridSize,
   gridStep: appState.gridStep,
   gridType: appState.gridType,
+  gridColor: appState.gridColor,
+  gridOpacity: appState.gridOpacity,
   frameRendering: appState.frameRendering,
   selectedElementIds: appState.selectedElementIds,
   frameToHighlight: appState.frameToHighlight,
@@ -23622,11 +23239,11 @@ var Renderer = class {
 };
 
 // components/SVGLayer.tsx
-import { useEffect as useEffect43, useRef as useRef38 } from "react";
-import { jsx as jsx142 } from "react/jsx-runtime";
+import { useEffect as useEffect40, useRef as useRef34 } from "react";
+import { jsx as jsx137 } from "react/jsx-runtime";
 var SVGLayer = ({ trails }) => {
-  const svgRef = useRef38(null);
-  useEffect43(() => {
+  const svgRef = useRef34(null);
+  useEffect40(() => {
     if (svgRef.current) {
       for (const trail of trails) {
         trail.start(svgRef.current);
@@ -23638,11 +23255,11 @@ var SVGLayer = ({ trails }) => {
       }
     };
   }, trails);
-  return /* @__PURE__ */ jsx142("div", { className: "SVGLayer", children: /* @__PURE__ */ jsx142("svg", { ref: svgRef }) });
+  return /* @__PURE__ */ jsx137("div", { className: "SVGLayer", children: /* @__PURE__ */ jsx137("svg", { ref: svgRef }) });
 };
 
 // element/ElementCanvasButtons.tsx
-import { jsx as jsx143 } from "react/jsx-runtime";
+import { jsx as jsx138 } from "react/jsx-runtime";
 var CONTAINER_PADDING = 5;
 var getContainerCoords = (element, appState, elementsMap) => {
   const [x1, y1] = getElementAbsoluteCoords(element, elementsMap);
@@ -23664,7 +23281,7 @@ var ElementCanvasButtons = ({
     return null;
   }
   const { x, y } = getContainerCoords(element, appState, elementsMap);
-  return /* @__PURE__ */ jsx143(
+  return /* @__PURE__ */ jsx138(
     "div",
     {
       className: "excalidraw-canvas-buttons",
@@ -23680,14 +23297,14 @@ var ElementCanvasButtons = ({
 };
 
 // components/MagicButton.tsx
-import clsx54 from "clsx";
-import { jsx as jsx144, jsxs as jsxs76 } from "react/jsx-runtime";
+import clsx50 from "clsx";
+import { jsx as jsx139, jsxs as jsxs71 } from "react/jsx-runtime";
 var DEFAULT_SIZE4 = "small";
 var ElementCanvasButton = (props) => {
-  return /* @__PURE__ */ jsxs76(
+  return /* @__PURE__ */ jsxs71(
     "label",
     {
-      className: clsx54(
+      className: clsx50(
         "ToolIcon ToolIcon__MagicButton",
         `ToolIcon_size_${DEFAULT_SIZE4}`,
         {
@@ -23696,7 +23313,7 @@ var ElementCanvasButton = (props) => {
       ),
       title: `${props.title}`,
       children: [
-        /* @__PURE__ */ jsx144(
+        /* @__PURE__ */ jsx139(
           "input",
           {
             className: "ToolIcon_type_checkbox",
@@ -23707,25 +23324,25 @@ var ElementCanvasButton = (props) => {
             "aria-label": props.title
           }
         ),
-        /* @__PURE__ */ jsx144("div", { className: "ToolIcon__icon", children: props.icon })
+        /* @__PURE__ */ jsx139("div", { className: "ToolIcon__icon", children: props.icon })
       ]
     }
   );
 };
 
 // components/FollowMode/FollowMode.tsx
-import { jsx as jsx145, jsxs as jsxs77 } from "react/jsx-runtime";
+import { jsx as jsx140, jsxs as jsxs72 } from "react/jsx-runtime";
 var FollowMode = ({
   height,
   width,
   userToFollow,
   onDisconnect
 }) => {
-  return /* @__PURE__ */ jsx145("div", { className: "follow-mode", style: { width, height }, children: /* @__PURE__ */ jsxs77("div", { className: "follow-mode__badge", children: [
-    /* @__PURE__ */ jsxs77("div", { className: "follow-mode__badge__label", children: [
+  return /* @__PURE__ */ jsx140("div", { className: "follow-mode", style: { width, height }, children: /* @__PURE__ */ jsxs72("div", { className: "follow-mode__badge", children: [
+    /* @__PURE__ */ jsxs72("div", { className: "follow-mode__badge__label", children: [
       "Following",
       " ",
-      /* @__PURE__ */ jsx145(
+      /* @__PURE__ */ jsx140(
         "span",
         {
           className: "follow-mode__badge__username",
@@ -23734,7 +23351,7 @@ var FollowMode = ({
         }
       )
     ] }),
-    /* @__PURE__ */ jsx145(
+    /* @__PURE__ */ jsx140(
       "button",
       {
         type: "button",
@@ -24549,7 +24166,7 @@ var isMaybeMermaidDefinition = (text) => {
 };
 
 // components/canvases/NewElementCanvas.tsx
-import { useEffect as useEffect44, useRef as useRef39 } from "react";
+import { useEffect as useEffect41, useRef as useRef35 } from "react";
 
 // renderer/renderNewElementScene.ts
 var _renderNewElementScene = ({
@@ -24605,10 +24222,10 @@ var renderNewElementScene = (renderConfig, throttle5) => {
 };
 
 // components/canvases/NewElementCanvas.tsx
-import { jsx as jsx146 } from "react/jsx-runtime";
+import { jsx as jsx141 } from "react/jsx-runtime";
 var NewElementCanvas = (props) => {
-  const canvasRef = useRef39(null);
-  useEffect44(() => {
+  const canvasRef = useRef35(null);
+  useEffect41(() => {
     if (!canvasRef.current) {
       return;
     }
@@ -24626,7 +24243,7 @@ var NewElementCanvas = (props) => {
       isRenderThrottlingEnabled()
     );
   });
-  return /* @__PURE__ */ jsx146(
+  return /* @__PURE__ */ jsx141(
     "canvas",
     {
       className: "excalidraw__canvas",
@@ -24643,7 +24260,7 @@ var NewElementCanvas = (props) => {
 var NewElementCanvas_default = NewElementCanvas;
 
 // components/App.tsx
-import { Fragment as Fragment23, jsx as jsx147, jsxs as jsxs78 } from "react/jsx-runtime";
+import { Fragment as Fragment22, jsx as jsx142, jsxs as jsxs73 } from "react/jsx-runtime";
 var AppContext = React43.createContext(null);
 var AppPropsContext = React43.createContext(null);
 var deviceContextInitialValue = {
@@ -24744,6 +24361,8 @@ var App = class _App extends React43.Component {
     __publicField(this, "elementsPendingErasure", /* @__PURE__ */ new Set());
     __publicField(this, "flowChartCreator", new FlowChartCreator());
     __publicField(this, "flowChartNavigator", new FlowChartNavigator());
+    /** When true, shape properties strip stays collapsed until tool change or expand. */
+    __publicField(this, "shapeActionsUserDismissed", false);
     __publicField(this, "hitLinkElement");
     __publicField(this, "lastPointerDownEvent", null);
     __publicField(this, "lastPointerUpEvent", null);
@@ -24894,7 +24513,7 @@ var App = class _App extends React43.Component {
         const frameName = getFrameLikeTitle(f);
         if (f.id === this.state.editingFrame) {
           const frameNameInEdit = frameName;
-          frameNameJSX = /* @__PURE__ */ jsx147(
+          frameNameJSX = /* @__PURE__ */ jsx142(
             "input",
             {
               autoFocus: true,
@@ -24937,7 +24556,7 @@ var App = class _App extends React43.Component {
         } else {
           frameNameJSX = frameName;
         }
-        return /* @__PURE__ */ jsx147(
+        return /* @__PURE__ */ jsx142(
           "div",
           {
             id: this.getFrameNameDOMId(f),
@@ -25903,6 +25522,31 @@ var App = class _App extends React43.Component {
         this.addNewImagesToImageCache();
       }
     ));
+    /** Replace existing file payloads (e.g. theme-dependent PNG reprocessing). */
+    __publicField(this, "updateFiles", withBatchedUpdates(
+      (files) => {
+        const updatedFiles = {};
+        for (const fileData of files) {
+          const existing = this.files[fileData.id];
+          if (!existing) {
+            continue;
+          }
+          const next = {
+            ...existing,
+            ...fileData,
+            version: (existing.version ?? 1) + 1
+          };
+          this.files[fileData.id] = next;
+          updatedFiles[fileData.id] = next;
+        }
+        if (Object.keys(updatedFiles).length === 0) {
+          return;
+        }
+        this.clearImageShapeCache(updatedFiles);
+        this.scene.triggerUpdate();
+        void this.addNewImagesToImageCache();
+      }
+    ));
     __publicField(this, "addMissingFiles", (files, replace = false) => {
       const nextFiles = replace ? {} : { ...this.files };
       const addedFiles = {};
@@ -26475,6 +26119,30 @@ var App = class _App extends React43.Component {
     __publicField(this, "isToolSupported", (tool) => {
       return this.props.UIOptions.tools?.[tool] !== false;
     });
+    __publicField(this, "dismissShapeActionsPanel", () => {
+      this.shapeActionsUserDismissed = true;
+      this.setState((prev) => ({
+        ...prev,
+        openMenu: prev.openMenu === "shape" ? null : prev.openMenu
+      }));
+    });
+    __publicField(this, "expandShapeActionsPanel", () => {
+      this.shapeActionsUserDismissed = false;
+      this.setState({ openMenu: "shape" });
+    });
+    __publicField(this, "toggleShapeActionsPanel", () => {
+      if (!showSelectedShapeActions(
+        this.state,
+        this.scene.getNonDeletedElements()
+      )) {
+        return;
+      }
+      if (this.state.openMenu === "shape") {
+        this.dismissShapeActionsPanel();
+      } else {
+        this.expandShapeActionsPanel();
+      }
+    });
     __publicField(this, "setActiveTool", (tool) => {
       if (!this.isToolSupported(tool.type)) {
         console.warn(
@@ -26483,6 +26151,12 @@ var App = class _App extends React43.Component {
         return;
       }
       const nextActiveTool = updateActiveTool(this.state, tool);
+      const sameToolType = nextActiveTool.type === this.state.activeTool.type;
+      const sceneElements = this.scene.getNonDeletedElements();
+      const canToggleShapePanel = showSelectedShapeActions(
+        this.state,
+        sceneElements
+      );
       if (nextActiveTool.type === "hand") {
         setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
       } else if (!isHoldingSpace) {
@@ -26508,6 +26182,29 @@ var App = class _App extends React43.Component {
           originSnapOffset: null,
           activeEmbeddable: null
         };
+        if (sameToolType && canToggleShapePanel && nextActiveTool.type !== "image") {
+          if (prevState.openMenu === "shape") {
+            this.shapeActionsUserDismissed = true;
+            return {
+              ...prevState,
+              activeTool: nextActiveTool,
+              openMenu: null,
+              ...commonResets
+            };
+          }
+          this.shapeActionsUserDismissed = false;
+          return {
+            ...prevState,
+            activeTool: nextActiveTool,
+            openMenu: "shape",
+            ...commonResets
+          };
+        }
+        if (nextActiveTool.type !== prevState.activeTool.type) {
+          this.shapeActionsUserDismissed = true;
+        }
+        const toolTypeChanged = nextActiveTool.type !== prevState.activeTool.type;
+        const menuClose = toolTypeChanged ? { openMenu: null } : {};
         if (nextActiveTool.type === "freedraw") {
           this.store.shouldCaptureIncrement();
         }
@@ -26519,13 +26216,15 @@ var App = class _App extends React43.Component {
             selectedGroupIds: makeNextSelectedElementIds({}, prevState),
             editingGroupId: null,
             multiElement: null,
-            ...commonResets
+            ...commonResets,
+            ...menuClose
           };
         }
         return {
           ...prevState,
           activeTool: nextActiveTool,
-          ...commonResets
+          ...commonResets,
+          ...menuClose
         };
       });
     });
@@ -27491,6 +27190,10 @@ var App = class _App extends React43.Component {
             });
           }
         );
+        return;
+      }
+      if (event.button === POINTER_BUTTON.SECONDARY && event.pointerType === "mouse" && !this.state.viewModeEnabled && gesture.pointers.size <= 1) {
+        this.handleSecondaryButtonDragSelection(event);
         return;
       }
       if (event.button !== POINTER_BUTTON.MAIN && event.button !== POINTER_BUTTON.TOUCH && event.button !== POINTER_BUTTON.ERASER) {
@@ -28892,8 +28595,124 @@ var App = class _App extends React43.Component {
         this.setState({ isLoading: false, errorMessage: error.message });
       }
     });
+    /**
+     * Start a box-selection interaction from an existing pointer-down (used when
+     * right-drag switches to the selection tool mid-gesture).
+     */
+    __publicField(this, "beginBoxSelectionInteraction", (event, followUpMoveEvent) => {
+      const pointerDownState = this.initialPointerDownState(event);
+      this.setState({
+        selectedElementsAreBeingDragged: false
+      });
+      this.clearSelectionIfNotUsingSelection();
+      this.updateBindingEnabledOnPointerMove(event);
+      if (this.handleSelectionOnPointerDown(event, pointerDownState)) {
+        return;
+      }
+      this.createGenericElementOnPointerDown("selection", pointerDownState);
+      this.props?.onPointerDown?.(this.state.activeTool, pointerDownState);
+      this.onPointerDownEmitter.trigger(
+        this.state.activeTool,
+        pointerDownState,
+        event
+      );
+      const onPointerMove = this.onPointerMoveFromPointerDownHandler(pointerDownState);
+      const onPointerUp = this.onPointerUpFromPointerDownHandler(pointerDownState);
+      const onKeyDown = this.onKeyDownFromPointerDownHandler(pointerDownState);
+      const onKeyUp = this.onKeyUpFromPointerDownHandler(pointerDownState);
+      this.missingPointerEventCleanupEmitter.once(
+        (_event) => onPointerUp(_event || event.nativeEvent)
+      );
+      if (!this.state.viewModeEnabled) {
+        window.addEventListener("pointermove" /* POINTER_MOVE */, onPointerMove);
+        window.addEventListener("pointerup" /* POINTER_UP */, onPointerUp);
+        window.addEventListener("keydown" /* KEYDOWN */, onKeyDown);
+        window.addEventListener("keyup" /* KEYUP */, onKeyUp);
+        pointerDownState.eventListeners.onMove = onPointerMove;
+        pointerDownState.eventListeners.onUp = onPointerUp;
+        pointerDownState.eventListeners.onKeyUp = onKeyUp;
+        pointerDownState.eventListeners.onKeyDown = onKeyDown;
+      }
+      if (followUpMoveEvent) {
+        onPointerMove(followUpMoveEvent);
+      }
+    });
+    __publicField(this, "handleSecondaryButtonDragSelection", (event) => {
+      const originX = event.clientX;
+      const originY = event.clientY;
+      const pointerId = event.pointerId;
+      const toolBeforeDrag = this.state.activeTool;
+      let dragSelectionStarted = false;
+      const cleanupMoveListener = () => {
+        window.removeEventListener("pointermove" /* POINTER_MOVE */, onPointerMove, true);
+      };
+      const cleanupAllListeners = () => {
+        cleanupMoveListener();
+        window.removeEventListener("pointerup" /* POINTER_UP */, onPointerUp, true);
+      };
+      const onPointerMove = (moveEvent) => {
+        if (dragSelectionStarted || moveEvent.pointerId !== pointerId) {
+          return;
+        }
+        const dx = moveEvent.clientX - originX;
+        const dy = moveEvent.clientY - originY;
+        if (Math.hypot(dx, dy) < DRAGGING_THRESHOLD) {
+          return;
+        }
+        dragSelectionStarted = true;
+        invalidateContextMenu = true;
+        cleanupMoveListener();
+        const startSelection = () => {
+          this.beginBoxSelectionInteraction(event, moveEvent);
+        };
+        if (toolBeforeDrag.type !== "selection") {
+          this.setState(
+            {
+              activeTool: updateActiveTool(this.state, { type: "selection" })
+            },
+            startSelection
+          );
+        } else {
+          startSelection();
+        }
+      };
+      const onPointerUp = (upEvent) => {
+        if (upEvent.pointerId !== pointerId) {
+          return;
+        }
+        cleanupAllListeners();
+        if (!dragSelectionStarted || toolBeforeDrag.type === "selection") {
+          return;
+        }
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.setState({
+              activeTool: updateActiveTool(
+                this.state,
+                toolBeforeDrag.type === "custom" ? {
+                  type: "custom",
+                  customType: toolBeforeDrag.customType,
+                  locked: toolBeforeDrag.locked
+                } : {
+                  type: toolBeforeDrag.type,
+                  locked: toolBeforeDrag.locked
+                }
+              )
+            });
+          });
+        });
+      };
+      window.addEventListener("pointermove" /* POINTER_MOVE */, onPointerMove, {
+        capture: true
+      });
+      window.addEventListener("pointerup" /* POINTER_UP */, onPointerUp, { capture: true });
+    });
     __publicField(this, "handleCanvasContextMenu", (event) => {
       event.preventDefault();
+      if (invalidateContextMenu) {
+        invalidateContextMenu = false;
+        return;
+      }
       if (("pointerType" in event.nativeEvent && event.nativeEvent.pointerType === "touch" || "pointerType" in event.nativeEvent && event.nativeEvent.pointerType === "pen" && // always allow if user uses a pen secondary button
       event.button !== POINTER_BUTTON.SECONDARY) && this.state.activeTool.type !== "selection") {
         return;
@@ -29425,6 +29244,7 @@ var App = class _App extends React43.Component {
         updateScene: this.updateScene,
         updateLibrary: this.library.updateLibrary,
         addFiles: this.addFiles,
+        updateFiles: this.updateFiles,
         resetScene: this.resetScene,
         getSceneElementsIncludingDeleted: this.getSceneElementsIncludingDeleted,
         history: {
@@ -29442,6 +29262,7 @@ var App = class _App extends React43.Component {
         setToast: this.setToast,
         id: this.id,
         setActiveTool: this.setActiveTool,
+        toggleShapeActionsPanel: this.toggleShapeActionsPanel,
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
         updateFrameRendering: this.updateFrameRendering,
@@ -29604,7 +29425,7 @@ var App = class _App extends React43.Component {
     const embeddableElements = this.scene.getNonDeletedElements().filter(
       (el) => isEmbeddableElement(el) && this.embedsValidationStatus.get(el.id) === true || isIframeElement(el)
     );
-    return /* @__PURE__ */ jsx147(Fragment23, { children: embeddableElements.map((el) => {
+    return /* @__PURE__ */ jsx142(Fragment22, { children: embeddableElements.map((el) => {
       const { x, y } = sceneCoordsToViewportCoords(
         { sceneX: el.x, sceneY: el.y },
         this.state
@@ -29760,10 +29581,10 @@ var App = class _App extends React43.Component {
       }
       const isActive = this.state.activeEmbeddable?.element === el && this.state.activeEmbeddable?.state === "active";
       const isHovered = this.state.activeEmbeddable?.element === el && this.state.activeEmbeddable?.state === "hover";
-      return /* @__PURE__ */ jsx147(
+      return /* @__PURE__ */ jsx142(
         "div",
         {
-          className: clsx55("excalidraw__embeddable-container", {
+          className: clsx51("excalidraw__embeddable-container", {
             "is-hovered": isHovered
           }),
           style: {
@@ -29781,7 +29602,7 @@ var App = class _App extends React43.Component {
               el
             )}px`
           },
-          children: /* @__PURE__ */ jsxs78(
+          children: /* @__PURE__ */ jsxs73(
             "div",
             {
               className: "excalidraw__embeddable-container__inner",
@@ -29792,15 +29613,15 @@ var App = class _App extends React43.Component {
                 pointerEvents: isActive ? POINTER_EVENTS.enabled : POINTER_EVENTS.disabled
               },
               children: [
-                isHovered && /* @__PURE__ */ jsx147("div", { className: "excalidraw__embeddable-hint", children: t("buttons.embeddableInteractionButton") }),
-                /* @__PURE__ */ jsx147(
+                isHovered && /* @__PURE__ */ jsx142("div", { className: "excalidraw__embeddable-hint", children: t("buttons.embeddableInteractionButton") }),
+                /* @__PURE__ */ jsx142(
                   "div",
                   {
                     className: "excalidraw__embeddable__outer",
                     style: {
                       padding: `${el.strokeWidth}px`
                     },
-                    children: (isEmbeddableElement(el) ? this.props.renderEmbeddable?.(el, this.state) : null) ?? /* @__PURE__ */ jsx147(
+                    children: (isEmbeddableElement(el) ? this.props.renderEmbeddable?.(el, this.state) : null) ?? /* @__PURE__ */ jsx142(
                       "iframe",
                       {
                         ref: (ref) => this.cacheEmbeddableRef(el, ref),
@@ -29854,10 +29675,10 @@ var App = class _App extends React43.Component {
       this.state.cursorButton === "down"
     );
     const firstSelectedElement = selectedElements[0];
-    return /* @__PURE__ */ jsx147(
+    return /* @__PURE__ */ jsx142(
       "div",
       {
-        className: clsx55("excalidraw excalidraw-container", {
+        className: clsx51("excalidraw excalidraw-container", {
           "excalidraw--view-mode": this.state.viewModeEnabled || this.state.openDialog?.name === "elementLinkSelector",
           "excalidraw--mobile": this.device.editor.isMobile
         }),
@@ -29871,21 +29692,21 @@ var App = class _App extends React43.Component {
         onKeyDown: this.props.handleKeyboardGlobally ? void 0 : this.onKeyDown,
         onPointerEnter: this.toggleOverscrollBehavior,
         onPointerLeave: this.toggleOverscrollBehavior,
-        children: /* @__PURE__ */ jsx147(AppContext.Provider, { value: this, children: /* @__PURE__ */ jsx147(AppPropsContext.Provider, { value: this.props, children: /* @__PURE__ */ jsx147(
+        children: /* @__PURE__ */ jsx142(AppContext.Provider, { value: this, children: /* @__PURE__ */ jsx142(AppPropsContext.Provider, { value: this.props, children: /* @__PURE__ */ jsx142(
           ExcalidrawContainerContext.Provider,
           {
             value: this.excalidrawContainerValue,
-            children: /* @__PURE__ */ jsx147(DeviceContext.Provider, { value: this.device, children: /* @__PURE__ */ jsx147(ExcalidrawSetAppStateContext.Provider, { value: this.setAppState, children: /* @__PURE__ */ jsx147(ExcalidrawAppStateContext.Provider, { value: this.state, children: /* @__PURE__ */ jsxs78(
+            children: /* @__PURE__ */ jsx142(DeviceContext.Provider, { value: this.device, children: /* @__PURE__ */ jsx142(ExcalidrawSetAppStateContext.Provider, { value: this.setAppState, children: /* @__PURE__ */ jsx142(ExcalidrawAppStateContext.Provider, { value: this.state, children: /* @__PURE__ */ jsxs73(
               ExcalidrawElementsContext.Provider,
               {
                 value: this.scene.getNonDeletedElements(),
                 children: [
-                  /* @__PURE__ */ jsxs78(
+                  /* @__PURE__ */ jsxs73(
                     ExcalidrawActionManagerContext.Provider,
                     {
                       value: this.actionManager,
                       children: [
-                        /* @__PURE__ */ jsx147(
+                        /* @__PURE__ */ jsx142(
                           LayerUI_default,
                           {
                             canvas: this.canvas,
@@ -29910,16 +29731,16 @@ var App = class _App extends React43.Component {
                             children: this.props.children
                           }
                         ),
-                        /* @__PURE__ */ jsx147("div", { className: "excalidraw-textEditorContainer" }),
-                        /* @__PURE__ */ jsx147("div", { className: "excalidraw-contextMenuContainer" }),
-                        /* @__PURE__ */ jsx147("div", { className: "excalidraw-eye-dropper-container" }),
-                        /* @__PURE__ */ jsx147(
+                        /* @__PURE__ */ jsx142("div", { className: "excalidraw-textEditorContainer" }),
+                        /* @__PURE__ */ jsx142("div", { className: "excalidraw-contextMenuContainer" }),
+                        /* @__PURE__ */ jsx142("div", { className: "excalidraw-eye-dropper-container" }),
+                        /* @__PURE__ */ jsx142(
                           SVGLayer,
                           {
                             trails: [this.laserTrails, this.eraserTrail]
                           }
                         ),
-                        selectedElements.length === 1 && this.state.openDialog?.name !== "elementLinkSelector" && this.state.showHyperlinkPopup && /* @__PURE__ */ jsx147(
+                        selectedElements.length === 1 && this.state.openDialog?.name !== "elementLinkSelector" && this.state.showHyperlinkPopup && /* @__PURE__ */ jsx142(
                           Hyperlink,
                           {
                             element: firstSelectedElement,
@@ -29931,12 +29752,12 @@ var App = class _App extends React43.Component {
                           },
                           firstSelectedElement.id
                         ),
-                        this.props.aiEnabled !== false && selectedElements.length === 1 && isMagicFrameElement(firstSelectedElement) && /* @__PURE__ */ jsx147(
+                        this.props.aiEnabled !== false && selectedElements.length === 1 && isMagicFrameElement(firstSelectedElement) && /* @__PURE__ */ jsx142(
                           ElementCanvasButtons,
                           {
                             element: firstSelectedElement,
                             elementsMap,
-                            children: /* @__PURE__ */ jsx147(
+                            children: /* @__PURE__ */ jsx142(
                               ElementCanvasButton,
                               {
                                 title: t("labels.convertToCode"),
@@ -29950,13 +29771,13 @@ var App = class _App extends React43.Component {
                             )
                           }
                         ),
-                        selectedElements.length === 1 && isIframeElement(firstSelectedElement) && firstSelectedElement.customData?.generationData?.status === "done" && /* @__PURE__ */ jsxs78(
+                        selectedElements.length === 1 && isIframeElement(firstSelectedElement) && firstSelectedElement.customData?.generationData?.status === "done" && /* @__PURE__ */ jsxs73(
                           ElementCanvasButtons,
                           {
                             element: firstSelectedElement,
                             elementsMap,
                             children: [
-                              /* @__PURE__ */ jsx147(
+                              /* @__PURE__ */ jsx142(
                                 ElementCanvasButton,
                                 {
                                   title: t("labels.copySource"),
@@ -29965,7 +29786,7 @@ var App = class _App extends React43.Component {
                                   onChange: () => this.onIframeSrcCopy(firstSelectedElement)
                                 }
                               ),
-                              /* @__PURE__ */ jsx147(
+                              /* @__PURE__ */ jsx142(
                                 ElementCanvasButton,
                                 {
                                   title: "Enter fullscreen",
@@ -30002,7 +29823,7 @@ var App = class _App extends React43.Component {
                             ]
                           }
                         ),
-                        this.state.toast !== null && /* @__PURE__ */ jsx147(
+                        this.state.toast !== null && /* @__PURE__ */ jsx142(
                           Toast,
                           {
                             message: this.state.toast.message,
@@ -30011,7 +29832,7 @@ var App = class _App extends React43.Component {
                             closable: this.state.toast.closable
                           }
                         ),
-                        this.state.contextMenu && /* @__PURE__ */ jsx147(
+                        this.state.contextMenu && /* @__PURE__ */ jsx142(
                           ContextMenu,
                           {
                             items: this.state.contextMenu.items,
@@ -30026,7 +29847,7 @@ var App = class _App extends React43.Component {
                             }
                           }
                         ),
-                        /* @__PURE__ */ jsx147(
+                        /* @__PURE__ */ jsx142(
                           StaticCanvas_default,
                           {
                             canvas: this.canvas,
@@ -30049,7 +29870,7 @@ var App = class _App extends React43.Component {
                             }
                           }
                         ),
-                        this.state.newElement && /* @__PURE__ */ jsx147(
+                        this.state.newElement && /* @__PURE__ */ jsx142(
                           NewElementCanvas_default,
                           {
                             appState: this.state,
@@ -30068,7 +29889,7 @@ var App = class _App extends React43.Component {
                             }
                           }
                         ),
-                        /* @__PURE__ */ jsx147(
+                        /* @__PURE__ */ jsx142(
                           InteractiveCanvas_default,
                           {
                             containerRef: this.excalidrawContainerRef,
@@ -30093,7 +29914,7 @@ var App = class _App extends React43.Component {
                             onDoubleClick: this.handleCanvasDoubleClick
                           }
                         ),
-                        this.state.userToFollow && /* @__PURE__ */ jsx147(
+                        this.state.userToFollow && /* @__PURE__ */ jsx142(
                           FollowMode_default,
                           {
                             width: this.state.width,
@@ -30280,7 +30101,7 @@ var App = class _App extends React43.Component {
     }
     if (isBrave() && !isMeasureTextSupported()) {
       this.setState({
-        errorMessage: /* @__PURE__ */ jsx147(BraveMeasureTextError_default, {})
+        errorMessage: /* @__PURE__ */ jsx142(BraveMeasureTextError_default, {})
       });
     }
   }
@@ -32541,15 +32362,15 @@ var polyfill = () => {
 var polyfill_default = polyfill;
 
 // components/footer/FooterCenter.tsx
-import clsx56 from "clsx";
-import { jsx as jsx148 } from "react/jsx-runtime";
+import clsx52 from "clsx";
+import { jsx as jsx143 } from "react/jsx-runtime";
 var FooterCenter = ({ children }) => {
   const { FooterCenterTunnel } = useTunnels();
   const appState = useUIAppState();
-  return /* @__PURE__ */ jsx148(FooterCenterTunnel.In, { children: /* @__PURE__ */ jsx148(
+  return /* @__PURE__ */ jsx143(FooterCenterTunnel.In, { children: /* @__PURE__ */ jsx143(
     "div",
     {
-      className: clsx56("footer-center zen-mode-transition", {
+      className: clsx52("footer-center zen-mode-transition", {
         "layer-ui__wrapper__footer-left--transition-bottom": appState.zenModeEnabled
       }),
       children
@@ -32560,15 +32381,15 @@ var FooterCenter_default = FooterCenter;
 FooterCenter.displayName = "FooterCenter";
 
 // components/ExcalidrawLogo.tsx
-import { jsx as jsx149, jsxs as jsxs79 } from "react/jsx-runtime";
-var LogoIcon = () => /* @__PURE__ */ jsx149(
+import { jsx as jsx144, jsxs as jsxs74 } from "react/jsx-runtime";
+var LogoIcon = () => /* @__PURE__ */ jsx144(
   "svg",
   {
     viewBox: "0 0 40 40",
     fill: "none",
     xmlns: "http://www.w3.org/2000/svg",
     className: "ExcalidrawLogo-icon",
-    children: /* @__PURE__ */ jsx149(
+    children: /* @__PURE__ */ jsx144(
       "path",
       {
         d: "M39.9 32.889a.326.326 0 0 0-.279-.056c-2.094-3.083-4.774-6-7.343-8.833l-.419-.472a.212.212 0 0 0-.056-.139.586.586 0 0 0-.167-.111l-.084-.083-.056-.056c-.084-.167-.28-.278-.475-.167-.782.39-1.507.973-2.206 1.528-.92.722-1.842 1.445-2.708 2.25a8.405 8.405 0 0 0-.977 1.028c-.14.194-.028.361.14.444-.615.611-1.23 1.223-1.843 1.861a.315.315 0 0 0-.084.223c0 .083.056.166.111.194l1.09.833v.028c1.535 1.528 4.244 3.611 7.12 5.861.418.334.865.667 1.284 1 .195.223.39.473.558.695.084.11.28.139.391.055.056.056.14.111.196.167a.398.398 0 0 0 .167.056.255.255 0 0 0 .224-.111.394.394 0 0 0 .055-.167c.029 0 .028.028.056.028a.318.318 0 0 0 .224-.084l5.082-5.528a.309.309 0 0 0 0-.444Zm-14.63-1.917a.485.485 0 0 0 .111.14c.586.5 1.2 1 1.843 1.555l-2.569-1.945-.251-.166c-.056-.028-.112-.084-.168-.111l-.195-.167.056-.056.055-.055.112-.111c.866-.861 2.346-2.306 3.1-3.028-.81.805-2.43 3.167-2.095 3.944Zm8.767 6.89-2.122-1.612a44.713 44.713 0 0 0-2.625-2.5c1.145.861 2.122 1.611 2.262 1.75 1.117.972 1.06.806 1.815 1.445l.921.666a1.06 1.06 0 0 1-.251.25Zm.558.416-.056-.028c.084-.055.168-.111.252-.194l-.196.222ZM1.089 5.75c.055.361.14.722.195 1.056.335 1.833.67 3.5 1.284 4.75l.252.944c.084.361.223.806.363.917 1.424 1.25 3.602 3.11 5.947 4.889a.295.295 0 0 0 .363 0s0 .027.028.027a.254.254 0 0 0 .196.084.318.318 0 0 0 .223-.084c2.988-3.305 5.221-6.027 6.813-8.305.112-.111.14-.278.14-.417.111-.111.195-.25.307-.333.111-.111.111-.306 0-.39l-.028-.027c0-.055-.028-.139-.084-.167-.698-.666-1.2-1.138-1.731-1.638-.922-.862-1.871-1.75-3.881-3.75l-.028-.028c-.028-.028-.056-.056-.112-.056-.558-.194-1.703-.389-3.127-.639C6.087 2.223 3.21 1.723.614.944c0 0-.168 0-.196.028l-.083.084c-.028.027-.056.055-.224.11h.056-.056c.028.167.028.278.084.473 0 .055.112.5.112.555l.782 3.556Zm15.496 3.278-.335-.334c.084.112.196.195.335.334Zm-3.546 4.666-.056.056c0-.028.028-.056.056-.056Zm-2.038-10c.168.167.866.834 1.033.973-.726-.334-2.54-1.167-3.379-1.445.838.167 1.983.334 2.346.472ZM1.424 2.306c.419.722.754 3.222 1.089 5.666-.196-.778-.335-1.555-.503-2.278-.251-1.277-.503-2.416-.838-3.416.056 0 .14 0 .252.028Zm-.168-.584c-.112 0-.223-.028-.307-.028 0-.027 0-.055-.028-.055.14 0 .223.028.335.083Zm-1.089.222c0-.027 0-.027 0 0ZM39.453 1.333c.028-.11-.558-.61-.363-.639.42-.027.42-.666 0-.666-.558.028-1.144.166-1.675.25-.977.194-1.982.389-2.96.61-2.205.473-4.383.973-6.561 1.557-.67.194-1.424.333-2.066.666-.224.111-.196.333-.084.472-.056.028-.084.028-.14.056-.195.028-.363.056-.558.083-.168.028-.252.167-.224.334 0 .027.028.083.028.11-1.173 1.556-2.485 3.195-3.909 4.945-1.396 1.611-2.876 3.306-4.356 5.056-4.719 5.5-10.052 11.75-15.943 17.25a.268.268 0 0 0 0 .389c.028.027.056.055.084.055-.084.084-.168.14-.252.222-.056.056-.084.111-.084.167a.605.605 0 0 0-.111.139c-.112.111-.112.305.028.389.111.11.307.11.39-.028.029-.028.029-.056.056-.056a.44.44 0 0 1 .615 0c.335.362.67.723.977 1.028l-.698-.583c-.112-.111-.307-.083-.39.028-.113.11-.085.305.027.389l7.427 6.194c.056.056.112.056.196.056s.14-.028.195-.084l.168-.166c.028.027.083.027.111.027.084 0 .14-.027.196-.083 10.052-10.055 18.15-17.639 27.42-24.417.083-.055.111-.166.111-.25.112 0 .196-.083.251-.194 1.704-5.194 2.039-9.806 2.15-12.083v-.028c0-.028.028-.056.028-.083.028-.056.028-.084.028-.084a1.626 1.626 0 0 0-.111-1.028ZM21.472 9.5c.446-.5.893-1.028 1.34-1.5-2.876 3.778-7.65 9.583-14.408 16.5 4.607-5.083 9.242-10.333 13.068-15ZM5.193 35.778h.084-.084Zm3.462 3.194c-.027-.028-.027-.028 0-.028v.028Zm4.16-3.583c.224-.25.448-.472.699-.722 0 0 0 .027.028.027-.252.223-.475.445-.726.695Zm1.146-1.111c.14-.14.279-.334.446-.5l.028-.028c1.648-1.694 3.351-3.389 5.082-5.111l.028-.028c.419-.333.921-.694 1.368-1.028a379.003 379.003 0 0 0-6.952 6.695ZM24.794 6.472c-.921 1.195-1.954 2.778-2.82 4.028-2.736 3.944-11.532 13.583-11.727 13.75a1976.983 1976.983 0 0 1-8.042 7.639l-.167.167c-.14-.167-.14-.417.028-.556C14.49 19.861 22.03 10.167 25.074 5.917c-.084.194-.14.36-.28.555Zm4.83 5.695c-1.116-.64-1.646-1.64-1.34-2.611l.084-.334c.028-.083.084-.194.14-.277.307-.5.754-.917 1.257-1.167.027 0 .055 0 .083-.028-.028-.056-.028-.139-.028-.222.028-.167.14-.278.335-.278.335 0 1.369.306 1.76.639.111.083.223.194.335.305.14.167.363.445.474.667.056.028.112.306.196.445.056.222.111.472.084.694-.028.028 0 .194-.028.194a2.668 2.668 0 0 1-.363 1.028c-.028.028-.028.056-.056.084l-.028.027c-.14.223-.335.417-.53.556-.643.444-1.369.583-2.095.389 0 0-.195-.084-.28-.111Zm8.154-.834a39.098 39.098 0 0 1-.893 3.167c0 .028-.028.083 0 .111-.056 0-.084.028-.14.056-2.206 1.61-4.356 3.305-6.506 5.028 1.843-1.64 3.686-3.306 5.613-4.945.558-.5.949-1.139 1.06-1.861l.28-1.667v-.055c.14-.334.67-.195.586.166Z",
@@ -32577,7 +32398,7 @@ var LogoIcon = () => /* @__PURE__ */ jsx149(
     )
   }
 );
-var LogoText = () => /* @__PURE__ */ jsxs79(
+var LogoText = () => /* @__PURE__ */ jsxs74(
   "svg",
   {
     viewBox: "0 0 450 55",
@@ -32585,28 +32406,28 @@ var LogoText = () => /* @__PURE__ */ jsxs79(
     fill: "none",
     className: "ExcalidrawLogo-text",
     children: [
-      /* @__PURE__ */ jsx149(
+      /* @__PURE__ */ jsx144(
         "path",
         {
           d: "M429.27 96.74c2.47-1.39 4.78-3.02 6.83-4.95 1.43-1.35 2.73-2.86 3.81-4.51-.66.9-1.4 1.77-2.23 2.59-2.91 2.84-5.72 5.09-8.42 6.87h.01ZM343.6 69.36c.33 3.13.58 6.27.79 9.4.09 1.37.18 2.75.25 4.12-.12-4.46-.27-8.93-.5-13.39-.11-2.08-.24-4.16-.4-6.24-.06 1.79-.11 3.85-.13 6.11h-.01ZM378.47 98.34c.01-.37.07-1.13.01-6.51-.11 1.9-.22 3.81-.31 5.71-.07 1.42-.22 2.91-.16 4.35.39.03.78.07 1.17.1-.92-.85-.76-2.01-.72-3.66l.01.01ZM344.09 86.12c-.09-2.41-.22-4.83-.39-7.24v12.21c.15-.05.32-.09.47-.14.05-1.61-.03-3.23-.09-4.83h.01ZM440.69 66.79c-.22-.34-.45-.67-.69-.99-3.71-4.87-9.91-7.14-15.65-8.55-1.05-.26-2.12-.49-3.18-.71 2.29.59 4.48 1.26 6.64 2.02 7.19 2.54 10.57 5.41 12.88 8.23ZM305.09 72.46l1.2 3.6c.84 2.53 1.67 5.06 2.46 7.61.24.78.5 1.57.73 2.36.22-.04.44-.08.67-.12a776.9 776.9 0 0 1-5.01-13.57c-.02.04-.03.09-.05.13v-.01ZM345.49 90.25v.31c1.48-.42 3.05-.83 4.66-1.2-1.56.25-3.12.52-4.66.89ZM371.02 90.22c0-.57-.04-1.14-.11-1.71-.06-.02-.12-.04-.19-.05-.21-.05-.43-.08-.65-.11.42.16.74.88.95 1.87ZM398.93 54.23c-.13 0-.27-.01-.4-.02l.03.4c.11-.15.23-.27.37-.38ZM401.57 62.28v-.15c-1.22-.24-2.86-.61-3.23-1.25-.09-.15-.18-.51-.27-.98-.09.37-.2.73-.33 1.09 1.24.56 2.52.98 3.83 1.29ZM421.73 88.68c-2.97 1.65-6.28 3.12-9.69 3.68v.18c4.72-.14 11.63-3.85 16.33-8.38-2.04 1.75-4.33 3.24-6.63 4.53l-.01-.01ZM411.28 80.92c-.05-1.2-.09-2.4-.15-3.6-.21 5.66-.46 11.38-.47 14.51.24-.02.48-.04.71-.07.15-3.61.05-7.23-.09-10.83v-.01Z",
           transform: "translate(-144.023 -51.76)"
         }
       ),
-      /* @__PURE__ */ jsx149(
+      /* @__PURE__ */ jsx144(
         "path",
         {
           d: "M425.38 67.41c-3.5-1.45-7.19-2.57-14.06-3.62.09 1.97.06 4.88-.03 8.12.03.04.06.09.06.15.19 1.36.28 2.73.37 4.1.25 3.77.39 7.55.41 11.33 0 1.38-.01 2.76-.07 4.13 1.4-.25 2.78-.65 4.12-1.15 4.07-1.5 7.94-3.78 11.28-6.54 2.33-1.92 5.13-4.49 5.88-7.58.63-3.53-2.45-6.68-7.97-8.96l.01.02ZM411.35 92.53v-.06l-.34.03c.11.01.22.03.34.03ZM314.26 64.06c-.23-.59-.47-1.17-.7-1.75.57 1.62 1.11 3.25 1.6 4.9l.15.54 2.35 6.05c.32.82.66 1.64.98 2.46-1.38-4.1-2.83-8.17-4.39-12.2h.01ZM156.82 103.07c-.18.13-.38.23-.58.33 1.32-.03 2.66-.2 3.93-.34.86-.09 1.72-.22 2.58-.33-2.12.1-4.12.17-5.94.34h.01ZM210.14 68.88s.03.04.05.07c.18-.31.39-.64.58-.96-.21.3-.42.6-.64.89h.01ZM201.65 82.8c-.5.77-1.02 1.56-1.49 2.37 1.11-1.55 2.21-3.1 3.2-4.59-.23.23-.49.51-.75.79-.32.47-.65.95-.96 1.43ZM194.03 98.66c-.33-.4-.65-.84-1.05-1.17-.24-.2-.07-.49.17-.56-.23-.26-.42-.5-.63-.75 1.51-2.55 3.93-5.87 6.4-9.28-.17-.08-.29-.28-.2-.49.04-.09.09-.17.13-.26-1.21 1.78-2.42 3.55-3.61 5.33-.87 1.31-1.74 2.64-2.54 4-.29.5-.63 1.04-.87 1.61.81.65 1.63 1.27 2.47 1.88-.09-.11-.18-.21-.27-.32v.01ZM307.79 82.93c-1-3.17-2.05-6.32-3.1-9.48-1.62 4.08-3.69 9.17-6.16 15.19 3.32-1.04 6.77-1.87 10.27-2.5-.32-1.08-.67-2.15-1.01-3.21ZM149.5 80.7c.05-1.71.04-3.43 0-5.14-.1 2.26-.16 4.51-.22 6.77-.02.73-.03 1.46-.04 2.19.14-1.27.2-2.55.24-3.82h.02ZM228.98 98.3c.39 1.25.91 3.03.94 3.91.06-.03.12-.07.17-.1.08-1.29-.55-2.65-1.11-3.81ZM307.72 53.36c.81.5 1.53 1.04 2.07 1.49-.38-.8-.78-1.58-1.21-2.35-.17.03-.34.06-.51.11-.43.12-.86.26-1.29.41.35-.01.53.1.94.34ZM283.69 96.14c3.91-7.25 6.89-13.35 8.88-18.15l1.1-2.66c-1.27 2.64-2.56 5.27-3.83 7.9-1.53 3.15-3.06 6.31-4.58 9.47-.87 1.81-1.76 3.62-2.54 5.47.04.02.07.04.11.07.05.05.1.09.15.14.05-.73.27-1.48.71-2.24ZM289.92 103.23s-.04.01-.05.03c0-.02.04-.03.05-.04.05-.05.11-.1.16-.15l.21-.21c-.55 0-1.5-.27-2.55-.72.4.26.8.51 1.22.74.24.13.48.26.73.37.05.02.1.03.14.05a.27.27 0 0 1 .08-.07h.01ZM269.23 68.49c-.39-.19-.82-.48-1.33-.87-3.06-1.56-6.31-2.78-9.36-2.35-3.5.49-5.7 1.11-7.74 2.44 5.71-2.6 12.82-2.07 18.44.79l-.01-.01ZM177.87 53.69l1.06.03c-.96-.22-2-.25-2.89-.3-4.95-.26-9.99.33-14.86 1.19-2.44.43-4.88.95-7.28 1.59 9.09-1.76 15.69-2.77 23.97-2.51ZM219.85 55.51c-.18.12-.36.27-.56.45-.45.53-.86 1.11-1.26 1.66-1.91 2.61-3.71 5.31-5.57 7.95l-.12.18 8.05-10.11c-.18-.05-.36-.1-.55-.13h.01ZM510.71 54.1c.12-.15.29-.3.53-.45.69-.4 3.72-.63 5.87-.74-.36-.02-.73-.04-1.09-.05-1.84-.03-3.67.09-5.49.35.05.3.12.59.18.88v.01ZM510.76 86.02c1.37-3.07 2.49-6.27 3.57-9.46.55-1.64 1.12-3.3 1.6-4.97-1.59 4.01-3.67 9.14-6.2 15.3.24-.08.5-.14.74-.22.1-.22.19-.44.29-.65ZM566.95 75.76c.11-.02.23.03.31.11-.05-.13-.09-.26-.14-.39-.05.09-.11.18-.17.28ZM511.33 86.41c3.08-.89 6.24-1.62 9.46-2.14-1.51-3.98-2.98-7.96-4.39-11.87-.05.15-.09.31-.14.46-1.02 3.32-2.15 6.61-3.39 9.85-.48 1.25-.98 2.49-1.53 3.7h-.01ZM578.24 74.45c.11-.44.23-.87.35-1.31-.31.7-.64 1.39-.97 2.08.09.21.19.4.28.61.12-.46.23-.92.35-1.38h-.01ZM520.62 53.11c-.09 0-.18-.01-.28-.02.38.34.29 1.08.93 2.53l6.65 17.15c2.2 5.68 4.69 11.36 7.41 16.87l1.06 2.17c-2.95-7.05-5.92-14.08-8.87-21.13-1.58-3.79-3.16-7.59-4.7-11.4-.78-1.92-1.73-3.89-2.25-5.91-.03-.1 0-.19.04-.26h.01ZM578.78 77.87c1.45-5.77 3.07-10.43 3.58-13.36.05-.34.16-.88.31-1.55-.67 1.79-1.37 3.56-2.08 5.33-.12.43-.23.86-.35 1.29-.65 2.43-1.29 4.86-1.9 7.3.14.33.29.65.43 1l.01-.01ZM545.3 94.66c.02-.44.03-.83.05-1.12.02-1.01.05-2.02.11-3.02.03-6.66-.46-14.33-1.46-22.8-.13-.42-.27-1.24-.56-2.89 0-.02 0-.04-.01-.06.62 6.61.95 13.25 1.32 19.87.17 3.08.33 6.16.52 9.23.02.25.03.52.04.78l-.01.01ZM580.77 102.81c.13.2.27.38.37.49.27-.11.53-.22.8-.32-.43.09-.82.05-1.17-.16v-.01ZM530.48 104.07h.33c-.36-.13-.71-.32-1.04-.56.14.24.3.47.45.7.06-.08.14-.13.26-.13v-.01ZM542.63 58.82c.06.23.11.47.15.71.14-.33.36-.62.7-.86-.28.05-.57.11-.85.15ZM583.81 57.87c.15-.7.29-1.41.42-2.11-.14.45-.28.9-.42 1.34-.46 1.44-.89 2.89-1.31 4.34.44-1.19.88-2.37 1.31-3.57ZM523.62 91.48c-4.66 1.17-9.05 2.89-14.02 5.27 4.65-1.84 9.48-3.29 14.28-4.63-.09-.22-.17-.41-.26-.64ZM460.64 78.3c-.04-2.9-.11-5.81-.28-8.71-.1-1.68-.17-3.43-.5-5.09-.07.02-.14.03-.2.05.3 6.54.45 12.17.51 17.12.17-.07.34-.14.51-.2 0-1.06-.01-2.11-.03-3.17h-.01ZM470.63 63.24c-3.38-.26-6.81.32-10.1 1.1.41 2.01.47 4.14.57 6.18.18 3.55.25 7.11.27 10.67 3.31-1.38 6.5-3.12 9.3-5.35 1.96-1.56 3.86-3.41 5.02-5.66.73-1.41 1.19-3.22.26-4.65-1.09-1.7-3.46-2.14-5.32-2.29ZM460.29 63.68c1-.24 2.01-.46 3.04-.65-1.15.16-2.37.38-3.71.69v.13c.07-.02.15-.04.22-.05.11-.13.3-.18.45-.11v-.01ZM457.24 100.96c.43-.03.86-.07 1.29-.11.14-.49.27-.99.38-1.49-.44.7-1 1.23-1.67 1.6ZM482.88 104.98c-.18.23-.36.38-.55.47.14.09.27.19.4.28a70.76 70.76 0 0 0 4.37-4.63c.76-.89 1.52-1.81 2.19-2.77-.3-.27-.61-.53-.92-.79-.07 1.94-4.62 6.32-5.49 7.45v-.01Z",
           transform: "translate(-144.023 -51.76)"
         }
       ),
-      /* @__PURE__ */ jsx149(
+      /* @__PURE__ */ jsx144(
         "path",
         {
           d: "M474.36 63.31c-.4-.16-.84-.27-1.29-.37 1.56.42 3.08 1.22 3.76 2.74.62 1.4.32 2.95-.28 4.32.7-1.22.94-2.34.74-3.47-.24-1.33-1.19-2.54-2.93-3.21v-.01ZM477.34 89.18c-1.2-.81-2.4-1.62-3.6-2.42-.14.1-.26.19-.4.29 1.4.67 2.73 1.39 4 2.13ZM465.88 93.85c.37.25.74.5 1.1.75.46.32.92.65 1.38.97-1.57-1.2-2.01-1.61-2.49-1.72h.01ZM574.92 90.06c-2.28-5.21-4.93-11.13-5.67-12.26-.1-.15-1.57-3.01-1.63-3.08 0 0-.01.02-.02.02.4 1.37 1.09 2.69 1.65 3.99 2.14 4.95 4.36 9.86 6.67 14.73.6 1.26 1.21 2.52 1.83 3.78-.75-2.01-1.64-4.45-2.83-7.18ZM448.73 65.29c.1.2.22.38.34.57.22-.02.43-.06.65-.08v-.08c-.14-.05-.25 0-.99-.41ZM460.16 94.81c-.02.31-.06.59-.1.89-.03 1.71-.33 3.43-.79 5.07.15-.02.3-.03.45-.05.01-.04.02-.08.03-.11.09-.34.15-.69.2-1.03.17-1.07.25-2.16.33-3.24.05-.69.08-1.39.12-2.08-.27.1-.27.26-.24.57v-.02Z",
           transform: "translate(-144.023 -51.76)"
         }
       ),
-      /* @__PURE__ */ jsx149(
+      /* @__PURE__ */ jsx144(
         "path",
         {
           d: "m328.67 98.12-3.22-6.58c-1.29-2.63-2.53-5.29-3.72-7.97-.25-.85-.52-1.69-.79-2.53-.81-2.57-1.67-5.12-2.55-7.67-1.92-5.53-3.9-11.08-6.32-16.41-.72-1.58-1.46-3.44-2.63-4.79-.03-.17-.16-.29-.34-.36a.282.282 0 0 0-.23-.04c-.06-.01-.12 0-.18.01-.74.06-1.5.38-2.19.61-2.22.77-4.4 1.64-6.63 2.38-.03-.08-.06-.16-.09-.25-.15-.42-.82-.24-.67.19.03.09.07.19.1.28l-.18.06c-.36.11-.28.6 0 .68.18 1.18.63 2.36.98 3.49.03.09.06.17.08.26-.08.23-.17.46-.24.64-.37.98-.79 1.94-1.21 2.9-1.27 2.89-2.62 5.75-3.98 8.6-3.18 6.67-6.44 13.31-9.64 19.97-1.08 2.25-2.2 4.5-3.15 6.81-.13.32.24.5.5.37 1.34 1.33 2.84 2.5 4.4 3.57.65.44 1.31.87 2.01 1.24.4.22.86.48 1.33.5.24.01.35-.19.33-.37.11-.1.21-.21.28-.28.41-.41.81-.84 1.2-1.26.85-.92 1.69-1.87 2.5-2.84 6.31-2.34 12.6-4.31 18.71-5.84 2.14 5.3 3.43 8.43 3.97 9.58.55 1.05 1.15 1.88 1.82 2.52 1.32.56 6.96-.03 9.23-1.96.87-1.28 1.19-2.67.93-4.15-.09-.5-.22-.95-.4-1.33l-.01-.03Zm-20.09-45.61c.43.77.83 1.56 1.21 2.35-.54-.45-1.27-.99-2.07-1.49-.42-.24-.6-.35-.94-.34.43-.15.85-.29 1.29-.41.17-.05.34-.08.51-.11Zm-25.86 45.66c.78-1.85 1.67-3.66 2.54-5.47 1.51-3.16 3.05-6.31 4.58-9.47 1.28-2.63 2.56-5.26 3.83-7.9l-1.1 2.66c-1.99 4.79-4.97 10.9-8.88 18.15-.43.76-.66 1.51-.71 2.24-.05-.05-.1-.09-.15-.14a.259.259 0 0 0-.11-.07Zm6.24 4.71c-.42-.23-.82-.48-1.22-.74 1.05.45 2 .72 2.55.72l-.21.21c-.05.05-.11.1-.16.15-.01.01-.04.03-.05.04 0-.02.03-.02.05-.03a.27.27 0 0 0-.08.07c-.05-.02-.1-.03-.14-.05-.25-.1-.49-.24-.73-.37h-.01Zm15.73-29.43c1.05 3.15 2.1 6.31 3.1 9.48.34 1.06.69 2.13 1.01 3.21-3.5.63-6.95 1.46-10.27 2.5 2.48-6.03 4.54-11.11 6.16-15.19Zm4.79 12.57c-.23-.79-.49-1.58-.73-2.36-.79-2.54-1.63-5.08-2.46-7.61l-1.2-3.6c.02-.04.04-.09.05-.13 1.6 4.45 3.28 9 5.01 13.57l-.67.12v.01Zm5.83-18.27-.15-.54c-.49-1.64-1.03-3.28-1.6-4.9.23.58.47 1.17.7 1.75 1.56 4.03 3.01 8.1 4.39 12.2-.33-.82-.67-1.64-.98-2.46l-2.35-6.05h-.01ZM390.43 79.37c-.13-10.43-.22-17.5-.24-19.97-.24-1.6.21-2.88-.65-3.65-.14-.13-.32-.23-.52-.32h.03c.45 0 .45-.69 0-.7-1.75-.03-3.5-.04-5.25-.14-1.38-.08-2.76-.21-4.15-.31-.07 0-.12.01-.17.04-.21-.07-.47.03-.45.31l.03.45c-.11.14-.19.3-.22.5-.21 1.26-.32 13.67-.36 23.59-.32 5.79-.67 11.57-.97 17.36-.09 1.73-.29 3.54-.21 5.3-.39.02-.38.64.04.69v.12c.05.44.74.45.7 0v-.06c1.1.09 2.2.21 3.3.3 1.14.19 2.44.2 3.29.17 1.73-.05 2.92-.05 3.8-.37.45-.05.9-.11 1.35-.17.44-.06.25-.73-.19-.67h-.01c.24-.32.45-.72.62-1.25.66-1.84.41-6.36.34-11.33l-.13-9.9.02.01Zm-12.26 18.17c.09-1.91.2-3.81.31-5.71.06 5.38 0 6.14-.01 6.51-.05 1.65-.21 2.81.72 3.66-.39-.04-.78-.07-1.17-.1-.06-1.44.09-2.93.16-4.35l-.01-.01ZM588.97 53.85c-2.06-.25-3.17-.51-3.76-.6a.3.3 0 0 1 .04-.08c.22-.39-.39-.75-.6-.35-.56 1.02-.9 2.19-1.26 3.29-.61 1.88-1.17 3.78-1.72 5.68-.63 2.19-1.24 4.39-1.83 6.59-.81 2.03-1.67 4.05-2.61 6.03-1.7-3.64-3.11-6.04-4.03-7.57-2.26-3.74-2.85-5.48-3.57-6.08l.31-.09c.43-.12.25-.8-.19-.67-1.06.3-2.12.6-3.17.95-.93.32-1.85.69-2.76 1.07-.13.05-.19.16-.22.27-.04.02-.08.05-.11.07-.04-.06-.07-.12-.11-.18a.354.354 0 0 0-.48-.12c-.16.09-.22.32-.13.48l.33.54c0 .09.02.18.06.28.51 1.16.78 1.38.72 1.47-2.42 3.44-5.41 7.86-6.2 9.1-1.27 1.97-2.01 3.14-2.45 3.84l-.91-6.56-.43-4.1c-.19-1.85-.37-3.23-.53-4.13-.19-1.1-.3-2.15-.45-3.16-.2-1.36-.29-2.06-.47-2.42h.04c.45.02.45-.68 0-.7-3.43-.16-6.81.94-10.17 1.48-.24-.22-.73-.04-.58.32.24.59.33 1.25.43 1.87.17 1.06.29 2.13.4 3.2.32 3.09.53 6.2.74 9.3.44 6.75.77 13.51 1.17 20.26.11 1.95.13 3.96.46 5.89.05.3.37.31.55.14.74 1.71 2.87 1.27 6.13 1.27 1.34 0 2.39.04 2.99-.11.02.32.48.53.63.18 3.61-8.26 7.41-16.46 12.05-24.2.03-.05.04-.1.05-.15.3.73.64 1.45.94 2.16.97 2.26 1.97 4.52 2.98 6.76 2.26 5.03 4.54 10.07 7.09 14.96.47.9.94 1.79 1.47 2.65.2.32.4.67.66.96-.18.25 0 .68.34.54.91-.38 1.82-.75 2.76-1.07 1.04-.35 2.11-.65 3.17-.95.39-.11.28-.66-.07-.68.62-.4.95-.96.87-1.91-.3-3.34.72-7.47.86-8.52l2.14-11.43c1.75-10.74 3.13-17.51 3.23-20.86.02-.49.08-2.84.13-3.24.17-1.25.48-1-4.96-1.65l.03-.02Zm-46.19 5.67c-.04-.24-.09-.48-.15-.71l.85-.15c-.34.24-.56.53-.7.86Zm1.95 25.12c-.36-6.63-.7-13.26-1.32-19.87 0 .02 0 .04.01.06.29 1.65.44 2.47.56 2.89 1 8.46 1.5 16.14 1.46 22.8-.06.99-.1 2-.11 3.02-.01.29-.03.68-.05 1.12-.01-.26-.03-.53-.04-.78-.19-3.08-.35-6.16-.52-9.23l.01-.01Zm36.4 18.66c-.11-.11-.24-.29-.37-.49.35.21.74.26 1.17.16-.27.11-.53.22-.8.32v.01Zm-.89-33.72c.12-.43.23-.86.35-1.29.71-1.77 1.41-3.55 2.08-5.33-.15.68-.26 1.22-.31 1.55-.5 2.94-2.13 7.59-3.58 13.36-.15-.35-.29-.66-.43-1 .61-2.44 1.25-4.87 1.9-7.3l-.01.01Zm3.56-12.48c.14-.44.28-.89.42-1.34-.13.7-.27 1.41-.42 2.11-.43 1.19-.86 2.38-1.31 3.57.42-1.45.85-2.9 1.31-4.34Zm-5.22 16.05c-.11.44-.23.87-.35 1.31-.12.46-.23.92-.35 1.38-.1-.22-.19-.4-.28-.61.34-.69.66-1.38.97-2.08h.01Zm-11.64 2.62c.06-.1.12-.19.17-.28.05.13.09.26.14.39a.398.398 0 0 0-.31-.11Zm2.3 2.98c-.56-1.3-1.25-2.63-1.65-3.99 0 0 .01-.02.02-.02.06.08 1.52 2.93 1.63 3.08.73 1.13 3.38 7.04 5.67 12.26 1.2 2.73 2.08 5.17 2.83 7.18-.62-1.25-1.23-2.51-1.83-3.78-2.31-4.87-4.53-9.78-6.67-14.73ZM275.92 87.03c-1.06-2.18-1.13-3.45-2.44-2.93-1.52.57-2.94 1.3-4.5 2.1-1.4.72-2.68 1.44-3.92 2.12.01-.25-.24-.5-.51-.34-4.8 2.93-12.41 4.7-17.28 1.31-1.98-1.77-3.32-4.15-3.97-5.78-.29-.95-.49-1.94-.63-2.93-.14-3.34 1.58-6.53 3.9-9.12.8-.79 1.68-1.51 2.66-2.12 3.7-2.3 8.22-3.07 12.51-2.51 2.71.35 5.32 1.24 7.71 2.55.39.22.75-.39.35-.6-.18-.1-.37-.18-.55-.27.56.27 1.03.33 1.51.19l-.48.39c-.15.11-.23.3-.13.48.09.15.33.24.48.13 1.3-.97 2.46-2.09 3.45-3.37.37-.29.64-.6.65-.97v-.02c.08-.33-.03-.7-.21-1.08-.31-.87-.98-2.01-2.19-3.26-2.43-2.52-3.79-3.45-5.68-4.26-1.14-.49-3.12-1.06-4.42-1.23-3.28-.42-10.64-1.21-18.18 4.11-7.74 5.46-11.94 12.3-12.23 20.61-.08 2.06.04 3.98.34 5.71.74 4.18 2.57 8 5.44 11.34 4.26 4.99 9.76 7.52 16.34 7.52 4.85 0 9.69-1.77 14.89-4.62.23-.12.45-.23.68-.35 2.19-1.1 4.37-2.23 6.46-3.5.49-.3 1.03-.61 1.5-.98 1.47-.87 1.11-1.12.49-2.95-.39-1.14-.76-2.7-2.06-5.36l.02-.01Zm-17.38-21.76c3.05-.42 6.31.79 9.36 2.35.51.39.94.68 1.33.87-5.61-2.86-12.72-3.39-18.44-.79 2.05-1.33 4.24-1.95 7.74-2.44l.01.01ZM443.67 72.67c-.4-2.2-1.15-4.33-2.37-6.22-1.49-2.32-3.58-4.19-5.91-5.64-6.17-3.81-13.75-5.11-20.83-6.01-3.23-.41-6.47-.69-9.72-.92l-1.39-.12c-.85-.07-1.52-.1-2.05-.1-1.08-.06-2.17-.12-3.25-.17-.08 0-.14.02-.19.05-.1.05-.18.14-.16.3.27 2.55-.01 5.12-.92 7.52-.15.38.4.56.62.28 1.32.59 2.68 1.05 4.08 1.37 0 2.78-.14 7.58-.33 12.91 0 0 0 .02-.01.03-.61 3.66-.79 7.42-1 11.12-.23 4.01-.43 8.03-.44 12.05 0 .64 0 1.28.03 1.93.02.31 0 .68.15.96.06.11.14.16.24.17-.2.17-.21.54.11.59 3.83.67 7.78.71 11.68.25 2.3-.19 4.87-.65 7.65-1.56 1.85-.54 3.67-1.18 5.43-1.91 7.2-3.02 14.31-8.07 17.35-15.53.76-1.86 1.17-3.8 1.31-5.75.3-1.93.28-3.82-.09-5.58l.01-.02Zm-19.32-15.42c5.74 1.41 11.94 3.68 15.65 8.55.25.32.47.65.69.99-2.3-2.82-5.68-5.69-12.88-8.23-2.16-.76-4.35-1.43-6.64-2.02 1.06.21 2.13.45 3.18.71Zm-25.82-3.04c.13 0 .27.01.4.02-.14.1-.26.23-.37.38 0-.13-.02-.26-.03-.4Zm34.82 22.17c-.75 3.09-3.55 5.66-5.88 7.58-3.35 2.76-7.21 5.03-11.28 6.54-1.33.49-2.71.9-4.12 1.15.06-1.38.08-2.76.07-4.13-.02-3.78-.16-7.56-.41-11.33-.09-1.37-.18-2.74-.37-4.1 0-.06-.03-.11-.06-.15.09-3.25.12-6.16.03-8.12 6.86 1.05 10.56 2.17 14.06 3.62 5.52 2.28 8.59 5.44 7.97 8.96l-.01-.02Zm-22 16.15c-.12 0-.23-.02-.34-.03l.34-.03v.06Zm-.69-.7c0-3.13.26-8.84.47-14.51.06 1.2.11 2.41.15 3.6.15 3.6.25 7.23.09 10.83-.24.03-.48.05-.71.07v.01Zm-12.33-30.94c.37.63 2.01 1.01 3.23 1.25v.15c-1.31-.31-2.59-.73-3.83-1.29.12-.36.23-.72.33-1.09.08.48.18.84.27.98Zm13.7 31.65v-.18c3.41-.56 6.71-2.02 9.69-3.68 2.31-1.28 4.59-2.78 6.63-4.53-4.69 4.53-11.61 8.24-16.33 8.38l.01.01Zm24.07-.75c-2.05 1.93-4.37 3.56-6.83 4.95 2.7-1.78 5.52-4.03 8.42-6.87.82-.82 1.56-1.69 2.23-2.59-1.08 1.65-2.38 3.16-3.81 4.51h-.01ZM187.16 92.14c-.79-2.47-2.1-7.12-3.1-6.87-.19-.01-2.09.77-4.08 1.54-3.06 1.18-5.91 2.13-10.09 2.82-2.74.42-5.87 1.01-10.61 1.06.04-3.34.05-6.01.05-7.99 7.97-.65 12.33-2.11 16.37-3.55 1.11-.39 2.69-1.01 2.63-1.8-.08-.35-.55-1.39-1.17-2.61-.47-1.16-.98-2.31-1.61-3.38-.42-.71-1.04-1.69-1.86-2.06-.11-.08-.22-.13-.29-.12-.02 0-.04 0-.07.01-.19-.04-.39-.05-.6-.01-.17.03-.24.15-.25.28-.04.02-.09.04-.14.05-4.33 1.48-8.85 2.33-13.24 3.61a499.1 499.1 0 0 0-.31-8.19c4.51-.99 8.88-1.38 13.11-1.82 3.68-.38 6.28.12 7.47.34.59.11.9.16 1.16.18h.1c-.1.37.44.66.62.28.02-.04.03-.08.05-.13.15.2.53.22.62-.1.17-.58.19-1.21.21-1.81v-.36c.03-.15.05-.3.07-.45.52-2.47.33-5.09-.64-7.44-.11-.27-.44-.28-.6-.14-.08-.21-.15-.42-.24-.62-.19-.41-.79-.05-.6.35.03.07.05.15.09.22-.98-.42-2.15-.54-3.17-.63-2.17-.19-4.37-.14-6.54 0-5.7.35-11.4 1.3-16.91 2.79-2.08.56-4.13 1.22-6.14 2-4.54 1.05-3.79 1.51-2.17 6.07.18.51.46 1.68.54 1.94.82 2.47 1.08 2.13 3.1 2.13s0 .05 0 .08h.52c-.48 2.66-.51 5.45-.62 8.13-.15 3.48-.22 6.96-.28 10.45 0 .41-.01.82-.02 1.23-.16.29-.33.57-.51.85-.05.38-.09.77-.14 1.18-.42 3.52-.59 6.48-.52 8.8v.34c.02.47.05.76.06.87.16 1.57-.26 3.47 1.35 3.79 1.61.32 3.5.55 4.85.55.11 0 .22-.02.33-.02 1.79.24 3.67.05 5.45-.12 2.85-.28 5.69-.7 8.51-1.19 3.03-.53 6.05-1.14 9.04-1.86 2.4-.58 4.82-1.19 7.13-2.06.51-.19 1.73-.57 2.46-1.14 1.81-.68 2.18-1 1.57-2.67-.23-.62-.48-1.49-.91-2.78l-.03-.02Zm-11.12-38.71c.89.05 1.93.08 2.89.3-.33 0-.68-.02-1.06-.03-8.28-.26-14.88.75-23.97 2.51 2.41-.64 4.85-1.16 7.28-1.59 4.87-.86 9.91-1.45 14.86-1.19Zm-26.53 22.13c.03 1.71.04 3.43 0 5.14-.04 1.27-.11 2.55-.24 3.82 0-.73.02-1.46.04-2.19.05-2.26.12-4.51.22-6.77h-.02Zm6.73 27.85c.2-.1.4-.21.58-.33 1.82-.17 3.82-.24 5.94-.34-.86.11-1.72.24-2.58.33-1.27.14-2.61.31-3.93.34h-.01ZM534.48 85.44c-3.52-8.38-7.07-16.75-10.5-25.17-.63-1.54-1.25-3.09-1.86-4.65-.31-.8-.65-1.6-.87-2.43-.04-.17-.17-.24-.31-.25.1-.2 0-.51-.29-.53-1.59-.08-3.18-.22-4.78-.25-1.96-.03-3.91.13-5.84.42-.31.05-.31.38-.13.56-.03.06-.05.14-.04.22.23 1.54.63 3.06 1.16 4.53.13.35.27.7.41 1.06l-2.68 6.18c-.11.03-.2.09-.25.22-.67 1.9-1.52 3.73-2.34 5.56a536.85 536.85 0 0 1-3.9 8.45c-2.64 5.64-5.34 11.25-7.91 16.93-.44.97-.88 1.94-1.29 2.93-.2.48-.47 1-.55 1.52v.05c-.02.12.02.26.16.34 1.19.73 2.41 1.41 3.66 2.05 1.2.62 2.45 1.25 3.76 1.61.43.12.62-.55.19-.67-1.13-.31-2.2-.83-3.24-1.36 1.09.36 2.1.69 2.75.93 2.82 1.01 2.38 1.1 4.3-3.75 2.1-1.09 4.34-1.96 6.53-2.79 4.35-1.64 8.8-3.03 13.27-4.29.82 2.01 1.77 3.97 2.72 5.92.35.83.62 1.45.79 1.82.22.42.45.8.69 1.15.17.33.33.67.5 1 .42.8.84 1.63 1.4 2.35.23.29.6 0 .55-.31 1.53-.02 3.06-.07 4.58-.27.92-.12 1.82-.32 2.71-.54 1.39-.27 3.85-1.11 3.74-1.42-.67-1.96-1.55-3.87-2.34-5.78-1.57-3.78-3.16-7.56-4.75-11.33v-.01Zm-11.65-26.16c1.54 3.81 3.12 7.6 4.7 11.4 2.94 7.05 5.91 14.09 8.87 21.13l-1.06-2.17c-2.71-5.51-5.2-11.19-7.41-16.87l-6.65-17.15c-.65-1.45-.55-2.19-.93-2.53.09 0 .18.01.28.02a.29.29 0 0 0-.04.26c.52 2.02 1.47 3.98 2.25 5.91h-.01Zm-6.58 13.58c.05-.15.09-.31.14-.46 1.41 3.92 2.88 7.9 4.39 11.87-3.22.52-6.38 1.25-9.46 2.14.55-1.22 1.05-2.46 1.53-3.7 1.24-3.24 2.37-6.53 3.39-9.85h.01Zm-.23-20c.36 0 .73.03 1.09.05-2.15.1-5.18.33-5.87.74-.24.15-.41.3-.53.45-.06-.29-.13-.58-.18-.88 1.82-.26 3.65-.39 5.49-.35v-.01Zm-.09 18.72c-.49 1.67-1.05 3.33-1.6 4.97-1.07 3.19-2.19 6.38-3.57 9.46-.09.21-.19.43-.29.65-.25.07-.5.14-.74.22 2.53-6.16 4.61-11.29 6.2-15.3Zm-6.34 25.16c4.97-2.38 9.37-4.1 14.02-5.27l.26.64c-4.8 1.35-9.63 2.8-14.28 4.63Zm20.17 6.76c.33.23.68.42 1.04.56h-.33c-.12 0-.21.06-.26.13-.15-.23-.31-.45-.45-.7v.01ZM226.57 91.75c-3.55-4.74-6.68-9.11-9.31-12.99 9.2-15.25 10.05-17.81 10.35-18.38.17-.34 1.09-2.27.64-2.53-1.13-.65-1.03-.65-2.97-1.71-1.19-.65-3.04-1.61-4.53-2.12-1.71-.59-1.24-.36-3 2.77-.06.1-.11.2-.17.3-.75 1.02-1.48 2.05-2.2 3.09-1.88 2.71-3.73 5.45-5.69 8.1-3.68-4.91-6.88-8.76-9.51-11.43-.15-.15-.3-.29-.46-.42-1.27-1.28-7.24 3.53-7.93 5.58-.09.09-.19.16-.28.25-.27.26.03.64.33.58.19.65.5 1.29.94 1.91 3.85 5.06 7.19 9.76 9.94 14-1.23 2.61-3.06 5-4.67 7.38l-2.28 3.33c-.5.66-.93 1.23-1.29 1.69-.67.93-2.09 2.61-2.3 3.87-.51.85-1.16 1.84-1.29 2.83-.06.44.61.63.67.19.01-.08.04-.15.06-.22 1.36 1.08 2.76 2.11 4.19 3.11 1.3.91 2.62 1.85 4.04 2.56.21.1.4 0 .48-.17.24.07.48.14.72.2.44.1.62-.57.19-.67-2.02-.48-3.77-1.57-5.23-3.02-.47-.46-.9-.96-1.32-1.46 1.74 1.35 4.2 2.89 5.89 4.14 1.39 1.03 2.85-2.27 4.22-4.2 1.86-2.64 3.96-5.86 5.52-8.29l10.39 14.51c.67.81 1.14 1.21 1.57 1.36-.05.24.12.51.41.4 1.53-.58 3.05-1.19 4.54-1.87 1.52-.69 3.06-1.45 4.36-2.5a.28.28 0 0 0 .12-.23c1.66-1.1.81-1.74-1.41-4.91-1.13-1.58-1.71-2.36-3.7-5.01l-.03-.02Zm2.41 6.54c.56 1.15 1.19 2.52 1.11 3.81-.06.04-.12.07-.17.1-.03-.88-.55-2.66-.94-3.91Zm-16.51-32.73c1.86-2.65 3.65-5.35 5.57-7.95.4-.55.81-1.13 1.26-1.66.19-.18.38-.33.56-.45.18.03.36.08.55.13l-8.05 10.11.12-.18h-.01ZM192.7 95.48c.79-1.37 1.66-2.69 2.54-4 1.19-1.79 2.4-3.56 3.61-5.33-.04.09-.09.17-.13.26-.1.22.03.41.2.49-2.47 3.42-4.89 6.73-6.4 9.28.21.24.4.48.63.75-.24.07-.4.36-.17.56.4.33.72.77 1.05 1.17.09.11.18.21.27.32-.84-.61-1.66-1.24-2.47-1.88.24-.57.58-1.11.87-1.61v-.01Zm7.46-10.32c.47-.81.98-1.59 1.49-2.37.31-.48.64-.95.96-1.43.26-.29.52-.56.75-.79-.99 1.48-2.09 3.03-3.2 4.59Zm10.03-16.22s-.03-.05-.05-.07c.22-.29.43-.59.64-.89-.2.32-.4.65-.58.96h-.01ZM371.54 87.96c-.01-.08-.01-.16-.03-.23-.06-.38-.58-.29-.66.03-.3-.05-.6-.08-.81-.11-1.14-.15-2.29-.19-3.44-.2 1.04-.09 2.09-.18 3.14-.23.45-.02.45-.72 0-.7-6.57.35-13.14 1.23-19.65 2.11-1.53.21-3.05.42-4.57.68-.01 0-.02.01-.04.01-.04-3.33-.13-6.66-.24-9.99-.19-5.7-.4-11.41-.88-17.1-.13-1.51-.23-3.07-.49-4.58 0-.25 0-.48-.02-.68-.06-1.19-.04-2.61-.68-2.78-.16-.07-.72-.16-1.5-.24.22-.17.16-.62-.2-.63-1.19-.04-2.39.09-3.57.23-1.2.14-2.41.32-3.59.6-.16-.1-.41-.06-.5.12-.06.02-.13.03-.19.05-.35.1-.29.55-.03.66-.26.6-.19 2.27-.21 3-.02.66-.66 33.73-.9 40.3-.03.65.06 1.12.04 1.45-.16 3.05.87 4.96 6.34 3.93 1.09-.08 2.75-.77 5.36-1.43 4.13-1.04 5.78-1.52 6.2-1.65 6.43-1.69 6.78-1.97 11.72-2.43.55-.05 4.8-.38 6.03-.3.64.04 1.19.07 1.65.1.09 0 .16-.03.24-.05.1.27.56.33.66-.02.39-1.32.61-2.71.78-4.08.2-1.61.29-3.24.15-4.86.24.03.52-.23.38-.53-.09-.2-.27-.33-.49-.43v-.02Zm-.63.56c.07.57.11 1.14.11 1.71-.21-.99-.53-1.71-.95-1.87.22.03.44.06.65.11.06.01.12.04.19.05Zm-25.41 1.73c1.54-.36 3.1-.64 4.66-.89-1.61.37-3.18.77-4.66 1.2v-.31Zm-.86-7.37c-.07-1.37-.16-2.75-.25-4.12-.21-3.13-.45-6.27-.79-9.4.02-2.25.08-4.31.13-6.11.16 2.08.29 4.16.4 6.24.23 4.46.38 8.93.5 13.39h.01Zm-.94-4c.16 2.41.29 4.83.39 7.24.06 1.6.14 3.22.09 4.83-.15.05-.32.09-.47.14V78.88h-.01ZM483.72 92.83c-3.05-2.28-6.22-4.4-9.38-6.51 8.86-6.49 13.49-12.95 13.73-19.23.04-.76 0-1.5-.13-2.2-.67-3.82-3.5-6.68-8.39-8.48.13.04.27.08.4.13 3.92 1.39 7.74 4.23 8.5 8.56.34 1.95-.05 3.96-.98 5.69-.21.4.39.75.6.35 1.86-3.46 1.46-7.55-.97-10.63-3.53-4.47-9.76-5.88-15.16-6.16-2.32-.12-4.64-.04-6.95.19-6 .32-12.71 1.68-17.63 3.21-.37.11-.67.23-.92.35-.2-.17-.62.02-.57.37v.03c-.64.68-.18 1.64.48 3.21.38.91.67 1.89 1.15 2.58.32.76.68 1.51 1.13 2.19.14.21.38.19.53.07.19-.02.38-.05.57-.08v1.57c-.06.06-.1.13-.11.23-.27 4.18-.34 8.38-.48 12.57l-.3 9.03c-.24 3.91-.44 6.77-.46 7.26-.05.88-.11 1.95.07 2.81-.01.22-.02.43-.04.65 0 .11-.02.23-.03.35 0 .05-.03.27-.01.16-.05.4.5.59.64.28.05.04.12.08.2.08 1.75.13 3.5.28 5.25.3 1.69.02 3.38-.12 5.06-.32.08.23.36.39.55.15.06-.08.11-.17.16-.26.18-.09.24-.32.18-.48.05-.2.1-.4.13-.6.16-.86.25-1.74.33-2.62.11-1.17.17-2.34.23-3.51.15-.01.32-.03.52-.04.36-.03 1.73-.15 2.06-.15.39 0 .7-.02.95-.04 1.76 1.11 3.45 2.35 5.14 3.55 2.83 2.01 5.64 4.04 8.47 6.04 1.42 1 2.85 2 4.29 2.97.1.06.19.07.27.04.08 0 .17-.02.25-.1 1.61-1.56 3.15-3.18 4.6-4.88.75-.88 1.49-1.78 2.15-2.73.01.01.03.02.04.03.34.3.83-.2.49-.49-2.16-1.9-4.34-3.76-6.64-5.48l.03-.01Zm-6.38-3.65a55.72 55.72 0 0 0-4-2.13c.14-.1.26-.19.4-.29 1.2.81 2.4 1.61 3.6 2.42Zm-20.1 11.78c.67-.37 1.23-.91 1.67-1.6-.11.5-.24 1-.38 1.49-.43.04-.86.08-1.29.11Zm2.38-37.24c1.34-.31 2.56-.52 3.71-.69-1.03.19-2.04.41-3.04.65-.14-.07-.34-.02-.45.11-.07.02-.15.04-.22.05v-.13.01Zm.04.84c.07-.02.14-.03.2-.05.34 1.66.41 3.41.5 5.09.17 2.9.24 5.81.28 8.71l.03 3.17c-.17.07-.34.14-.51.2-.06-4.96-.21-10.58-.51-17.12h.01Zm16.04 5.62c-1.16 2.25-3.06 4.1-5.02 5.66-2.8 2.23-5.99 3.97-9.3 5.35-.01-3.56-.09-7.12-.27-10.67-.1-2.04-.16-4.16-.57-6.18 3.3-.78 6.72-1.36 10.1-1.1 1.85.14 4.23.59 5.32 2.29.92 1.43.46 3.24-.26 4.65Zm.85-.18c.6-1.37.9-2.92.28-4.32-.67-1.52-2.2-2.32-3.76-2.74.46.1.89.21 1.29.37 1.74.67 2.69 1.88 2.93 3.21.2 1.13-.05 2.25-.74 3.47V70Zm-27.47-4.14c-.12-.19-.23-.38-.34-.57.74.42.85.36.99.41v.08c-.22.03-.43.06-.65.08Zm11.21 30.46c-.08 1.08-.16 2.17-.33 3.24-.05.35-.11.69-.2 1.03 0 .04-.02.07-.03.11-.15.02-.3.04-.45.05.45-1.64.76-3.36.79-5.07.03-.29.08-.57.1-.89-.03-.31-.03-.47.24-.57-.04.69-.07 1.39-.12 2.08v.02Zm5.6-2.47c.48.11.92.52 2.49 1.72-.46-.32-.92-.65-1.38-.97-.37-.25-.73-.5-1.1-.75h-.01Zm21.23 7.24a70.76 70.76 0 0 1-4.37 4.63c-.14-.09-.27-.19-.4-.28.19-.09.37-.24.55-.47.87-1.14 5.43-5.51 5.49-7.45.31.26.62.53.92.79-.67.97-1.42 1.88-2.19 2.77v.01Z",
@@ -32622,24 +32443,24 @@ var ExcalidrawLogo = ({
   size = "small",
   withText
 }) => {
-  return /* @__PURE__ */ jsxs79("div", { className: `ExcalidrawLogo is-${size}`, style, children: [
-    /* @__PURE__ */ jsx149(LogoIcon, {}),
-    withText && /* @__PURE__ */ jsx149(LogoText, {})
+  return /* @__PURE__ */ jsxs74("div", { className: `ExcalidrawLogo is-${size}`, style, children: [
+    /* @__PURE__ */ jsx144(LogoIcon, {}),
+    withText && /* @__PURE__ */ jsx144(LogoText, {})
   ] });
 };
 
 // components/welcome-screen/WelcomeScreen.Center.tsx
-import { Fragment as Fragment24, jsx as jsx150, jsxs as jsxs80 } from "react/jsx-runtime";
+import { Fragment as Fragment23, jsx as jsx145, jsxs as jsxs75 } from "react/jsx-runtime";
 var WelcomeScreenMenuItemContent = ({
   icon,
   shortcut,
   children
 }) => {
   const device = useDevice();
-  return /* @__PURE__ */ jsxs80(Fragment24, { children: [
-    /* @__PURE__ */ jsx150("div", { className: "welcome-screen-menu-item__icon", children: icon }),
-    /* @__PURE__ */ jsx150("div", { className: "welcome-screen-menu-item__text", children }),
-    shortcut && !device.editor.isMobile && /* @__PURE__ */ jsx150("div", { className: "welcome-screen-menu-item__shortcut", children: shortcut })
+  return /* @__PURE__ */ jsxs75(Fragment23, { children: [
+    /* @__PURE__ */ jsx145("div", { className: "welcome-screen-menu-item__icon", children: icon }),
+    /* @__PURE__ */ jsx145("div", { className: "welcome-screen-menu-item__text", children }),
+    shortcut && !device.editor.isMobile && /* @__PURE__ */ jsx145("div", { className: "welcome-screen-menu-item__shortcut", children: shortcut })
   ] });
 };
 WelcomeScreenMenuItemContent.displayName = "WelcomeScreenMenuItemContent";
@@ -32651,14 +32472,14 @@ var WelcomeScreenMenuItem = ({
   className = "",
   ...props
 }) => {
-  return /* @__PURE__ */ jsx150(
+  return /* @__PURE__ */ jsx145(
     "button",
     {
       ...props,
       type: "button",
       className: `welcome-screen-menu-item ${className}`,
       onClick: onSelect,
-      children: /* @__PURE__ */ jsx150(WelcomeScreenMenuItemContent, { icon, shortcut, children })
+      children: /* @__PURE__ */ jsx145(WelcomeScreenMenuItemContent, { icon, shortcut, children })
     }
   );
 };
@@ -32671,7 +32492,7 @@ var WelcomeScreenMenuItemLink = ({
   className = "",
   ...props
 }) => {
-  return /* @__PURE__ */ jsx150(
+  return /* @__PURE__ */ jsx145(
     "a",
     {
       ...props,
@@ -32679,38 +32500,38 @@ var WelcomeScreenMenuItemLink = ({
       href,
       target: "_blank",
       rel: "noreferrer",
-      children: /* @__PURE__ */ jsx150(WelcomeScreenMenuItemContent, { icon, shortcut, children })
+      children: /* @__PURE__ */ jsx145(WelcomeScreenMenuItemContent, { icon, shortcut, children })
     }
   );
 };
 WelcomeScreenMenuItemLink.displayName = "WelcomeScreenMenuItemLink";
 var Center = ({ children }) => {
   const { WelcomeScreenCenterTunnel } = useTunnels();
-  return /* @__PURE__ */ jsx150(WelcomeScreenCenterTunnel.In, { children: /* @__PURE__ */ jsx150("div", { className: "welcome-screen-center", children: children || /* @__PURE__ */ jsxs80(Fragment24, { children: [
-    /* @__PURE__ */ jsx150(Logo, {}),
-    /* @__PURE__ */ jsx150(Heading, { children: t("welcomeScreen.defaults.center_heading") }),
-    /* @__PURE__ */ jsxs80(Menu, { children: [
-      /* @__PURE__ */ jsx150(MenuItemLoadScene, {}),
-      /* @__PURE__ */ jsx150(MenuItemHelp, {})
+  return /* @__PURE__ */ jsx145(WelcomeScreenCenterTunnel.In, { children: /* @__PURE__ */ jsx145("div", { className: "welcome-screen-center", children: children || /* @__PURE__ */ jsxs75(Fragment23, { children: [
+    /* @__PURE__ */ jsx145(Logo, {}),
+    /* @__PURE__ */ jsx145(Heading, { children: t("welcomeScreen.defaults.center_heading") }),
+    /* @__PURE__ */ jsxs75(Menu, { children: [
+      /* @__PURE__ */ jsx145(MenuItemLoadScene, {}),
+      /* @__PURE__ */ jsx145(MenuItemHelp, {})
     ] })
   ] }) }) });
 };
 Center.displayName = "Center";
 var Logo = ({ children }) => {
-  return /* @__PURE__ */ jsx150("div", { className: "welcome-screen-center__logo excalifont welcome-screen-decor", children: children || /* @__PURE__ */ jsx150(ExcalidrawLogo, { withText: true }) });
+  return /* @__PURE__ */ jsx145("div", { className: "welcome-screen-center__logo excalifont welcome-screen-decor", children: children || /* @__PURE__ */ jsx145(ExcalidrawLogo, { withText: true }) });
 };
 Logo.displayName = "Logo";
 var Heading = ({ children }) => {
-  return /* @__PURE__ */ jsx150("div", { className: "welcome-screen-center__heading welcome-screen-decor excalifont", children });
+  return /* @__PURE__ */ jsx145("div", { className: "welcome-screen-center__heading welcome-screen-decor excalifont", children });
 };
 Heading.displayName = "Heading";
 var Menu = ({ children }) => {
-  return /* @__PURE__ */ jsx150("div", { className: "welcome-screen-menu", children });
+  return /* @__PURE__ */ jsx145("div", { className: "welcome-screen-menu", children });
 };
 Menu.displayName = "Menu";
 var MenuItemHelp = () => {
   const actionManager = useExcalidrawActionManager();
-  return /* @__PURE__ */ jsx150(
+  return /* @__PURE__ */ jsx145(
     WelcomeScreenMenuItem,
     {
       onSelect: () => actionManager.executeAction(actionShortcuts),
@@ -32727,7 +32548,7 @@ var MenuItemLoadScene = () => {
   if (appState.viewModeEnabled) {
     return null;
   }
-  return /* @__PURE__ */ jsx150(
+  return /* @__PURE__ */ jsx145(
     WelcomeScreenMenuItem,
     {
       onSelect: () => actionManager.executeAction(actionLoadScene),
@@ -32742,7 +32563,7 @@ var MenuItemLiveCollaborationTrigger = ({
   onSelect
 }) => {
   const { t: t2 } = useI18n();
-  return /* @__PURE__ */ jsx150(WelcomeScreenMenuItem, { shortcut: null, onSelect, icon: usersIcon, children: t2("labels.liveCollaboration") });
+  return /* @__PURE__ */ jsx145(WelcomeScreenMenuItem, { shortcut: null, onSelect, icon: usersIcon, children: t2("labels.liveCollaboration") });
 };
 MenuItemLiveCollaborationTrigger.displayName = "MenuItemLiveCollaborationTrigger";
 Center.Logo = Logo;
@@ -32755,40 +32576,40 @@ Center.MenuItemLoadScene = MenuItemLoadScene;
 Center.MenuItemLiveCollaborationTrigger = MenuItemLiveCollaborationTrigger;
 
 // components/welcome-screen/WelcomeScreen.Hints.tsx
-import { jsx as jsx151, jsxs as jsxs81 } from "react/jsx-runtime";
+import { jsx as jsx146, jsxs as jsxs76 } from "react/jsx-runtime";
 var MenuHint = ({ children }) => {
   const { WelcomeScreenMenuHintTunnel } = useTunnels();
-  return /* @__PURE__ */ jsx151(WelcomeScreenMenuHintTunnel.In, { children: /* @__PURE__ */ jsxs81("div", { className: "excalifont welcome-screen-decor welcome-screen-decor-hint welcome-screen-decor-hint--menu", children: [
+  return /* @__PURE__ */ jsx146(WelcomeScreenMenuHintTunnel.In, { children: /* @__PURE__ */ jsxs76("div", { className: "excalifont welcome-screen-decor welcome-screen-decor-hint welcome-screen-decor-hint--menu", children: [
     WelcomeScreenMenuArrow,
-    /* @__PURE__ */ jsx151("div", { className: "welcome-screen-decor-hint__label", children: children || t("welcomeScreen.defaults.menuHint") })
+    /* @__PURE__ */ jsx146("div", { className: "welcome-screen-decor-hint__label", children: children || t("welcomeScreen.defaults.menuHint") })
   ] }) });
 };
 MenuHint.displayName = "MenuHint";
 var ToolbarHint = ({ children }) => {
   const { WelcomeScreenToolbarHintTunnel } = useTunnels();
-  return /* @__PURE__ */ jsx151(WelcomeScreenToolbarHintTunnel.In, { children: /* @__PURE__ */ jsxs81("div", { className: "excalifont welcome-screen-decor welcome-screen-decor-hint welcome-screen-decor-hint--toolbar", children: [
-    /* @__PURE__ */ jsx151("div", { className: "welcome-screen-decor-hint__label", children: children || t("welcomeScreen.defaults.toolbarHint") }),
+  return /* @__PURE__ */ jsx146(WelcomeScreenToolbarHintTunnel.In, { children: /* @__PURE__ */ jsxs76("div", { className: "excalifont welcome-screen-decor welcome-screen-decor-hint welcome-screen-decor-hint--toolbar", children: [
+    /* @__PURE__ */ jsx146("div", { className: "welcome-screen-decor-hint__label", children: children || t("welcomeScreen.defaults.toolbarHint") }),
     WelcomeScreenTopToolbarArrow
   ] }) });
 };
 ToolbarHint.displayName = "ToolbarHint";
 var HelpHint = ({ children }) => {
   const { WelcomeScreenHelpHintTunnel } = useTunnels();
-  return /* @__PURE__ */ jsx151(WelcomeScreenHelpHintTunnel.In, { children: /* @__PURE__ */ jsxs81("div", { className: "excalifont welcome-screen-decor welcome-screen-decor-hint welcome-screen-decor-hint--help", children: [
-    /* @__PURE__ */ jsx151("div", { children: children || t("welcomeScreen.defaults.helpHint") }),
+  return /* @__PURE__ */ jsx146(WelcomeScreenHelpHintTunnel.In, { children: /* @__PURE__ */ jsxs76("div", { className: "excalifont welcome-screen-decor welcome-screen-decor-hint welcome-screen-decor-hint--help", children: [
+    /* @__PURE__ */ jsx146("div", { children: children || t("welcomeScreen.defaults.helpHint") }),
     WelcomeScreenHelpArrow
   ] }) });
 };
 HelpHint.displayName = "HelpHint";
 
 // components/welcome-screen/WelcomeScreen.tsx
-import { Fragment as Fragment25, jsx as jsx152, jsxs as jsxs82 } from "react/jsx-runtime";
+import { Fragment as Fragment24, jsx as jsx147, jsxs as jsxs77 } from "react/jsx-runtime";
 var WelcomeScreen = (props) => {
-  return /* @__PURE__ */ jsx152(Fragment25, { children: props.children || /* @__PURE__ */ jsxs82(Fragment25, { children: [
-    /* @__PURE__ */ jsx152(Center, {}),
-    /* @__PURE__ */ jsx152(MenuHint, {}),
-    /* @__PURE__ */ jsx152(ToolbarHint, {}),
-    /* @__PURE__ */ jsx152(HelpHint, {})
+  return /* @__PURE__ */ jsx147(Fragment24, { children: props.children || /* @__PURE__ */ jsxs77(Fragment24, { children: [
+    /* @__PURE__ */ jsx147(Center, {}),
+    /* @__PURE__ */ jsx147(MenuHint, {}),
+    /* @__PURE__ */ jsx147(ToolbarHint, {}),
+    /* @__PURE__ */ jsx147(HelpHint, {})
   ] }) });
 };
 WelcomeScreen.displayName = "WelcomeScreen";
@@ -32797,8 +32618,8 @@ WelcomeScreen.Hints = { MenuHint, ToolbarHint, HelpHint };
 var WelcomeScreen_default = WelcomeScreen;
 
 // components/live-collaboration/LiveCollaborationTrigger.tsx
-import clsx57 from "clsx";
-import { jsx as jsx153, jsxs as jsxs83 } from "react/jsx-runtime";
+import clsx53 from "clsx";
+import { jsx as jsx148, jsxs as jsxs78 } from "react/jsx-runtime";
 var LiveCollaborationTrigger2 = ({
   isCollaborating,
   onSelect,
@@ -32806,18 +32627,18 @@ var LiveCollaborationTrigger2 = ({
 }) => {
   const appState = useUIAppState();
   const showIconOnly = appState.width < 830;
-  return /* @__PURE__ */ jsxs83(
+  return /* @__PURE__ */ jsxs78(
     Button,
     {
       ...rest,
-      className: clsx57("collab-button", { active: isCollaborating }),
+      className: clsx53("collab-button", { active: isCollaborating }),
       type: "button",
       onSelect,
       style: { position: "relative", width: showIconOnly ? void 0 : "auto" },
       title: t("labels.liveCollaboration"),
       children: [
         showIconOnly ? share : t("labels.share"),
-        appState.collaborators.size > 0 && /* @__PURE__ */ jsx153("div", { className: "CollabButton-collaborators", children: appState.collaborators.size })
+        appState.collaborators.size > 0 && /* @__PURE__ */ jsx148("div", { className: "CollabButton-collaborators", children: appState.collaborators.size })
       ]
     }
   );
@@ -32892,14 +32713,14 @@ var reconcileElements = (localElements, remoteElements, localAppState) => {
 };
 
 // components/TTDDialog/TTDDialogTrigger.tsx
-import { jsx as jsx154, jsxs as jsxs84 } from "react/jsx-runtime";
+import { jsx as jsx149, jsxs as jsxs79 } from "react/jsx-runtime";
 var TTDDialogTrigger = ({
   children,
   icon
 }) => {
   const { TTDDialogTriggerTunnel } = useTunnels();
   const setAppState = useExcalidrawSetAppState();
-  return /* @__PURE__ */ jsx154(TTDDialogTriggerTunnel.In, { children: /* @__PURE__ */ jsxs84(
+  return /* @__PURE__ */ jsx149(TTDDialogTriggerTunnel.In, { children: /* @__PURE__ */ jsxs79(
     DropdownMenu_default.Item,
     {
       onSelect: () => {
@@ -32909,7 +32730,7 @@ var TTDDialogTrigger = ({
       icon: icon ?? brainIcon,
       children: [
         children ?? t("labels.textToDiagram"),
-        /* @__PURE__ */ jsx154(DropdownMenu_default.Item.Badge, { children: "AI" })
+        /* @__PURE__ */ jsx149(DropdownMenu_default.Item.Badge, { children: "AI" })
       ]
     }
   ) });
@@ -32929,7 +32750,7 @@ var DiagramToCodePlugin = (props) => {
 };
 
 // index.tsx
-import { jsx as jsx155 } from "react/jsx-runtime";
+import { jsx as jsx150 } from "react/jsx-runtime";
 polyfill_default();
 var ExcalidrawBase = (props) => {
   const {
@@ -32982,7 +32803,7 @@ var ExcalidrawBase = (props) => {
   if (UIOptions.canvasActions.toggleTheme === null && typeof theme === "undefined") {
     UIOptions.canvasActions.toggleTheme = true;
   }
-  useEffect45(() => {
+  useEffect42(() => {
     const importPolyfill = async () => {
       await import("canvas-roundrect-polyfill");
     };
@@ -32999,7 +32820,7 @@ var ExcalidrawBase = (props) => {
       document.removeEventListener("touchmove", handleTouchMove);
     };
   }, []);
-  return /* @__PURE__ */ jsx155(EditorJotaiProvider, { store: editorJotaiStore, children: /* @__PURE__ */ jsx155(InitializeApp, { langCode, theme, children: /* @__PURE__ */ jsx155(
+  return /* @__PURE__ */ jsx150(EditorJotaiProvider, { store: editorJotaiStore, children: /* @__PURE__ */ jsx150(InitializeApp, { langCode, theme, children: /* @__PURE__ */ jsx150(
     App_default,
     {
       onChange,

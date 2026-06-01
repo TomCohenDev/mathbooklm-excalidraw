@@ -11,6 +11,8 @@ import {
   THEME,
   DEFAULT_GRID_STEP,
   DEFAULT_GRID_TYPE,
+  DEFAULT_GRID_COLOR,
+  DEFAULT_GRID_OPACITY,
 } from "./constants";
 import type { AppState, NormalizedZoomValue } from "./types";
 
@@ -66,6 +68,8 @@ export const getDefaultAppState = (): Omit<
     gridStep: DEFAULT_GRID_STEP,
     gridType: DEFAULT_GRID_TYPE,
     gridModeEnabled: false,
+    gridColor: DEFAULT_GRID_COLOR,
+    gridOpacity: DEFAULT_GRID_OPACITY,
     isBindingEnabled: true,
     defaultSidebarDockedPreference: false,
     isLoading: false,
@@ -187,6 +191,8 @@ const APP_STATE_STORAGE_CONF = (<
   gridStep: { browser: true, export: true, server: true },
   gridType: { browser: true, export: true, server: true },
   gridModeEnabled: { browser: true, export: true, server: true },
+  gridColor: { browser: true, export: true, server: true },
+  gridOpacity: { browser: true, export: true, server: true },
   height: { browser: false, export: false, server: false },
   isBindingEnabled: { browser: false, export: false, server: false },
   defaultSidebarDockedPreference: {

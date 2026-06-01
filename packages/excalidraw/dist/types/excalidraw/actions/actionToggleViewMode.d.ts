@@ -119,6 +119,8 @@ export declare const actionToggleViewMode: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             selectedGroupIds: {
                 [groupId: string]: boolean;
             };

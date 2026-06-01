@@ -117,7 +117,7 @@
   "bugs": "https://github.com/TomCohenDev/mathbooklm-excalidraw/issues",
   "homepage": "https://github.com/TomCohenDev/mathbooklm-excalidraw",
   "scripts": {
-    "prepare": "node ./scripts/prepare-dist.js",
+    "prepare": "node ./scripts/prepare-dist.cjs",
     "gen:types": "rm -rf types && tsc",
     "build:esm": "rm -rf dist && node ../../scripts/buildPackage.js && yarn gen:types",
     "build:dist": "node ../../scripts/buildPackage.js && node ../../node_modules/typescript/bin/tsc -p tsconfig.json"

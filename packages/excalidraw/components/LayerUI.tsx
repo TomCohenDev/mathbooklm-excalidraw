@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect } from "react";
 import type { ActionManager } from "../actions/manager";
 import { CLASSES, DEFAULT_SIDEBAR, TOOL_TYPE } from "../constants";
 import { showSelectedShapeActions } from "../element";
@@ -141,6 +141,16 @@ const LayerUI = ({
 }: LayerUIProps) => {
   const device = useDevice();
   const tunnels = useInitializeTunnels();
+  const shouldRenderSelectedShapeActions = showSelectedShapeActions(
+    appState,
+    elements,
+  );
+
+  useEffect(() => {
+    if (!shouldRenderSelectedShapeActions && appState.openMenu === "shape") {
+      setAppState({ openMenu: null });
+    }
+  }, [appState.openMenu, setAppState, shouldRenderSelectedShapeActions]);
 
   const TunnelsJotaiProvider = tunnels.tunnelsJotai.Provider;
 
@@ -202,13 +212,8 @@ const LayerUI = ({
       })}
     >
       <Island
-        className={CLASSES.SHAPE_ACTIONS_MENU}
-        padding={2}
-        style={{
-          // we want to make sure this doesn't overflow so subtracting the
-          // approximate height of hamburgerMenu + footer
-          maxHeight: `${appState.height - 166}px`,
-        }}
+        className={clsx(CLASSES.SHAPE_ACTIONS_MENU, "mathbook-shape-actions-menu")}
+        padding={1}
       >
         <SelectedShapeActions
           appState={appState}
@@ -221,11 +226,6 @@ const LayerUI = ({
   );
 
   const renderFixedSideContainer = () => {
-    const shouldRenderSelectedShapeActions = showSelectedShapeActions(
-      appState,
-      elements,
-    );
-
     const shouldShowStats =
       appState.stats.open &&
       !appState.zenModeEnabled &&
@@ -237,7 +237,6 @@ const LayerUI = ({
         <div className="App-menu App-menu_top">
           <Stack.Col gap={6} className={clsx("App-menu_top__left")}>
             {renderCanvasActions()}
-            {shouldRenderSelectedShapeActions && renderSelectedShapeActions()}
           </Stack.Col>
           {!appState.viewModeEnabled &&
             appState.openDialog?.name !== "elementLinkSelector" && (
@@ -247,7 +246,7 @@ const LayerUI = ({
                     {renderWelcomeScreen && (
                       <tunnels.WelcomeScreenToolbarHintTunnel.Out />
                     )}
-                    <Stack.Col gap={4} align="start">
+                    <Stack.Col gap={4} align="center">
                       <Stack.Row
                         gap={1}
                         className={clsx("App-toolbar-container", {
@@ -319,6 +318,13 @@ const LayerUI = ({
                           </Island>
                         )}
                       </Stack.Row>
+                      {shouldRenderSelectedShapeActions &&
+                        !device.editor.isMobile &&
+                        appState.openMenu === "shape" && (
+                          <div className="mathbook-shape-actions-slot">
+                            {renderSelectedShapeActions()}
+                          </div>
+                        )}
                     </Stack.Col>
                   </div>
                 )}

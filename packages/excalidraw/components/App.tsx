@@ -120,6 +120,7 @@ import {
   refreshTextDimensions,
   redrawTextBoundingBox,
   getElementAbsoluteCoords,
+  showSelectedShapeActions,
 } from "../element";
 import {
   bindOrUnbindLinearElement,
@@ -605,6 +606,9 @@ class App extends React.Component<AppProps, AppState> {
   public flowChartCreator: FlowChartCreator = new FlowChartCreator();
   private flowChartNavigator: FlowChartNavigator = new FlowChartNavigator();
 
+  /** When true, shape properties strip stays collapsed until tool change or expand. */
+  shapeActionsUserDismissed = false;
+
   hitLinkElement?: NonDeletedExcalidrawElement;
   lastPointerDownEvent: React.PointerEvent<HTMLElement> | null = null;
   lastPointerUpEvent: React.PointerEvent<HTMLElement> | PointerEvent | null =
@@ -719,6 +723,7 @@ class App extends React.Component<AppProps, AppState> {
         updateScene: this.updateScene,
         updateLibrary: this.library.updateLibrary,
         addFiles: this.addFiles,
+        updateFiles: this.updateFiles,
         resetScene: this.resetScene,
         getSceneElementsIncludingDeleted: this.getSceneElementsIncludingDeleted,
         history: {
@@ -736,6 +741,7 @@ class App extends React.Component<AppProps, AppState> {
         setToast: this.setToast,
         id: this.id,
         setActiveTool: this.setActiveTool,
+        toggleShapeActionsPanel: this.toggleShapeActionsPanel,
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
         updateFrameRendering: this.updateFrameRendering,
@@ -3843,6 +3849,35 @@ class App extends React.Component<AppProps, AppState> {
     },
   );
 
+  /** Replace existing file payloads (e.g. theme-dependent PNG reprocessing). */
+  public updateFiles: ExcalidrawImperativeAPI["updateFiles"] = withBatchedUpdates(
+    (files) => {
+      const updatedFiles: BinaryFiles = {};
+
+      for (const fileData of files) {
+        const existing = this.files[fileData.id];
+        if (!existing) {
+          continue;
+        }
+        const next = {
+          ...existing,
+          ...fileData,
+          version: (existing.version ?? 1) + 1,
+        };
+        this.files[fileData.id] = next;
+        updatedFiles[fileData.id] = next;
+      }
+
+      if (Object.keys(updatedFiles).length === 0) {
+        return;
+      }
+
+      this.clearImageShapeCache(updatedFiles);
+      this.scene.triggerUpdate();
+      void this.addNewImagesToImageCache();
+    },
+  );
+
   private addMissingFiles = (
     files: BinaryFiles | BinaryFileData[],
     replace = false,
@@ -4673,6 +4708,35 @@ class App extends React.Component<AppProps, AppState> {
     );
   };
 
+  dismissShapeActionsPanel = () => {
+    this.shapeActionsUserDismissed = true;
+    this.setState((prev) => ({
+      ...prev,
+      openMenu: prev.openMenu === "shape" ? null : prev.openMenu,
+    }));
+  };
+
+  expandShapeActionsPanel = () => {
+    this.shapeActionsUserDismissed = false;
+    this.setState({ openMenu: "shape" });
+  };
+
+  toggleShapeActionsPanel = () => {
+    if (
+      !showSelectedShapeActions(
+        this.state,
+        this.scene.getNonDeletedElements(),
+      )
+    ) {
+      return;
+    }
+    if (this.state.openMenu === "shape") {
+      this.dismissShapeActionsPanel();
+    } else {
+      this.expandShapeActionsPanel();
+    }
+  };
+
   setActiveTool = (
     tool: (
       | (
@@ -4693,6 +4757,12 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     const nextActiveTool = updateActiveTool(this.state, tool);
+    const sameToolType = nextActiveTool.type === this.state.activeTool.type;
+    const sceneElements = this.scene.getNonDeletedElements();
+    const canToggleShapePanel = showSelectedShapeActions(
+      this.state,
+      sceneElements,
+    );
     if (nextActiveTool.type === "hand") {
       setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
     } else if (!isHoldingSpace) {
@@ -4721,6 +4791,36 @@ class App extends React.Component<AppProps, AppState> {
         activeEmbeddable: null,
       } as const;
 
+      if (
+        sameToolType &&
+        canToggleShapePanel &&
+        nextActiveTool.type !== "image"
+      ) {
+        if (prevState.openMenu === "shape") {
+          this.shapeActionsUserDismissed = true;
+          return {
+            ...prevState,
+            activeTool: nextActiveTool,
+            openMenu: null,
+            ...commonResets,
+          };
+        }
+        this.shapeActionsUserDismissed = false;
+        return {
+          ...prevState,
+          activeTool: nextActiveTool,
+          openMenu: "shape",
+          ...commonResets,
+        };
+      }
+
+      if (nextActiveTool.type !== prevState.activeTool.type) {
+        this.shapeActionsUserDismissed = true;
+      }
+
+      const toolTypeChanged = nextActiveTool.type !== prevState.activeTool.type;
+      const menuClose = toolTypeChanged ? { openMenu: null } : {};
+
       if (nextActiveTool.type === "freedraw") {
         this.store.shouldCaptureIncrement();
       }
@@ -4734,12 +4834,14 @@ class App extends React.Component<AppProps, AppState> {
           editingGroupId: null,
           multiElement: null,
           ...commonResets,
+          ...menuClose,
         };
       }
       return {
         ...prevState,
         activeTool: nextActiveTool,
         ...commonResets,
+        ...menuClose,
       };
     });
   };
@@ -6497,6 +6599,19 @@ class App extends React.Component<AppProps, AppState> {
           });
         },
       );
+      return;
+    }
+
+    // Right-click drag: lasso-select while another tool is active (MathbookLM).
+    // A stationary right click still opens the context menu; dragging past the
+    // threshold switches to selection and draws the box from the press origin.
+    if (
+      event.button === POINTER_BUTTON.SECONDARY &&
+      event.pointerType === "mouse" &&
+      !this.state.viewModeEnabled &&
+      gesture.pointers.size <= 1
+    ) {
+      this.handleSecondaryButtonDragSelection(event);
       return;
     }
 
@@ -10409,10 +10524,159 @@ class App extends React.Component<AppProps, AppState> {
     }
   };
 
+  /**
+   * Start a box-selection interaction from an existing pointer-down (used when
+   * right-drag switches to the selection tool mid-gesture).
+   */
+  private beginBoxSelectionInteraction = (
+    event: React.PointerEvent<HTMLElement>,
+    followUpMoveEvent?: PointerEvent,
+  ) => {
+    const pointerDownState = this.initialPointerDownState(event);
+
+    this.setState({
+      selectedElementsAreBeingDragged: false,
+    });
+
+    this.clearSelectionIfNotUsingSelection();
+    this.updateBindingEnabledOnPointerMove(event);
+
+    if (this.handleSelectionOnPointerDown(event, pointerDownState)) {
+      return;
+    }
+
+    this.createGenericElementOnPointerDown("selection", pointerDownState);
+
+    this.props?.onPointerDown?.(this.state.activeTool, pointerDownState);
+    this.onPointerDownEmitter.trigger(
+      this.state.activeTool,
+      pointerDownState,
+      event,
+    );
+
+    const onPointerMove =
+      this.onPointerMoveFromPointerDownHandler(pointerDownState);
+    const onPointerUp =
+      this.onPointerUpFromPointerDownHandler(pointerDownState);
+    const onKeyDown = this.onKeyDownFromPointerDownHandler(pointerDownState);
+    const onKeyUp = this.onKeyUpFromPointerDownHandler(pointerDownState);
+
+    this.missingPointerEventCleanupEmitter.once((_event) =>
+      onPointerUp(_event || event.nativeEvent),
+    );
+
+    if (!this.state.viewModeEnabled) {
+      window.addEventListener(EVENT.POINTER_MOVE, onPointerMove);
+      window.addEventListener(EVENT.POINTER_UP, onPointerUp);
+      window.addEventListener(EVENT.KEYDOWN, onKeyDown);
+      window.addEventListener(EVENT.KEYUP, onKeyUp);
+      pointerDownState.eventListeners.onMove = onPointerMove;
+      pointerDownState.eventListeners.onUp = onPointerUp;
+      pointerDownState.eventListeners.onKeyUp = onKeyUp;
+      pointerDownState.eventListeners.onKeyDown = onKeyDown;
+    }
+
+    if (followUpMoveEvent) {
+      onPointerMove(followUpMoveEvent);
+    }
+  };
+
+  private handleSecondaryButtonDragSelection = (
+    event: React.PointerEvent<HTMLElement>,
+  ) => {
+    const originX = event.clientX;
+    const originY = event.clientY;
+    const pointerId = event.pointerId;
+    const toolBeforeDrag = this.state.activeTool;
+    let dragSelectionStarted = false;
+
+    const cleanupMoveListener = () => {
+      window.removeEventListener(EVENT.POINTER_MOVE, onPointerMove, true);
+    };
+
+    const cleanupAllListeners = () => {
+      cleanupMoveListener();
+      window.removeEventListener(EVENT.POINTER_UP, onPointerUp, true);
+    };
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      if (dragSelectionStarted || moveEvent.pointerId !== pointerId) {
+        return;
+      }
+
+      const dx = moveEvent.clientX - originX;
+      const dy = moveEvent.clientY - originY;
+      if (Math.hypot(dx, dy) < DRAGGING_THRESHOLD) {
+        return;
+      }
+
+      dragSelectionStarted = true;
+      invalidateContextMenu = true;
+      cleanupMoveListener();
+
+      const startSelection = () => {
+        this.beginBoxSelectionInteraction(event, moveEvent);
+      };
+
+      if (toolBeforeDrag.type !== "selection") {
+        this.setState(
+          {
+            activeTool: updateActiveTool(this.state, { type: "selection" }),
+          },
+          startSelection,
+        );
+      } else {
+        startSelection();
+      }
+    };
+
+    const onPointerUp = (upEvent: PointerEvent) => {
+      if (upEvent.pointerId !== pointerId) {
+        return;
+      }
+      cleanupAllListeners();
+
+      if (!dragSelectionStarted || toolBeforeDrag.type === "selection") {
+        return;
+      }
+
+      // Defer until Excalidraw finalizes the box selection on pointerup.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          this.setState({
+            activeTool: updateActiveTool(
+              this.state,
+              toolBeforeDrag.type === "custom"
+                ? {
+                    type: "custom",
+                    customType: toolBeforeDrag.customType!,
+                    locked: toolBeforeDrag.locked,
+                  }
+                : {
+                    type: toolBeforeDrag.type,
+                    locked: toolBeforeDrag.locked,
+                  },
+            ),
+          });
+        });
+      });
+    };
+
+    window.addEventListener(EVENT.POINTER_MOVE, onPointerMove, {
+      capture: true,
+    });
+    window.addEventListener(EVENT.POINTER_UP, onPointerUp, { capture: true });
+  };
+
   private handleCanvasContextMenu = (
     event: React.MouseEvent<HTMLElement | HTMLCanvasElement>,
   ) => {
     event.preventDefault();
+
+    if (invalidateContextMenu) {
+      invalidateContextMenu = false;
+      return;
+    }
 
     if (
       (("pointerType" in event.nativeEvent &&

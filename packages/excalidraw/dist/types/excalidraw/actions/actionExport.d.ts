@@ -114,6 +114,8 @@ export declare const actionChangeProjectName: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -302,6 +304,8 @@ export declare const actionChangeExportScale: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -490,6 +494,8 @@ export declare const actionChangeExportBackground: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -678,6 +684,8 @@ export declare const actionChangeExportEmbedScene: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -867,6 +875,8 @@ export declare const actionSaveToActiveFile: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -1047,6 +1057,8 @@ export declare const actionSaveFileToDisk: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -1240,6 +1252,8 @@ export declare const actionLoadScene: {
             gridSize: number;
             gridStep: number;
             gridType: import("../constants").GridType;
+            gridColor: string;
+            gridOpacity: number;
             selectedGroupIds: {
                 [groupId: string]: boolean;
             };
@@ -1412,6 +1426,8 @@ export declare const actionLoadScene: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -1601,6 +1617,8 @@ export declare const actionExportWithDarkMode: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;

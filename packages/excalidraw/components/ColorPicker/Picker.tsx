@@ -1,40 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { t } from "../../i18n";
-
-import type { ExcalidrawElement } from "../../element/types";
-import { ShadeList } from "./ShadeList";
 
 import PickerColorList from "./PickerColorList";
 import { useAtom } from "../../editor-jotai";
-import { CustomColorList } from "./CustomColorList";
 import { colorPickerKeyNavHandler } from "./keyboardNavHandlers";
-import PickerHeading from "./PickerHeading";
 import type { ColorPickerType } from "./colorPickerUtils";
-import {
-  activeColorPickerSectionAtom,
-  getColorNameAndShadeFromColor,
-  getMostUsedCustomColors,
-  isCustomColor,
-} from "./colorPickerUtils";
+import { activeColorPickerSectionAtom } from "./colorPickerUtils";
 import type { ColorPaletteCustom } from "../../colors";
-import {
-  DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX,
-  DEFAULT_ELEMENT_STROKE_COLOR_INDEX,
-} from "../../colors";
 import { KEYS } from "../../keys";
 import { EVENT } from "../../constants";
+import {
+  loadColorWheel,
+  saveColorWheel,
+} from "./colorWheelStorage";
 
 interface PickerProps {
   color: string;
   onChange: (color: string) => void;
   label: string;
   type: ColorPickerType;
-  elements: readonly ExcalidrawElement[];
   palette: ColorPaletteCustom;
   updateData: (formData?: any) => void;
-  children?: React.ReactNode;
   onEyeDropperToggle: (force?: boolean) => void;
   onEscape: (event: React.KeyboardEvent | KeyboardEvent) => void;
+  customColors: string[];
+  onAddToWheel: (color: string) => void;
 }
 
 export const Picker = ({
@@ -42,65 +32,20 @@ export const Picker = ({
   onChange,
   label,
   type,
-  elements,
   palette,
   updateData,
-  children,
   onEyeDropperToggle,
   onEscape,
+  customColors,
+  onAddToWheel,
 }: PickerProps) => {
-  const [customColors] = React.useState(() => {
-    if (type === "canvasBackground") {
-      return [];
-    }
-    return getMostUsedCustomColors(elements, type, palette);
-  });
+  const [, setActiveColorPickerSection] = useAtom(activeColorPickerSectionAtom);
 
-  const [activeColorPickerSection, setActiveColorPickerSection] = useAtom(
-    activeColorPickerSectionAtom,
-  );
+  React.useEffect(() => {
+    setActiveColorPickerSection("baseColors");
+  }, [setActiveColorPickerSection]);
 
-  const colorObj = getColorNameAndShadeFromColor({
-    color,
-    palette,
-  });
-
-  useEffect(() => {
-    if (!activeColorPickerSection) {
-      const isCustom = isCustomColor({ color, palette });
-      const isCustomButNotInList = isCustom && !customColors.includes(color);
-
-      setActiveColorPickerSection(
-        isCustomButNotInList
-          ? "hex"
-          : isCustom
-          ? "custom"
-          : colorObj?.shade != null
-          ? "shades"
-          : "baseColors",
-      );
-    }
-  }, [
-    activeColorPickerSection,
-    color,
-    palette,
-    setActiveColorPickerSection,
-    colorObj,
-    customColors,
-  ]);
-
-  const [activeShade, setActiveShade] = useState(
-    colorObj?.shade ??
-      (type === "elementBackground"
-        ? DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX
-        : DEFAULT_ELEMENT_STROKE_COLOR_INDEX),
-  );
-
-  useEffect(() => {
-    if (colorObj?.shade != null) {
-      setActiveShade(colorObj.shade);
-    }
-
+  React.useEffect(() => {
     const keyup = (event: KeyboardEvent) => {
       if (event.key === KEYS.ALT) {
         onEyeDropperToggle(false);
@@ -110,7 +55,7 @@ export const Picker = ({
     return () => {
       document.removeEventListener(EVENT.KEYUP, keyup, { capture: true });
     };
-  }, [colorObj, onEyeDropperToggle]);
+  }, [onEyeDropperToggle]);
 
   const pickerRef = React.useRef<HTMLDivElement>(null);
 
@@ -121,7 +66,7 @@ export const Picker = ({
         onKeyDown={(event) => {
           const handled = colorPickerKeyNavHandler({
             event,
-            activeColorPickerSection,
+            activeColorPickerSection: "baseColors",
             palette,
             color,
             onChange,
@@ -129,7 +74,6 @@ export const Picker = ({
             customColors,
             setActiveColorPickerSection,
             updateData,
-            activeShade,
             onEscape,
           });
 
@@ -139,40 +83,37 @@ export const Picker = ({
           }
         }}
         className="color-picker-content properties-content"
-        // to allow focusing by clicking but not by tabbing
         tabIndex={-1}
       >
-        {!!customColors.length && (
-          <div>
-            <PickerHeading>
-              {t("colorPicker.mostUsedCustomColors")}
-            </PickerHeading>
-            <CustomColorList
-              colors={customColors}
-              color={color}
-              label={t("colorPicker.mostUsedCustomColors")}
-              onChange={onChange}
-            />
-          </div>
-        )}
-
-        <div>
-          <PickerHeading>{t("colorPicker.colors")}</PickerHeading>
-          <PickerColorList
-            color={color}
-            label={label}
-            palette={palette}
-            onChange={onChange}
-            activeShade={activeShade}
-          />
-        </div>
-
-        <div>
-          <PickerHeading>{t("colorPicker.shades")}</PickerHeading>
-          <ShadeList hex={color} onChange={onChange} palette={palette} />
-        </div>
-        {children}
+        <PickerColorList
+          color={color}
+          label={label}
+          palette={palette}
+          onChange={onChange}
+          onAddToWheel={onAddToWheel}
+        />
       </div>
     </div>
   );
 };
+
+/** Hook: persisted color wheel for a picker type. */
+export function useColorWheel(type: ColorPickerType): [
+  string[],
+  (colors: string[]) => void,
+] {
+  const [wheel, setWheel] = React.useState(() => loadColorWheel(type));
+
+  React.useEffect(() => {
+    setWheel(loadColorWheel(type));
+  }, [type]);
+
+  const persist = React.useCallback(
+    (colors: string[]) => {
+      setWheel(saveColorWheel(type, colors));
+    },
+    [type],
+  );
+
+  return [wheel, persist];
+}

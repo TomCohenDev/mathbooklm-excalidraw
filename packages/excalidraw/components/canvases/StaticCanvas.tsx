@@ -105,6 +105,8 @@ const getRelevantAppStateProps = (
   gridSize: appState.gridSize,
   gridStep: appState.gridStep,
   gridType: appState.gridType,
+  gridColor: appState.gridColor,
+  gridOpacity: appState.gridOpacity,
   frameRendering: appState.frameRendering,
   selectedElementIds: appState.selectedElementIds,
   frameToHighlight: appState.frameToHighlight,

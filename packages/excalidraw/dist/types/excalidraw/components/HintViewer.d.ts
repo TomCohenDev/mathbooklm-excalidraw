@@ -6,5 +6,5 @@ interface HintViewerProps {
     device: Device;
     app: AppClassProperties;
 }
-export declare const HintViewer: ({ appState, isMobile, device, app, }: HintViewerProps) => import("react/jsx-runtime").JSX.Element | null;
+export declare const HintViewer: (_props: HintViewerProps) => null;
 export {};

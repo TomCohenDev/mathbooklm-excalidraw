@@ -4,7 +4,7 @@ interface PickerColorListProps {
     color: string;
     onChange: (color: string) => void;
     label: string;
-    activeShade: number;
+    onAddToWheel: (color: string) => void;
 }
-declare const PickerColorList: ({ palette, color, onChange, label, activeShade, }: PickerColorListProps) => import("react/jsx-runtime").JSX.Element;
+declare const PickerColorList: ({ palette, color, onChange, onAddToWheel, }: PickerColorListProps) => import("react/jsx-runtime").JSX.Element;
 export default PickerColorList;

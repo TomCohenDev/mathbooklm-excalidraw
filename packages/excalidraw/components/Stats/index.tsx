@@ -428,6 +428,8 @@ export const StatsInner = memo(
       prev.appState.stats.panels === next.appState.stats.panels &&
       prev.gridModeEnabled === next.gridModeEnabled &&
       prev.appState.gridStep === next.appState.gridStep &&
+      prev.appState.gridColor === next.appState.gridColor &&
+      prev.appState.gridOpacity === next.appState.gridOpacity &&
       prev.appState.croppingElementId === next.appState.croppingElementId
     );
   },

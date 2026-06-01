@@ -25,6 +25,7 @@ import { PenModeButton } from "./PenModeButton";
 import { HandButton } from "./HandButton";
 import { isHandToolActive } from "../appState";
 import { useTunnels } from "../context/tunnels";
+import { CalculatorButton } from "./CalculatorButton";
 
 type MobileMenuProps = {
   appState: UIAppState;
@@ -144,16 +145,19 @@ export const MobileMenu = ({
 
     return (
       <div className="App-toolbar-content">
-        <MainMenuTunnel.Out />
-        {actionManager.renderAction("toggleEditMenu")}
-        {actionManager.renderAction(
-          appState.multiElement ? "finalize" : "duplicateSelection",
-        )}
-        {actionManager.renderAction("deleteSelectedElements")}
-        <div>
-          {actionManager.renderAction("undo")}
-          {actionManager.renderAction("redo")}
+        <div className="mathbook-toolbar-leading">
+          <MainMenuTunnel.Out />
+          {actionManager.renderAction("toggleEditMenu")}
+          {actionManager.renderAction(
+            appState.multiElement ? "finalize" : "duplicateSelection",
+          )}
+          {actionManager.renderAction("deleteSelectedElements")}
+          <div className="mathbook-toolbar-undo-redo">
+            {actionManager.renderAction("undo")}
+            {actionManager.renderAction("redo")}
+          </div>
         </div>
+        <CalculatorButton className="help-icon calc-icon mathbook-calc-footer-btn" />
       </div>
     );
   };

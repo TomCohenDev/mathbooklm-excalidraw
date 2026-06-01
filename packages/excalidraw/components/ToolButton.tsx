@@ -53,6 +53,8 @@ type ToolButtonProps =
       checked: boolean;
       onChange?(data: { pointerType: PointerType | null }): void;
       onPointerDown?(data: { pointerType: PointerType }): void;
+      /** Fired on pointer down when the radio is already selected (re-click). */
+      onSelectedClick?(data: { pointerType: PointerType | null }): void;
     });
 
 export const ToolButton = React.forwardRef(
@@ -169,6 +171,11 @@ export const ToolButton = React.forwardRef(
         onPointerDown={(event) => {
           lastPointerTypeRef.current = event.pointerType || null;
           props.onPointerDown?.({ pointerType: event.pointerType || null });
+          if (props.checked) {
+            props.onSelectedClick?.({
+              pointerType: event.pointerType || null,
+            });
+          }
         }}
         onPointerUp={() => {
           requestAnimationFrame(() => {

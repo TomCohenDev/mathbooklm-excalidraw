@@ -1,23 +1,19 @@
 import { isTransparent } from "../../utils";
 import type { ExcalidrawElement } from "../../element/types";
 import type { AppState } from "../../types";
-import { TopPicks } from "./TopPicks";
-import { ButtonSeparator } from "../ButtonSeparator";
-import { Picker } from "./Picker";
+import { Picker, useColorWheel } from "./Picker";
 import * as Popover from "@radix-ui/react-popover";
 import type { ColorPickerType } from "./colorPickerUtils";
 import { activeColorPickerSectionAtom } from "./colorPickerUtils";
 import { useExcalidrawContainer } from "../App";
-import type { ColorTuple, ColorPaletteCustom } from "../../colors";
+import type { ColorPaletteCustom } from "../../colors";
 import { COLOR_PALETTE } from "../../colors";
-import PickerHeading from "./PickerHeading";
 import { t } from "../../i18n";
 import clsx from "clsx";
-import { useRef } from "react";
 import { useAtom } from "../../editor-jotai";
-import { ColorInput } from "./ColorInput";
 import { activeEyeDropperAtom } from "../EyeDropper";
 import { PropertiesPopover } from "../PropertiesPopover";
+import { normalizeWheelColor, removeFromColorWheel, addToColorWheel } from "./colorWheelStorage";
 
 import "./ColorPicker.scss";
 
@@ -32,9 +28,6 @@ export const getColor = (color: string): string | null => {
     return color;
   }
 
-  // testing for `#` first fixes a bug on Electron (more specfically, an
-  // Obsidian popout window), where a hex color without `#` is (incorrectly)
-  // considered valid
   return isValidColor(`#${color}`)
     ? `#${color}`
     : isValidColor(color)
@@ -50,7 +43,6 @@ interface ColorPickerProps {
   elements: readonly ExcalidrawElement[];
   appState: AppState;
   palette?: ColorPaletteCustom | null;
-  topPicks?: ColorTuple;
   updateData: (formData?: any) => void;
 }
 
@@ -62,6 +54,8 @@ const ColorPickerPopupContent = ({
   elements,
   palette = COLOR_PALETTE,
   updateData,
+  wheelColors,
+  onWheelChange,
 }: Pick<
   ColorPickerProps,
   | "type"
@@ -71,48 +65,23 @@ const ColorPickerPopupContent = ({
   | "elements"
   | "palette"
   | "updateData"
->) => {
+> & {
+  wheelColors: string[];
+  onWheelChange: (colors: string[]) => void;
+}) => {
   const { container } = useExcalidrawContainer();
   const [, setActiveColorPickerSection] = useAtom(activeColorPickerSectionAtom);
-
   const [eyeDropperState, setEyeDropperState] = useAtom(activeEyeDropperAtom);
-
-  const colorInputJSX = (
-    <div>
-      <PickerHeading>{t("colorPicker.hexCode")}</PickerHeading>
-      <ColorInput
-        color={color}
-        label={label}
-        onChange={(color) => {
-          onChange(color);
-        }}
-        colorPickerType={type}
-      />
-    </div>
-  );
-
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  const focusPickerContent = () => {
-    popoverRef.current
-      ?.querySelector<HTMLDivElement>(".color-picker-content")
-      ?.focus();
-  };
 
   return (
     <PropertiesPopover
       container={container}
       style={{ maxWidth: "13rem" }}
       onFocusOutside={(event) => {
-        // refocus due to eye dropper
-        focusPickerContent();
         event.preventDefault();
       }}
       onPointerDownOutside={(event) => {
         if (eyeDropperState) {
-          // prevent from closing if we click outside the popover
-          // while eyedropping (e.g. click when clicking the sidebar;
-          // the eye-dropper-backdrop is prevented downstream)
           event.preventDefault();
         }
       }}
@@ -125,9 +94,7 @@ const ColorPickerPopupContent = ({
         <Picker
           palette={palette}
           color={color}
-          onChange={(changedColor) => {
-            onChange(changedColor);
-          }}
+          onChange={onChange}
           onEyeDropperToggle={(force) => {
             setEyeDropperState((state) => {
               if (force) {
@@ -160,15 +127,49 @@ const ColorPickerPopupContent = ({
           type={type}
           elements={elements}
           updateData={updateData}
-        >
-          {colorInputJSX}
-        </Picker>
-      ) : (
-        colorInputJSX
-      )}
+          customColors={wheelColors}
+          onAddToWheel={(swatch) =>
+            onWheelChange(addToColorWheel(type, swatch))
+          }
+        />
+      ) : null}
     </PropertiesPopover>
   );
 };
+
+function WheelSwatch({
+  swatch,
+  onChange,
+  onRemove,
+}: {
+  swatch: string;
+  onChange: (color: string) => void;
+  onRemove: () => void;
+}) {
+  const normalized = normalizeWheelColor(swatch);
+  return (
+    <button
+      type="button"
+      className={clsx("color-picker__button color-picker__wheel-inline", {
+        "is-transparent": normalized === "transparent" || !normalized,
+      })}
+      style={
+        normalized && normalized !== "transparent"
+          ? { "--swatch-color": normalized }
+          : undefined
+      }
+      title={`${normalized} — ${t("colorPicker.colorWheelRemoveHint")}`}
+      aria-label={normalized}
+      onClick={() => onChange(normalized)}
+      onDoubleClick={(e) => {
+        e.preventDefault();
+        onRemove();
+      }}
+    >
+      <div className="color-picker__button-outline" />
+    </button>
+  );
+}
 
 const ColorPickerTrigger = ({
   label,
@@ -205,29 +206,31 @@ export const ColorPicker = ({
   label,
   elements,
   palette = COLOR_PALETTE,
-  topPicks,
   updateData,
   appState,
 }: ColorPickerProps) => {
+  const [wheelColors, setWheelColors] = useColorWheel(type);
+
   return (
     <div>
       <div role="dialog" aria-modal="true" className="color-picker-container">
-        <TopPicks
-          activeColor={color}
-          onChange={onChange}
-          type={type}
-          topPicks={topPicks}
-        />
-        <ButtonSeparator />
         <Popover.Root
           open={appState.openPopup === type}
           onOpenChange={(open) => {
             updateData({ openPopup: open ? type : null });
           }}
         >
-          {/* serves as an active color indicator as well */}
+          {wheelColors.map((swatch) => (
+            <WheelSwatch
+              key={swatch}
+              swatch={swatch}
+              onChange={onChange}
+              onRemove={() =>
+                setWheelColors(removeFromColorWheel(type, swatch))
+              }
+            />
+          ))}
           <ColorPickerTrigger color={color} label={label} type={type} />
-          {/* popup content */}
           {appState.openPopup === type && (
             <ColorPickerPopupContent
               type={type}
@@ -237,6 +240,8 @@ export const ColorPicker = ({
               elements={elements}
               palette={palette}
               updateData={updateData}
+              wheelColors={wheelColors}
+              onWheelChange={setWheelColors}
             />
           )}
         </Popover.Root>

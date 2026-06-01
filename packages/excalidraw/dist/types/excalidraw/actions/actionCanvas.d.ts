@@ -38,6 +38,8 @@ export declare const actionClearCanvas: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             stats: {
                 open: boolean;
                 panels: number;
@@ -321,6 +323,8 @@ export declare const actionZoomIn: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -511,6 +515,8 @@ export declare const actionZoomOut: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -701,6 +707,8 @@ export declare const actionResetZoom: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -897,6 +905,8 @@ export declare const zoomToFitBounds: ({ bounds, appState, canvasOffsets, fitToV
         gridStep: number;
         gridType: import("../constants").GridType;
         gridModeEnabled: boolean;
+        gridColor: string;
+        gridOpacity: number;
         viewModeEnabled: boolean;
         selectedGroupIds: {
             [groupId: string]: boolean;
@@ -1089,6 +1099,8 @@ export declare const zoomToFit: ({ canvasOffsets, targetElements, appState, fitT
         gridStep: number;
         gridType: import("../constants").GridType;
         gridModeEnabled: boolean;
+        gridColor: string;
+        gridOpacity: number;
         viewModeEnabled: boolean;
         selectedGroupIds: {
             [groupId: string]: boolean;
@@ -1273,6 +1285,8 @@ export declare const actionZoomToFitSelectionInViewport: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -1461,6 +1475,8 @@ export declare const actionZoomToFitSelection: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -1650,6 +1666,8 @@ export declare const actionZoomToFit: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -1840,6 +1858,8 @@ export declare const actionToggleTheme: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             selectedGroupIds: {
                 [groupId: string]: boolean;
@@ -2024,6 +2044,8 @@ export declare const actionToggleEraserTool: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             editingGroupId: string | null;
             width: number;
@@ -2207,6 +2229,8 @@ export declare const actionToggleHandTool: {
             gridStep: number;
             gridType: import("../constants").GridType;
             gridModeEnabled: boolean;
+            gridColor: string;
+            gridOpacity: number;
             viewModeEnabled: boolean;
             editingGroupId: string | null;
             width: number;

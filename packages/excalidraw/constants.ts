@@ -200,14 +200,24 @@ export const CANVAS_ONLY_ACTIONS = ["selectAll"];
 
 export const DEFAULT_GRID_SIZE = 20;
 export const DEFAULT_GRID_STEP = 5;
+export const DEFAULT_GRID_COLOR = "#e5e5e5";
+export const DEFAULT_GRID_OPACITY = 100;
 
 /** Canvas background grid style when `gridModeEnabled` is true. */
-export type GridType = "square" | "dots" | "lines" | "isometric";
+export type GridType =
+  | "square"
+  | "dots"
+  | "boxes"
+  | "verticalLines"
+  | "horizontalLines"
+  | "isometric";
 
 export const GRID_TYPES: readonly GridType[] = [
   "square",
   "dots",
-  "lines",
+  "boxes",
+  "verticalLines",
+  "horizontalLines",
   "isometric",
 ] as const;
 

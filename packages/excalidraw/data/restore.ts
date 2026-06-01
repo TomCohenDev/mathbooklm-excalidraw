@@ -40,6 +40,8 @@ import {
   DEFAULT_ELEMENT_PROPS,
   DEFAULT_GRID_SIZE,
   DEFAULT_GRID_STEP,
+  DEFAULT_GRID_COLOR,
+  DEFAULT_GRID_OPACITY,
 } from "../constants";
 import { getDefaultAppState } from "../appState";
 import { LinearElementEditor } from "../element/linearElementEditor";
@@ -57,6 +59,8 @@ import {
   getNormalizedGridSize,
   getNormalizedGridStep,
   getNormalizedGridType,
+  getNormalizedGridColor,
+  getNormalizedGridOpacity,
   getNormalizedZoom,
 } from "../scene";
 import type { LocalPoint, Radians } from "@excalidraw/math";
@@ -747,6 +751,10 @@ export const restoreAppState = (
       isFiniteNumber(appState.gridStep) ? appState.gridStep : DEFAULT_GRID_STEP,
     ),
     gridType: getNormalizedGridType(appState.gridType),
+    gridColor: getNormalizedGridColor(appState.gridColor ?? DEFAULT_GRID_COLOR),
+    gridOpacity: getNormalizedGridOpacity(
+      appState.gridOpacity ?? DEFAULT_GRID_OPACITY,
+    ),
     editingFrame: null,
   };
 };

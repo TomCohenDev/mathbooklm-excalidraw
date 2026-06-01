@@ -1,5 +1,7 @@
 import { clamp, round } from "@excalidraw/math";
 import {
+  DEFAULT_GRID_COLOR,
+  DEFAULT_GRID_OPACITY,
   DEFAULT_GRID_TYPE,
   GRID_TYPES,
   MAX_ZOOM,
@@ -21,6 +23,10 @@ export const getNormalizedGridStep = (gridStep: number) => {
 };
 
 export const getNormalizedGridType = (gridType: unknown): GridType => {
+  // Legacy value before "lines" was renamed to "boxes".
+  if (gridType === "lines") {
+    return "boxes";
+  }
   if (
     typeof gridType === "string" &&
     (GRID_TYPES as readonly string[]).includes(gridType)
@@ -28,4 +34,18 @@ export const getNormalizedGridType = (gridType: unknown): GridType => {
     return gridType as GridType;
   }
   return DEFAULT_GRID_TYPE;
+};
+
+export const getNormalizedGridColor = (color: unknown): string => {
+  if (typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) {
+    return color;
+  }
+  return DEFAULT_GRID_COLOR;
+};
+
+export const getNormalizedGridOpacity = (opacity: unknown): number => {
+  if (typeof opacity === "number" && isFinite(opacity)) {
+    return clamp(Math.round(opacity), 0, 100);
+  }
+  return DEFAULT_GRID_OPACITY;
 };

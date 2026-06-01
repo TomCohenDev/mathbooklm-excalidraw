@@ -3,9 +3,7 @@ import type { AppClassProperties, AppState, Primitive } from "../types";
 import type { CaptureUpdateActionType } from "../store";
 import {
   DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE,
-  DEFAULT_ELEMENT_BACKGROUND_PICKS,
   DEFAULT_ELEMENT_STROKE_COLOR_PALETTE,
-  DEFAULT_ELEMENT_STROKE_PICKS,
 } from "../colors";
 import { trackEvent } from "../analytics";
 import { ButtonIconSelect } from "../components/ButtonIconSelect";
@@ -33,8 +31,6 @@ import {
   SloppinessArtistIcon,
   SloppinessCartoonistIcon,
   StrokeWidthBaseIcon,
-  StrokeWidthBoldIcon,
-  StrokeWidthExtraBoldIcon,
   FontSizeSmallIcon,
   FontSizeMediumIcon,
   FontSizeLargeIcon,
@@ -310,7 +306,6 @@ export const actionChangeStrokeColor = register({
     <>
       <h3 aria-hidden="true">{t("labels.stroke")}</h3>
       <ColorPicker
-        topPicks={DEFAULT_ELEMENT_STROKE_PICKS}
         palette={DEFAULT_ELEMENT_STROKE_COLOR_PALETTE}
         type="elementStroke"
         label={t("labels.stroke")}
@@ -356,7 +351,6 @@ export const actionChangeBackgroundColor = register({
     <>
       <h3 aria-hidden="true">{t("labels.background")}</h3>
       <ColorPicker
-        topPicks={DEFAULT_ELEMENT_BACKGROUND_PICKS}
         palette={DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE}
         type="elementBackground"
         label={t("labels.background")}
@@ -454,6 +448,22 @@ export const actionChangeFillStyle = register({
   },
 });
 
+const STROKE_WIDTH_CYCLE = [
+  STROKE_WIDTH.thin,
+  STROKE_WIDTH.bold,
+  STROKE_WIDTH.extraBold,
+] as const;
+
+const nextStrokeWidth = (current: number) => {
+  const idx = STROKE_WIDTH_CYCLE.indexOf(
+    current as (typeof STROKE_WIDTH_CYCLE)[number],
+  );
+  if (idx === -1) {
+    return STROKE_WIDTH.bold;
+  }
+  return STROKE_WIDTH_CYCLE[(idx + 1) % STROKE_WIDTH_CYCLE.length];
+};
+
 export const actionChangeStrokeWidth = register({
   name: "changeStrokeWidth",
   label: "labels.strokeWidth",
@@ -469,43 +479,32 @@ export const actionChangeStrokeWidth = register({
       captureUpdate: CaptureUpdateAction.IMMEDIATELY,
     };
   },
-  PanelComponent: ({ elements, appState, updateData }) => (
-    <fieldset>
-      <legend>{t("labels.strokeWidth")}</legend>
-      <ButtonIconSelect
-        group="stroke-width"
-        options={[
-          {
-            value: STROKE_WIDTH.thin,
-            text: t("labels.thin"),
-            icon: StrokeWidthBaseIcon,
-            testId: "strokeWidth-thin",
-          },
-          {
-            value: STROKE_WIDTH.bold,
-            text: t("labels.bold"),
-            icon: StrokeWidthBoldIcon,
-            testId: "strokeWidth-bold",
-          },
-          {
-            value: STROKE_WIDTH.extraBold,
-            text: t("labels.extraBold"),
-            icon: StrokeWidthExtraBoldIcon,
-            testId: "strokeWidth-extraBold",
-          },
-        ]}
-        value={getFormValue(
-          elements,
-          appState,
-          (element) => element.strokeWidth,
-          (element) => element.hasOwnProperty("strokeWidth"),
-          (hasSelection) =>
-            hasSelection ? null : appState.currentItemStrokeWidth,
-        )}
-        onChange={(value) => updateData(value)}
-      />
-    </fieldset>
-  ),
+  PanelComponent: ({ elements, appState, updateData }) => {
+    const currentWidth =
+      getFormValue(
+        elements,
+        appState,
+        (element) => element.strokeWidth,
+        (element) => element.hasOwnProperty("strokeWidth"),
+        (hasSelection) =>
+          hasSelection ? null : appState.currentItemStrokeWidth,
+      ) ?? appState.currentItemStrokeWidth;
+
+    return (
+      <fieldset className="mathbook-stroke-width-fieldset">
+        <legend>{t("labels.strokeWidth")}</legend>
+        <button
+          type="button"
+          className="mathbook-stroke-width-btn"
+          title={t("labels.strokeWidth")}
+          data-testid="strokeWidth-cycle"
+          onClick={() => updateData(nextStrokeWidth(currentWidth))}
+        >
+          {currentWidth}px
+        </button>
+      </fieldset>
+    );
+  },
 });
 
 export const actionChangeSloppiness = register({

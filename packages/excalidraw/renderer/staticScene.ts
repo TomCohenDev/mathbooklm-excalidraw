@@ -34,11 +34,6 @@ import { throttleRAF } from "../utils";
 import { getBoundTextElement } from "../element/textElement";
 import { isElementLink } from "../element/elementLink";
 
-const GridLineColor = {
-  Bold: "#dddddd",
-  Regular: "#e5e5e5",
-} as const;
-
 type GridRenderParams = {
   context: CanvasRenderingContext2D;
   gridSize: number;
@@ -48,6 +43,8 @@ type GridRenderParams = {
   zoom: Zoom;
   width: number;
   height: number;
+  gridColor: string;
+  gridOpacity: number;
 };
 
 const applyGridPixelOffset = (
@@ -78,6 +75,7 @@ const strokeGridSquare = ({
   zoom,
   width,
   height,
+  gridColor,
 }: GridRenderParams) => {
   const actualGridSize = gridSize * zoom.value;
   const spaceWidth = 1 / zoom.value;
@@ -104,7 +102,7 @@ const strokeGridSquare = ({
 
     context.beginPath();
     context.setLineDash(isBold ? [] : lineDash);
-    context.strokeStyle = isBold ? GridLineColor.Bold : GridLineColor.Regular;
+    context.strokeStyle = gridColor;
     context.moveTo(x, offsetY - gridSize);
     context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
     context.stroke();
@@ -123,7 +121,7 @@ const strokeGridSquare = ({
 
     context.beginPath();
     context.setLineDash(isBold ? [] : lineDash);
-    context.strokeStyle = isBold ? GridLineColor.Bold : GridLineColor.Regular;
+    context.strokeStyle = gridColor;
     context.moveTo(offsetX - gridSize, y);
     context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
     context.stroke();
@@ -131,7 +129,7 @@ const strokeGridSquare = ({
   context.restore();
 };
 
-const strokeGridLines = ({
+const strokeGridAxisLines = ({
   context,
   gridSize,
   scrollX,
@@ -139,7 +137,9 @@ const strokeGridLines = ({
   zoom,
   width,
   height,
-}: GridRenderParams) => {
+  gridColor,
+  axis,
+}: GridRenderParams & { axis: "both" | "vertical" | "horizontal" }) => {
   const actualGridSize = gridSize * zoom.value;
   if (actualGridSize < 10) {
     return;
@@ -156,20 +156,24 @@ const strokeGridLines = ({
 
   context.lineWidth = lineWidth;
   context.setLineDash([]);
-  context.strokeStyle = GridLineColor.Regular;
+  context.strokeStyle = gridColor;
 
-  for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
-    context.beginPath();
-    context.moveTo(x, offsetY - gridSize);
-    context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
-    context.stroke();
+  if (axis !== "horizontal") {
+    for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
+      context.beginPath();
+      context.moveTo(x, offsetY - gridSize);
+      context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
+      context.stroke();
+    }
   }
 
-  for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
-    context.beginPath();
-    context.moveTo(offsetX - gridSize, y);
-    context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
-    context.stroke();
+  if (axis !== "vertical") {
+    for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
+      context.beginPath();
+      context.moveTo(offsetX - gridSize, y);
+      context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
+      context.stroke();
+    }
   }
 
   context.restore();
@@ -183,6 +187,7 @@ const strokeGridDots = ({
   zoom,
   width,
   height,
+  gridColor,
 }: GridRenderParams) => {
   const actualGridSize = gridSize * zoom.value;
   if (actualGridSize < 10) {
@@ -198,7 +203,7 @@ const strokeGridDots = ({
     zoom,
   );
 
-  context.fillStyle = GridLineColor.Regular;
+  context.fillStyle = gridColor;
 
   for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
     for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
@@ -219,6 +224,7 @@ const strokeGridIsometric = ({
   zoom,
   width,
   height,
+  gridColor,
 }: GridRenderParams) => {
   const actualGridSize = gridSize * zoom.value;
   if (actualGridSize < 10) {
@@ -239,7 +245,7 @@ const strokeGridIsometric = ({
 
   context.lineWidth = lineWidth;
   context.setLineDash([]);
-  context.strokeStyle = GridLineColor.Regular;
+  context.strokeStyle = gridColor;
 
   for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
     context.beginPath();
@@ -270,12 +276,33 @@ const strokeGridIsometric = ({
 };
 
 const strokeGridByType = (gridType: GridType, params: GridRenderParams) => {
+  const { context, gridOpacity } = params;
+  context.save();
+  context.globalAlpha = gridOpacity / 100;
   switch (gridType) {
     case "dots":
       strokeGridDots({ ...params, gridSize: params.gridSize * 2.5 });
       break;
-    case "lines":
-      strokeGridLines({ ...params, gridSize: params.gridSize * 2.5 });
+    case "boxes":
+      strokeGridAxisLines({
+        ...params,
+        gridSize: params.gridSize * 2.5,
+        axis: "both",
+      });
+      break;
+    case "verticalLines":
+      strokeGridAxisLines({
+        ...params,
+        gridSize: params.gridSize * 2.5,
+        axis: "vertical",
+      });
+      break;
+    case "horizontalLines":
+      strokeGridAxisLines({
+        ...params,
+        gridSize: params.gridSize * 2.5,
+        axis: "horizontal",
+      });
       break;
     case "isometric":
       strokeGridIsometric({ ...params, gridSize: params.gridSize * 2.5 });
@@ -284,6 +311,7 @@ const strokeGridByType = (gridType: GridType, params: GridRenderParams) => {
     default:
       strokeGridSquare(params);
   }
+  context.restore();
 };
 
 const frameClip = (
@@ -427,6 +455,8 @@ const _renderStaticScene = ({
       zoom: appState.zoom,
       width: normalizedWidth / appState.zoom.value,
       height: normalizedHeight / appState.zoom.value,
+      gridColor: appState.gridColor,
+      gridOpacity: appState.gridOpacity,
     });
   }
 

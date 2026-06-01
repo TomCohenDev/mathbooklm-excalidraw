@@ -240,10 +240,14 @@ var COLOR_CHARCOAL_BLACK = "#1e1e1e";
 var COLOR_VOICE_CALL = "#a2f1a6";
 var DEFAULT_GRID_SIZE = 20;
 var DEFAULT_GRID_STEP = 5;
+var DEFAULT_GRID_COLOR = "#e5e5e5";
+var DEFAULT_GRID_OPACITY = 100;
 var GRID_TYPES = [
   "square",
   "dots",
-  "lines",
+  "boxes",
+  "verticalLines",
+  "horizontalLines",
   "isometric"
 ];
 var DEFAULT_GRID_TYPE = "square";
@@ -487,6 +491,8 @@ var getDefaultAppState = () => {
     gridStep: DEFAULT_GRID_STEP,
     gridType: DEFAULT_GRID_TYPE,
     gridModeEnabled: false,
+    gridColor: DEFAULT_GRID_COLOR,
+    gridOpacity: DEFAULT_GRID_OPACITY,
     isBindingEnabled: true,
     defaultSidebarDockedPreference: false,
     isLoading: false,
@@ -592,6 +598,8 @@ var APP_STATE_STORAGE_CONF = /* @__PURE__ */ ((config) => config)({
   gridStep: { browser: true, export: true, server: true },
   gridType: { browser: true, export: true, server: true },
   gridModeEnabled: { browser: true, export: true, server: true },
+  gridColor: { browser: true, export: true, server: true },
+  gridOpacity: { browser: true, export: true, server: true },
   height: { browser: false, export: false, server: false },
   isBindingEnabled: { browser: false, export: false, server: false },
   defaultSidebarDockedPreference: {
@@ -2816,6 +2824,20 @@ var HelpIconThin = createIcon(
     /* @__PURE__ */ jsx("circle", { cx: "12", cy: "12", r: "9" }),
     /* @__PURE__ */ jsx("line", { x1: "12", y1: "17", x2: "12", y2: "17.01" }),
     /* @__PURE__ */ jsx("path", { d: "M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" })
+  ] }),
+  tablerIconProps
+);
+var CalculatorIcon = createIcon(
+  /* @__PURE__ */ jsxs("g", { strokeWidth: "1.5", children: [
+    /* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }),
+    /* @__PURE__ */ jsx("rect", { x: "4", y: "3", width: "16", height: "18", rx: "2" }),
+    /* @__PURE__ */ jsx("rect", { x: "8", y: "7", width: "8", height: "3", rx: "1" }),
+    /* @__PURE__ */ jsx("line", { x1: "8", y1: "14", x2: "8", y2: "14.01" }),
+    /* @__PURE__ */ jsx("line", { x1: "12", y1: "14", x2: "12", y2: "14.01" }),
+    /* @__PURE__ */ jsx("line", { x1: "16", y1: "14", x2: "16", y2: "14.01" }),
+    /* @__PURE__ */ jsx("line", { x1: "8", y1: "17", x2: "8", y2: "17.01" }),
+    /* @__PURE__ */ jsx("line", { x1: "12", y1: "17", x2: "12", y2: "17.01" }),
+    /* @__PURE__ */ jsx("line", { x1: "16", y1: "17", x2: "16", y2: "17.01" })
   ] }),
   tablerIconProps
 );
@@ -12144,10 +12166,25 @@ var getNormalizedGridStep = (gridStep) => {
   return clamp(Math.round(gridStep), 1, 100);
 };
 var getNormalizedGridType = (gridType) => {
+  if (gridType === "lines") {
+    return "boxes";
+  }
   if (typeof gridType === "string" && GRID_TYPES.includes(gridType)) {
     return gridType;
   }
   return DEFAULT_GRID_TYPE;
+};
+var getNormalizedGridColor = (color) => {
+  if (typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) {
+    return color;
+  }
+  return DEFAULT_GRID_COLOR;
+};
+var getNormalizedGridOpacity = (opacity) => {
+  if (typeof opacity === "number" && isFinite(opacity)) {
+    return clamp(Math.round(opacity), 0, 100);
+  }
+  return DEFAULT_GRID_OPACITY;
 };
 
 // groups.ts
@@ -18280,10 +18317,6 @@ var parseElementLinkFromURL = (url) => {
 };
 
 // renderer/staticScene.ts
-var GridLineColor = {
-  Bold: "#dddddd",
-  Regular: "#e5e5e5"
-};
 var applyGridPixelOffset = (context, scrollX, scrollY, gridSize, zoom) => {
   const offsetX = scrollX % gridSize - gridSize;
   const offsetY = scrollY % gridSize - gridSize;
@@ -18301,7 +18334,8 @@ var strokeGridSquare = ({
   scrollY,
   zoom,
   width,
-  height
+  height,
+  gridColor
 }) => {
   const actualGridSize = gridSize * zoom.value;
   const spaceWidth = 1 / zoom.value;
@@ -18322,7 +18356,7 @@ var strokeGridSquare = ({
     const lineDash = [lineWidth * 3, spaceWidth + (lineWidth + spaceWidth)];
     context.beginPath();
     context.setLineDash(isBold ? [] : lineDash);
-    context.strokeStyle = isBold ? GridLineColor.Bold : GridLineColor.Regular;
+    context.strokeStyle = gridColor;
     context.moveTo(x, offsetY - gridSize);
     context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
     context.stroke();
@@ -18337,21 +18371,23 @@ var strokeGridSquare = ({
     const lineDash = [lineWidth * 3, spaceWidth + (lineWidth + spaceWidth)];
     context.beginPath();
     context.setLineDash(isBold ? [] : lineDash);
-    context.strokeStyle = isBold ? GridLineColor.Bold : GridLineColor.Regular;
+    context.strokeStyle = gridColor;
     context.moveTo(offsetX - gridSize, y);
     context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
     context.stroke();
   }
   context.restore();
 };
-var strokeGridLines = ({
+var strokeGridAxisLines = ({
   context,
   gridSize,
   scrollX,
   scrollY,
   zoom,
   width,
-  height
+  height,
+  gridColor,
+  axis
 }) => {
   const actualGridSize = gridSize * zoom.value;
   if (actualGridSize < 10) {
@@ -18367,18 +18403,22 @@ var strokeGridLines = ({
   );
   context.lineWidth = lineWidth;
   context.setLineDash([]);
-  context.strokeStyle = GridLineColor.Regular;
-  for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
-    context.beginPath();
-    context.moveTo(x, offsetY - gridSize);
-    context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
-    context.stroke();
+  context.strokeStyle = gridColor;
+  if (axis !== "horizontal") {
+    for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
+      context.beginPath();
+      context.moveTo(x, offsetY - gridSize);
+      context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
+      context.stroke();
+    }
   }
-  for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
-    context.beginPath();
-    context.moveTo(offsetX - gridSize, y);
-    context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
-    context.stroke();
+  if (axis !== "vertical") {
+    for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
+      context.beginPath();
+      context.moveTo(offsetX - gridSize, y);
+      context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
+      context.stroke();
+    }
   }
   context.restore();
 };
@@ -18389,7 +18429,8 @@ var strokeGridDots = ({
   scrollY,
   zoom,
   width,
-  height
+  height,
+  gridColor
 }) => {
   const actualGridSize = gridSize * zoom.value;
   if (actualGridSize < 10) {
@@ -18403,7 +18444,7 @@ var strokeGridDots = ({
     gridSize,
     zoom
   );
-  context.fillStyle = GridLineColor.Regular;
+  context.fillStyle = gridColor;
   for (let x = offsetX; x < offsetX + width + gridSize * 2; x += gridSize) {
     for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
       context.beginPath();
@@ -18420,7 +18461,8 @@ var strokeGridIsometric = ({
   scrollY,
   zoom,
   width,
-  height
+  height,
+  gridColor
 }) => {
   const actualGridSize = gridSize * zoom.value;
   if (actualGridSize < 10) {
@@ -18438,7 +18480,7 @@ var strokeGridIsometric = ({
   const slope = 1 / Math.sqrt(3);
   context.lineWidth = lineWidth;
   context.setLineDash([]);
-  context.strokeStyle = GridLineColor.Regular;
+  context.strokeStyle = gridColor;
   for (let y = offsetY; y < offsetY + height + gridSize * 2; y += gridSize) {
     context.beginPath();
     context.moveTo(offsetX - gridSize, y);
@@ -18464,12 +18506,33 @@ var strokeGridIsometric = ({
   context.restore();
 };
 var strokeGridByType = (gridType, params) => {
+  const { context, gridOpacity } = params;
+  context.save();
+  context.globalAlpha = gridOpacity / 100;
   switch (gridType) {
     case "dots":
       strokeGridDots({ ...params, gridSize: params.gridSize * 2.5 });
       break;
-    case "lines":
-      strokeGridLines({ ...params, gridSize: params.gridSize * 2.5 });
+    case "boxes":
+      strokeGridAxisLines({
+        ...params,
+        gridSize: params.gridSize * 2.5,
+        axis: "both"
+      });
+      break;
+    case "verticalLines":
+      strokeGridAxisLines({
+        ...params,
+        gridSize: params.gridSize * 2.5,
+        axis: "vertical"
+      });
+      break;
+    case "horizontalLines":
+      strokeGridAxisLines({
+        ...params,
+        gridSize: params.gridSize * 2.5,
+        axis: "horizontal"
+      });
       break;
     case "isometric":
       strokeGridIsometric({ ...params, gridSize: params.gridSize * 2.5 });
@@ -18478,6 +18541,7 @@ var strokeGridByType = (gridType, params) => {
     default:
       strokeGridSquare(params);
   }
+  context.restore();
 };
 var frameClip = (frame, context, renderConfig, appState) => {
   context.translate(frame.x + appState.scrollX, frame.y + appState.scrollY);
@@ -18586,7 +18650,9 @@ var _renderStaticScene = ({
       scrollY: appState.scrollY,
       zoom: appState.zoom,
       width: normalizedWidth / appState.zoom.value,
-      height: normalizedHeight / appState.zoom.value
+      height: normalizedHeight / appState.zoom.value,
+      gridColor: appState.gridColor,
+      gridOpacity: appState.gridOpacity
     });
   }
   const groupsToBeAddedToFrame = /* @__PURE__ */ new Set();
@@ -21009,6 +21075,10 @@ var restoreAppState = (appState, localAppState) => {
       isFiniteNumber(appState.gridStep) ? appState.gridStep : DEFAULT_GRID_STEP
     ),
     gridType: getNormalizedGridType(appState.gridType),
+    gridColor: getNormalizedGridColor(appState.gridColor ?? DEFAULT_GRID_COLOR),
+    gridOpacity: getNormalizedGridOpacity(
+      appState.gridOpacity ?? DEFAULT_GRID_OPACITY
+    ),
     editingFrame: null
   };
 };
@@ -24788,7 +24858,7 @@ var parseFileContents = async (blob) => {
   let contents;
   if (blob.type === MIME_TYPES.png) {
     try {
-      return await (await import("./data/image-LV6TNWT3.js")).decodePngMetadata(blob);
+      return await (await import("./data/image-2NY7M55D.js")).decodePngMetadata(blob);
     } catch (error) {
       if (error.message === "INVALID") {
         throw new ImageSceneDataError(
@@ -25484,6 +25554,7 @@ export {
   ExportIcon,
   HelpIcon,
   HelpIconThin,
+  CalculatorIcon,
   ExternalLinkIcon,
   GithubIcon,
   DiscordIcon,
@@ -25860,6 +25931,8 @@ export {
   centerScrollOn,
   calculateScrollCenter,
   getNormalizedZoom,
-  getNormalizedGridStep
+  getNormalizedGridStep,
+  getNormalizedGridColor,
+  getNormalizedGridOpacity
 };
-//# sourceMappingURL=chunk-KA3AO2CN.js.map
+//# sourceMappingURL=chunk-6D7D2EC3.js.map

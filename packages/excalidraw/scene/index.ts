@@ -12,10 +12,13 @@ export {
   hasStrokeStyle,
   canHaveArrowheads,
   canChangeRoundness,
+  isFillableShape,
 } from "./comparisons";
 export {
   getNormalizedZoom,
   getNormalizedGridSize,
   getNormalizedGridStep,
   getNormalizedGridType,
+  getNormalizedGridColor,
+  getNormalizedGridOpacity,
 } from "./normalize";
