@@ -10,10 +10,10 @@ interface PickerProps {
     updateData: (formData?: any) => void;
     onEyeDropperToggle: (force?: boolean) => void;
     onEscape: (event: React.KeyboardEvent | KeyboardEvent) => void;
-    wheelColors: string[];
-    onWheelChange: (colors: string[]) => void;
+    customColors: string[];
+    onAddToWheel: (color: string) => void;
 }
-export declare const Picker: ({ color, onChange, label, type, palette, updateData, onEyeDropperToggle, onEscape, wheelColors, onWheelChange, }: PickerProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Picker: ({ color, onChange, label, type, palette, updateData, onEyeDropperToggle, onEscape, customColors, onAddToWheel, }: PickerProps) => import("react/jsx-runtime").JSX.Element;
 /** Hook: persisted color wheel for a picker type. */
 export declare function useColorWheel(type: ColorPickerType): [
     string[],

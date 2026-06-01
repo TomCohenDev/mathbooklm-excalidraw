@@ -231,11 +231,7 @@ export const SelectedShapeActions = ({
       {showAlignActions && !isSingleElementBoundContainer && (
         <fieldset>
           <legend>{t("labels.align")}</legend>
-          <div className="buttonList">
-            {
-              // swap this order for RTL so the button positions always match their action
-              // (i.e. the leftmost button aligns left)
-            }
+          <div className="buttonList buttonList--align">
             {isRTL ? (
               <>
                 {renderAction("alignRight")}
@@ -251,22 +247,11 @@ export const SelectedShapeActions = ({
             )}
             {targetElements.length > 2 &&
               renderAction("distributeHorizontally")}
-            {/* breaks the row ˇˇ */}
-            <div style={{ flexBasis: "100%", height: 0 }} />
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: ".5rem",
-                marginTop: "-0.5rem",
-              }}
-            >
-              {renderAction("alignTop")}
-              {renderAction("alignVerticallyCentered")}
-              {renderAction("alignBottom")}
-              {targetElements.length > 2 &&
-                renderAction("distributeVertically")}
-            </div>
+            {renderAction("alignTop")}
+            {renderAction("alignVerticallyCentered")}
+            {renderAction("alignBottom")}
+            {targetElements.length > 2 &&
+              renderAction("distributeVertically")}
           </div>
         </fieldset>
       )}

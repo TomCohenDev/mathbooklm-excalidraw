@@ -1149,12 +1149,12 @@ export declare const actionLoadScene: {
             objectsSnapModeEnabled: boolean;
             theme: Theme;
             name: string | null;
-            currentItemArrowType: "round" | "sharp" | "elbow";
             contextMenu: {
                 items: import("../components/ContextMenu").ContextMenuItems;
                 top: number;
                 left: number;
             } | null;
+            currentItemArrowType: "round" | "sharp" | "elbow";
             showWelcomeScreen: boolean;
             isLoading: boolean;
             errorMessage: import("react").ReactNode;

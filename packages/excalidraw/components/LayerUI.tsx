@@ -246,7 +246,7 @@ const LayerUI = ({
                     {renderWelcomeScreen && (
                       <tunnels.WelcomeScreenToolbarHintTunnel.Out />
                     )}
-                    <Stack.Col gap={4} align="center">
+                    <Stack.Col gap={1} align="center">
                       <Stack.Row
                         gap={1}
                         className={clsx("App-toolbar-container", {

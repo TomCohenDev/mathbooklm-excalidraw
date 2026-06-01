@@ -350,6 +350,7 @@ import {
   getNormalizedGridColor,
   getNormalizedGridOpacity,
   getNormalizedGridStep,
+  getNormalizedGridType,
   getNormalizedZoom,
   getOmitSidesForDevice,
   getOriginalContainerHeightFromCache,
@@ -614,7 +615,7 @@ import {
   wrapText,
   youtubeIcon,
   zoomAreaIcon
-} from "./chunk-VFW5ME2J.js";
+} from "./chunk-URKFT3EL.js";
 import {
   define_import_meta_env_default
 } from "./chunk-AWQI2HM3.js";
@@ -2927,7 +2928,6 @@ var ColorPickerPopupContent = ({
   color,
   onChange,
   label,
-  elements,
   palette: palette2 = COLOR_PALETTE,
   updateData,
   wheelColors,
@@ -2986,7 +2986,6 @@ var ColorPickerPopupContent = ({
           },
           label,
           type,
-          elements,
           updateData,
           customColors: wheelColors,
           onAddToWheel: (swatch) => onWheelChange(addToColorWheel(type, swatch))
@@ -3075,7 +3074,6 @@ var ColorPicker = ({
             color,
             onChange,
             label,
-            elements,
             palette: palette2,
             updateData,
             wheelColors,
@@ -6130,7 +6128,7 @@ var exportCanvas = async (type, elements, appState, files, {
     let blob = canvasToBlob(tempCanvas);
     if (appState.exportEmbedScene) {
       blob = blob.then(
-        (blob2) => import("./data/image-JAXGM5XZ.js").then(
+        (blob2) => import("./data/image-AR7U44T5.js").then(
           ({ encodePngMetadata }) => encodePngMetadata({
             blob: blob2,
             metadata: serializeAsJSON(elements, appState, files, "local")
@@ -12020,7 +12018,7 @@ var SelectedShapeActions = ({
     ] }),
     showAlignActions && !isSingleElementBoundContainer && /* @__PURE__ */ jsxs33("fieldset", { children: [
       /* @__PURE__ */ jsx66("legend", { children: t("labels.align") }),
-      /* @__PURE__ */ jsxs33("div", { className: "buttonList", children: [
+      /* @__PURE__ */ jsxs33("div", { className: "buttonList buttonList--align", children: [
         isRTL ? /* @__PURE__ */ jsxs33(Fragment8, { children: [
           renderAction("alignRight"),
           renderAction("alignHorizontallyCentered"),
@@ -12031,24 +12029,10 @@ var SelectedShapeActions = ({
           renderAction("alignRight")
         ] }),
         targetElements.length > 2 && renderAction("distributeHorizontally"),
-        /* @__PURE__ */ jsx66("div", { style: { flexBasis: "100%", height: 0 } }),
-        /* @__PURE__ */ jsxs33(
-          "div",
-          {
-            style: {
-              display: "flex",
-              flexWrap: "wrap",
-              gap: ".5rem",
-              marginTop: "-0.5rem"
-            },
-            children: [
-              renderAction("alignTop"),
-              renderAction("alignVerticallyCentered"),
-              renderAction("alignBottom"),
-              targetElements.length > 2 && renderAction("distributeVertically")
-            ]
-          }
-        )
+        renderAction("alignTop"),
+        renderAction("alignVerticallyCentered"),
+        renderAction("alignBottom"),
+        targetElements.length > 2 && renderAction("distributeVertically")
       ] })
     ] }),
     !isEditingTextOrNewElement && targetElements.length > 0 && /* @__PURE__ */ jsxs33("fieldset", { children: [
@@ -20794,7 +20778,7 @@ var LayerUI = ({
       /* @__PURE__ */ jsx132(Stack_default.Col, { gap: 6, className: clsx49("App-menu_top__left"), children: renderCanvasActions() }),
       !appState.viewModeEnabled && appState.openDialog?.name !== "elementLinkSelector" && /* @__PURE__ */ jsx132(Section, { heading: "shapes", className: "shapes-section", children: (heading) => /* @__PURE__ */ jsxs68("div", { style: { position: "relative" }, children: [
         renderWelcomeScreen && /* @__PURE__ */ jsx132(tunnels.WelcomeScreenToolbarHintTunnel.Out, {}),
-        /* @__PURE__ */ jsxs68(Stack_default.Col, { gap: 4, align: "center", children: [
+        /* @__PURE__ */ jsxs68(Stack_default.Col, { gap: 1, align: "center", children: [
           /* @__PURE__ */ jsxs68(
             Stack_default.Row,
             {
@@ -26130,6 +26114,23 @@ var App = class _App extends React43.Component {
       this.shapeActionsUserDismissed = false;
       this.setState({ openMenu: "shape" });
     });
+    /** Open stroke/background/size panel after the user selects something on canvas. */
+    __publicField(this, "maybeOpenShapeActionsPanelOnSelection", (pointerDownState) => {
+      const elements = this.scene.getNonDeletedElements();
+      if (!showSelectedShapeActions(this.state, elements) || !isSomeElementSelected(elements, this.state)) {
+        return;
+      }
+      if (pointerDownState.resize.isResizing) {
+        return;
+      }
+      if (pointerDownState.drag.hasOccurred && !pointerDownState.boxSelection.hasOccurred && pointerDownState.hit.element && this.state.previousSelectedElementIds?.[pointerDownState.hit.element.id]) {
+        return;
+      }
+      this.shapeActionsUserDismissed = false;
+      if (this.state.openMenu !== "shape") {
+        this.setState({ openMenu: "shape" });
+      }
+    });
     __publicField(this, "toggleShapeActionsPanel", () => {
       if (!showSelectedShapeActions(
         this.state,
@@ -27350,6 +27351,9 @@ var App = class _App extends React43.Component {
       }
     });
     __publicField(this, "maybeOpenContextMenuAfterPointerDownOnTouchDevices", (event) => {
+      if (this.props.UIOptions.canvasActions.contextMenu === false) {
+        return;
+      }
       if (event.pointerType === "touch") {
         invalidateContextMenu = false;
         if (touchTimeout) {
@@ -28707,17 +28711,15 @@ var App = class _App extends React43.Component {
       });
       window.addEventListener("pointerup" /* POINTER_UP */, onPointerUp, { capture: true });
     });
-    __publicField(this, "handleCanvasContextMenu", (event) => {
-      event.preventDefault();
-      if (invalidateContextMenu) {
-        invalidateContextMenu = false;
+    __publicField(this, "openContextMenuAt", (clientX, clientY) => {
+      const container = this.excalidrawContainerRef.current;
+      if (!container) {
         return;
       }
-      if (("pointerType" in event.nativeEvent && event.nativeEvent.pointerType === "touch" || "pointerType" in event.nativeEvent && event.nativeEvent.pointerType === "pen" && // always allow if user uses a pen secondary button
-      event.button !== POINTER_BUTTON.SECONDARY) && this.state.activeTool.type !== "selection") {
-        return;
-      }
-      const { x, y } = viewportCoordsToSceneCoords(event, this.state);
+      const { x, y } = viewportCoordsToSceneCoords(
+        { clientX, clientY },
+        this.state
+      );
       const element = this.getElementAtPosition(x, y, {
         preferSelected: true,
         includeLockedElements: true
@@ -28727,11 +28729,10 @@ var App = class _App extends React43.Component {
         { x, y },
         selectedElements
       );
-      const type = element || isHittingCommonBoundBox ? "element" : "canvas";
-      const container = this.excalidrawContainerRef.current;
+      const type = selectedElements.length > 0 || element || isHittingCommonBoundBox ? "element" : "canvas";
       const { top: offsetTop, left: offsetLeft } = container.getBoundingClientRect();
-      const left = event.clientX - offsetLeft;
-      const top = event.clientY - offsetTop;
+      const left = clientX - offsetLeft;
+      const top = clientY - offsetTop;
       trackEvent("contextMenu", "openContextMenu", type);
       this.setState(
         {
@@ -28756,6 +28757,21 @@ var App = class _App extends React43.Component {
           });
         }
       );
+    });
+    __publicField(this, "handleCanvasContextMenu", (event) => {
+      event.preventDefault();
+      if (this.props.UIOptions.canvasActions.contextMenu === false) {
+        return;
+      }
+      if (invalidateContextMenu) {
+        invalidateContextMenu = false;
+        return;
+      }
+      if (("pointerType" in event.nativeEvent && event.nativeEvent.pointerType === "touch" || "pointerType" in event.nativeEvent && event.nativeEvent.pointerType === "pen" && // always allow if user uses a pen secondary button
+      event.button !== POINTER_BUTTON.SECONDARY) && this.state.activeTool.type !== "selection") {
+        return;
+      }
+      this.openContextMenuAt(event.clientX, event.clientY);
     });
     __publicField(this, "maybeDragNewGenericElement", (pointerDownState, event, informMutation = true) => {
       const selectionElement = this.state.selectionElement;
@@ -29267,6 +29283,7 @@ var App = class _App extends React43.Component {
         resetCursor: this.resetCursor,
         updateFrameRendering: this.updateFrameRendering,
         toggleSidebar: this.toggleSidebar,
+        openContextMenuAt: this.openContextMenuAt,
         onChange: (cb) => this.onChangeEmitter.on(cb),
         onPointerDown: (cb) => this.onPointerDownEmitter.on(cb),
         onPointerUp: (cb) => this.onPointerUpEmitter.on(cb),
@@ -31760,6 +31777,7 @@ var App = class _App extends React43.Component {
             },
             () => {
               this.actionManager.executeAction(actionFinalize);
+              this.maybeOpenShapeActionsPanelOnSelection(pointerDownState);
             }
           );
         } catch (error) {
@@ -31827,6 +31845,7 @@ var App = class _App extends React43.Component {
           }
           this.scene.triggerUpdate();
         }
+        this.maybeOpenShapeActionsPanelOnSelection(pointerDownState);
         return;
       }
       if (isTextElement(newElement2)) {
@@ -32242,6 +32261,7 @@ var App = class _App extends React43.Component {
       )) {
         this.handleEmbeddableCenterClick(hitElement);
       }
+      this.maybeOpenShapeActionsPanelOnSelection(pointerDownState);
     });
   }
   clearSelection(hitElement) {
@@ -32929,6 +32949,9 @@ export {
   getFreeDrawSvgPath,
   getLibraryItemsHash,
   getNonDeletedElements,
+  getNormalizedGridColor,
+  getNormalizedGridOpacity,
+  getNormalizedGridType,
   getSceneVersion,
   getTextFromElements,
   getVisibleSceneBounds,
@@ -32957,6 +32980,8 @@ export {
   serializeLibraryAsJSON,
   setCustomTextMetricsProvider,
   useDevice,
+  useExcalidrawAppState,
+  useExcalidrawSetAppState,
   useHandleLibrary,
   useI18n,
   viewportCoordsToSceneCoords,

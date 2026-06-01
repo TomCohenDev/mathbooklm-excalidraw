@@ -82,7 +82,7 @@ if (!fs.existsSync(prodMarker) || bundleStale) {
   runBuild();
 }
 
-if (typesMissing || bundleStale) {
+if (typesMissing || bundleStale || isDistStale(typesMarker)) {
   console.log("@excalidraw/excalidraw: generating TypeScript declarations...");
   runTsc();
 }

@@ -51,7 +51,6 @@ const ColorPickerPopupContent = ({
   color,
   onChange,
   label,
-  elements,
   palette = COLOR_PALETTE,
   updateData,
   wheelColors,
@@ -62,7 +61,6 @@ const ColorPickerPopupContent = ({
   | "color"
   | "onChange"
   | "label"
-  | "elements"
   | "palette"
   | "updateData"
 > & {
@@ -125,7 +123,6 @@ const ColorPickerPopupContent = ({
           }}
           label={label}
           type={type}
-          elements={elements}
           updateData={updateData}
           customColors={wheelColors}
           onAddToWheel={(swatch) =>
@@ -237,7 +234,6 @@ export const ColorPicker = ({
               color={color}
               onChange={onChange}
               label={label}
-              elements={elements}
               palette={palette}
               updateData={updateData}
               wheelColors={wheelColors}

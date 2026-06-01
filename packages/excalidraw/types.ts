@@ -623,6 +623,8 @@ export type ExportOpts = {
 export type CanvasActions = Partial<{
   changeViewBackgroundColor: boolean;
   clearCanvas: boolean;
+  /** When false, right-click / long-press will not open the context menu. */
+  contextMenu: boolean;
   export: false | ExportOpts;
   loadScene: boolean;
   saveToActiveFile: boolean;
@@ -798,6 +800,7 @@ export interface ExcalidrawImperativeAPI {
   setCursor: InstanceType<typeof App>["setCursor"];
   resetCursor: InstanceType<typeof App>["resetCursor"];
   toggleSidebar: InstanceType<typeof App>["toggleSidebar"];
+  openContextMenuAt: InstanceType<typeof App>["openContextMenuAt"];
   /**
    * Disables rendering of frames (including element clipping), but currently
    * the frames are still interactive in edit mode. As such, this API should be
