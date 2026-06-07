@@ -14,7 +14,8 @@ This directory is a git clone of upstream [excalidraw/excalidraw](https://github
 | Branch | Contents | Use |
 |--------|----------|-----|
 | **`develop`** | Full Excalidraw monorepo (default) | Day-to-day fork work; merge upstream here |
-| **`main`** | `packages/excalidraw` subtree with committed `dist/` | Consumed via `github:TomCohenDev/mathbooklm-excalidraw#main`; updated with `make excalidraw-publish` |
+| **`staging`** | Full monorepo pre-release | Promoted from `develop` via `make staging` |
+| **`main`** | `packages/excalidraw` subtree with committed `dist/` | Consumed via `github:TomCohenDev/mathbooklm-excalidraw#main`; updated with `make prod` |
 
 Work locally on **`develop`**. Do not commit directly to **`main`** — it is produced by subtree split from `develop`.
 
@@ -27,14 +28,14 @@ make excalidraw          # rebuild dist/ + types in packages/excalidraw
 make excalidraw-publish  # push subtree to origin/main (after commit)
 ```
 
-Branch promotion (same `develop` → `staging` → prod flow as `mathbooklm-server` / `mathbooklm-website`), run from this directory:
+Branch promotion (same `develop` → `staging` → `main` flow as `mathbooklm-server` / `mathbooklm-website`), run from this directory:
 
 ```bash
 make staging   # merge develop → staging, push, return to develop
 make prod      # subtree-publish packages/excalidraw from staging → origin/main
 ```
 
-On first run, `make staging` creates `staging` from `develop` and pushes it. Commit built `dist/` on `develop` before `make staging`. `make prod` is equivalent to `make excalidraw-publish` at the monorepo root, but runs from `staging` instead of whatever branch is checked out.
+Commit built `dist/` on `develop` before `make staging`. `make prod` replaces `make excalidraw-publish` at the monorepo root when releasing from `staging`.
 
 ## Committed dist
 
