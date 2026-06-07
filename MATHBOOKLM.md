@@ -34,7 +34,7 @@ make staging   # merge develop → staging, push, return to develop
 make prod      # subtree-publish packages/excalidraw from staging → origin/main
 ```
 
-Commit built `dist/` on `develop` before `make staging`. `make prod` is equivalent to `make excalidraw-publish` at the monorepo root, but runs from `staging` instead of whatever branch is checked out.
+On first run, `make staging` creates `staging` from `develop` and pushes it. Commit built `dist/` on `develop` before `make staging`. `make prod` is equivalent to `make excalidraw-publish` at the monorepo root, but runs from `staging` instead of whatever branch is checked out.
 
 ## Committed dist
 
