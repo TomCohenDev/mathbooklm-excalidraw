@@ -27,6 +27,15 @@ make excalidraw          # rebuild dist/ + types in packages/excalidraw
 make excalidraw-publish  # push subtree to origin/main (after commit)
 ```
 
+Branch promotion (same `develop` → `staging` → prod flow as `mathbooklm-server` / `mathbooklm-website`), run from this directory:
+
+```bash
+make staging   # merge develop → staging, push, return to develop
+make prod      # subtree-publish packages/excalidraw from staging → origin/main
+```
+
+Commit built `dist/` on `develop` before `make staging`. `make prod` is equivalent to `make excalidraw-publish` at the monorepo root, but runs from `staging` instead of whatever branch is checked out.
+
 ## Committed dist
 
 `packages/excalidraw/dist/` is tracked in git (see root `.gitignore` exceptions). The `prepare` script in `packages/excalidraw/package.json` exits immediately when `dist/prod/index.js` exists so tarball installs do not rebuild.
