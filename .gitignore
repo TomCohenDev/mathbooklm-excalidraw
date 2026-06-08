@@ -29,3 +29,7 @@ coverage
 dev-dist
 html
 meta*.json
+
+# Local dev / deploy shortcuts (vary by machine)
+makefile
+Makefile
