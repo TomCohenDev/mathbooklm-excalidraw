@@ -28257,6 +28257,27 @@ var App = class _App extends React43.Component {
             IMAGE_MIME_TYPES
           )
         });
+        if (this.props.onImageFileInsert) {
+          const handled = await this.props.onImageFileInsert(imageFile, {
+            sceneX: x,
+            sceneY: y,
+            clientX,
+            clientY
+          });
+          if (handled) {
+            this.setState(
+              {
+                pendingImageElementId: null,
+                newElement: null,
+                activeTool: updateActiveTool(this.state, { type: "selection" })
+              },
+              () => {
+                this.actionManager.executeAction(actionFinalize);
+              }
+            );
+            return;
+          }
+        }
         const imageElement = this.createImageElement({
           sceneX: x,
           sceneY: y,
@@ -28492,6 +28513,17 @@ var App = class _App extends React43.Component {
               if (error.name !== "EncodingError") {
                 throw new Error(t("alerts.couldNotLoadInvalidFile"));
               }
+            }
+          }
+          if (this.props.onImageFileInsert && file) {
+            const handled = await this.props.onImageFileInsert(file, {
+              sceneX,
+              sceneY,
+              clientX: event.clientX,
+              clientY: event.clientY
+            });
+            if (handled) {
+              return;
             }
           }
           const imageElement = this.createImageElement({ sceneX, sceneY });
@@ -32789,6 +32821,7 @@ var ExcalidrawBase = (props) => {
     name,
     renderCustomStats,
     onPaste,
+    onImageFileInsert,
     detectScroll = true,
     handleKeyboardGlobally = false,
     onLibraryChange,
@@ -32859,6 +32892,7 @@ var ExcalidrawBase = (props) => {
       renderCustomStats,
       UIOptions,
       onPaste,
+      onImageFileInsert,
       detectScroll,
       handleKeyboardGlobally,
       onLibraryChange,

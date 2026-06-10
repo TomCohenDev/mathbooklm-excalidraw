@@ -524,6 +524,19 @@ export interface ExcalidrawProps {
     event: ClipboardEvent | null,
   ) => Promise<boolean> | boolean;
   /**
+   * MathbookLM: intercept PNG (etc.) before Excalidraw's default image insert
+   * (toolbar picker, drag-drop). Return true when handled.
+   */
+  onImageFileInsert?: (
+    file: File,
+    context: {
+      sceneX: number;
+      sceneY: number;
+      clientX: number;
+      clientY: number;
+    },
+  ) => Promise<boolean> | boolean;
+  /**
    * Called when element(s) are duplicated so you can listen or modify as
    * needed.
    *
