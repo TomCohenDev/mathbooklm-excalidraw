@@ -10092,6 +10092,28 @@ class App extends React.Component<AppProps, AppState> {
         ) as (keyof typeof IMAGE_MIME_TYPES)[],
       });
 
+      if (this.props.onImageFileInsert) {
+        const handled = await this.props.onImageFileInsert(imageFile, {
+          sceneX: x,
+          sceneY: y,
+          clientX,
+          clientY,
+        });
+        if (handled) {
+          this.setState(
+            {
+              pendingImageElementId: null,
+              newElement: null,
+              activeTool: updateActiveTool(this.state, { type: "selection" }),
+            },
+            () => {
+              this.actionManager.executeAction(actionFinalize);
+            },
+          );
+          return;
+        }
+      }
+
       const imageElement = this.createImageElement({
         sceneX: x,
         sceneY: y,
@@ -10435,6 +10457,18 @@ class App extends React.Component<AppProps, AppState> {
         // if no scene is embedded or we fail for whatever reason, fall back
         // to importing as regular image
         // ---------------------------------------------------------------------
+
+        if (this.props.onImageFileInsert && file) {
+          const handled = await this.props.onImageFileInsert(file, {
+            sceneX,
+            sceneY,
+            clientX: event.clientX,
+            clientY: event.clientY,
+          });
+          if (handled) {
+            return;
+          }
+        }
 
         const imageElement = this.createImageElement({ sceneX, sceneY });
         this.insertImageElement(imageElement, file);
