@@ -6,7 +6,6 @@ import type { AppClassProperties, BinaryFiles, UIAppState } from "../types";
 import {
   actionExportWithDarkMode,
   actionChangeExportBackground,
-  actionChangeExportEmbedScene,
   actionChangeExportScale,
   actionChangeProjectName,
 } from "../actions/actionExport";
@@ -82,9 +81,6 @@ const ImageExportModal = ({
   const [exportDarkMode, setExportDarkMode] = useState(
     appStateSnapshot.exportWithDarkMode,
   );
-  const [embedScene, setEmbedScene] = useState(
-    appStateSnapshot.exportEmbedScene,
-  );
   const [exportScale, setExportScale] = useState(appStateSnapshot.exportScale);
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -101,7 +97,6 @@ const ImageExportModal = ({
     exportWithBackground,
     exportDarkMode,
     exportScale,
-    embedScene,
     resetCopyStatus,
   ]);
 
@@ -130,7 +125,7 @@ const ImageExportModal = ({
         exportBackground: exportWithBackground,
         exportWithDarkMode: exportDarkMode,
         exportScale,
-        exportEmbedScene: embedScene,
+        exportEmbedScene: false,
       },
       files,
       exportPadding: DEFAULT_EXPORT_PADDING,
@@ -165,7 +160,6 @@ const ImageExportModal = ({
     exportWithBackground,
     exportDarkMode,
     exportScale,
-    embedScene,
   ]);
 
   return (
@@ -246,24 +240,6 @@ const ImageExportModal = ({
             />
           </ExportSetting>
         )}
-        <ExportSetting
-          label={t("imageExportDialog.label.embedScene")}
-          tooltip={t("imageExportDialog.tooltip.embedScene")}
-          name="exportEmbedSwitch"
-        >
-          <Switch
-            name="exportEmbedSwitch"
-            checked={embedScene}
-            onChange={(checked) => {
-              setEmbedScene(checked);
-              actionManager.executeAction(
-                actionChangeExportEmbedScene,
-                "ui",
-                checked,
-              );
-            }}
-          />
-        </ExportSetting>
         <ExportSetting
           label={t("imageExportDialog.label.scale")}
           name="exportScale"

@@ -14031,9 +14031,6 @@ var ImageExportModal = ({
   const [exportDarkMode, setExportDarkMode] = useState26(
     appStateSnapshot.exportWithDarkMode
   );
-  const [embedScene, setEmbedScene] = useState26(
-    appStateSnapshot.exportEmbedScene
-  );
   const [exportScale, setExportScale] = useState26(appStateSnapshot.exportScale);
   const previewRef = useRef21(null);
   const [renderError, setRenderError] = useState26(null);
@@ -14045,7 +14042,6 @@ var ImageExportModal = ({
     exportWithBackground,
     exportDarkMode,
     exportScale,
-    embedScene,
     resetCopyStatus
   ]);
   const { exportedElements, exportingFrame } = prepareElementsForExport(
@@ -14071,7 +14067,7 @@ var ImageExportModal = ({
         exportBackground: exportWithBackground,
         exportWithDarkMode: exportDarkMode,
         exportScale,
-        exportEmbedScene: embedScene
+        exportEmbedScene: false
       },
       files,
       exportPadding: DEFAULT_EXPORT_PADDING,
@@ -14099,8 +14095,7 @@ var ImageExportModal = ({
     projectName,
     exportWithBackground,
     exportDarkMode,
-    exportScale,
-    embedScene
+    exportScale
   ]);
   return /* @__PURE__ */ jsxs39("div", { className: "ImageExportModal", children: [
     /* @__PURE__ */ jsx79("h3", { children: t("imageExportDialog.header") }),
@@ -14179,29 +14174,6 @@ var ImageExportModal = ({
                 setExportDarkMode(checked);
                 actionManager.executeAction(
                   actionExportWithDarkMode,
-                  "ui",
-                  checked
-                );
-              }
-            }
-          )
-        }
-      ),
-      /* @__PURE__ */ jsx79(
-        ExportSetting,
-        {
-          label: t("imageExportDialog.label.embedScene"),
-          tooltip: t("imageExportDialog.tooltip.embedScene"),
-          name: "exportEmbedSwitch",
-          children: /* @__PURE__ */ jsx79(
-            Switch,
-            {
-              name: "exportEmbedSwitch",
-              checked: embedScene,
-              onChange: (checked) => {
-                setEmbedScene(checked);
-                actionManager.executeAction(
-                  actionChangeExportEmbedScene,
                   "ui",
                   checked
                 );
