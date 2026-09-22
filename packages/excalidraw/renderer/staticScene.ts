@@ -350,13 +350,24 @@ const linkIconCanvasCache: {
   elementLink: null,
 };
 
+// MathbookLM: markdown-on-canvas-plan.md Markdown boxes use `.link` only as
+// a validation-status/identity tag (see mathbooklm-website/src/canvas/markdownBox.ts) —
+// it's never a real, user-facing link, so the little "linked element" badge
+// this function draws is never wanted for one.
+const isMathbookMarkdownBoxLink = (link: string | null): boolean =>
+  !!link && link.startsWith("mathbooklm://markdown/");
+
 const renderLinkIcon = (
   element: NonDeletedExcalidrawElement,
   context: CanvasRenderingContext2D,
   appState: StaticCanvasAppState,
   elementsMap: ElementsMap,
 ) => {
-  if (element.link && !appState.selectedElementIds[element.id]) {
+  if (
+    element.link &&
+    !isMathbookMarkdownBoxLink(element.link) &&
+    !appState.selectedElementIds[element.id]
+  ) {
     const [x1, y1, x2, y2] = getElementAbsoluteCoords(element, elementsMap);
     const [x, y, width, height] = getLinkHandleFromCoords(
       [x1, y1, x2, y2],

@@ -615,7 +615,7 @@ import {
   wrapText,
   youtubeIcon,
   zoomAreaIcon
-} from "./chunk-URKFT3EL.js";
+} from "./chunk-RQOIQTG7.js";
 import {
   define_import_meta_env_default
 } from "./chunk-AWQI2HM3.js";
@@ -6128,7 +6128,7 @@ var exportCanvas = async (type, elements, appState, files, {
     let blob = canvasToBlob(tempCanvas);
     if (appState.exportEmbedScene) {
       blob = blob.then(
-        (blob2) => import("./data/image-AR7U44T5.js").then(
+        (blob2) => import("./data/image-HCFADRSQ.js").then(
           ({ encodePngMetadata }) => encodePngMetadata({
             blob: blob2,
             metadata: serializeAsJSON(elements, appState, files, "local")

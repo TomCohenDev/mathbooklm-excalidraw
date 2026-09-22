@@ -23,7 +23,6 @@ var pick = (source, keys) => {
     return acc;
   }, {});
 };
-var MAX_CUSTOM_COLORS_USED_IN_CANVAS = 5;
 var COLORS_PER_ROW = 5;
 var DEFAULT_CHART_COLOR_INDEX = 4;
 var DEFAULT_ELEMENT_STROKE_COLOR_INDEX = 4;
@@ -89,22 +88,85 @@ var DEFAULT_CANVAS_BACKGROUND_PICKS = [
   "#fdf8f6"
 ];
 var DEFAULT_ELEMENT_STROKE_COLOR_PALETTE = {
-  // 1st row
   transparent: COLOR_PALETTE.transparent,
   white: COLOR_PALETTE.white,
-  gray: COLOR_PALETTE.gray,
   black: COLOR_PALETTE.black,
-  bronze: COLOR_PALETTE.bronze,
-  // rest
-  ...COMMON_ELEMENT_SHADES
+  gray: oc.gray[6],
+  bronze: COLOR_PALETTE.bronze[4],
+  red: oc.red[5],
+  orange: oc.orange[5],
+  yellow: oc.yellow[4],
+  lime: oc.lime[5],
+  green: oc.green[5],
+  teal: oc.teal[5],
+  cyan: oc.cyan[5],
+  blue: oc.blue[5],
+  indigo: oc.indigo[5],
+  violet: oc.violet[5],
+  grape: oc.grape[5],
+  pink: oc.pink[5],
+  navy: oc.blue[8],
+  forest: oc.green[8],
+  magenta: oc.grape[8],
+  brown: oc.orange[8],
+  sky: oc.cyan[3],
+  lavender: oc.violet[2],
+  mint: oc.teal[3],
+  sand: oc.yellow[2]
 };
 var DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE = {
   transparent: COLOR_PALETTE.transparent,
   white: COLOR_PALETTE.white,
-  gray: COLOR_PALETTE.gray,
-  black: COLOR_PALETTE.black,
-  bronze: COLOR_PALETTE.bronze,
-  ...COMMON_ELEMENT_SHADES
+  gray: oc.gray[1],
+  bronze: COLOR_PALETTE.bronze[0],
+  cream: "#fffce8",
+  red: oc.red[1],
+  orange: oc.orange[1],
+  yellow: oc.yellow[1],
+  lime: oc.lime[1],
+  green: oc.green[1],
+  teal: oc.teal[1],
+  cyan: oc.cyan[1],
+  blue: oc.blue[1],
+  indigo: oc.indigo[1],
+  violet: oc.violet[1],
+  grape: oc.grape[1],
+  pink: oc.pink[1],
+  blush: oc.red[0],
+  sand: oc.yellow[0],
+  mint: oc.green[0],
+  sky: oc.cyan[0],
+  lavender: oc.violet[0],
+  peach: oc.orange[0],
+  ice: oc.blue[0],
+  rose: oc.pink[0]
+};
+var DEFAULT_CANVAS_BACKGROUND_COLOR_PALETTE = {
+  white: COLOR_PALETTE.white,
+  gray: oc.gray[0],
+  cream: "#fffce8",
+  sand: "#fdf8f6",
+  sky: "#f5faff",
+  red: oc.red[0],
+  orange: oc.orange[0],
+  yellow: oc.yellow[0],
+  lime: oc.lime[0],
+  green: oc.green[0],
+  teal: oc.teal[0],
+  cyan: oc.cyan[0],
+  blue: oc.blue[0],
+  indigo: oc.indigo[0],
+  violet: oc.violet[0],
+  grape: oc.grape[0],
+  pink: oc.pink[0],
+  blush: oc.red[1],
+  peach: oc.orange[1],
+  mint: oc.green[1],
+  ice: oc.blue[1],
+  lavender: oc.violet[1],
+  rose: oc.pink[1],
+  bronze: COLOR_PALETTE.bronze[0],
+  fog: oc.gray[1]
 };
 var getAllColorsSpecificShade = (index) => [
   // 2nd row
@@ -313,6 +375,7 @@ var DEFAULT_UI_OPTIONS = {
   canvasActions: {
     changeViewBackgroundColor: true,
     clearCanvas: true,
+    contextMenu: true,
     export: { saveFileToDisk: true },
     loadScene: true,
     saveToActiveFile: true,
@@ -9386,6 +9449,7 @@ import { simplify } from "points-on-curve";
 
 // scene/comparisons.ts
 var hasBackground = (type) => type === "rectangle" || type === "iframe" || type === "embeddable" || type === "ellipse" || type === "diamond" || type === "line" || type === "freedraw";
+var isFillableShape = (type) => type === "rectangle" || type === "iframe" || type === "embeddable" || type === "ellipse" || type === "diamond" || type === "line";
 var hasStrokeColor = (type) => type !== "image" && type !== "frame" && type !== "magicframe";
 var hasStrokeWidth = (type) => type === "rectangle" || type === "iframe" || type === "embeddable" || type === "ellipse" || type === "diamond" || type === "freedraw" || type === "arrow" || type === "line";
 var hasStrokeStyle = (type) => type === "rectangle" || type === "iframe" || type === "embeddable" || type === "ellipse" || type === "diamond" || type === "arrow" || type === "line";
@@ -18567,8 +18631,9 @@ var linkIconCanvasCache = {
   regularLink: null,
   elementLink: null
 };
+var isMathbookMarkdownBoxLink = (link) => !!link && link.startsWith("mathbooklm://markdown/");
 var renderLinkIcon = (element, context, appState, elementsMap) => {
-  if (element.link && !appState.selectedElementIds[element.id]) {
+  if (element.link && !isMathbookMarkdownBoxLink(element.link) && !appState.selectedElementIds[element.id]) {
     const [x1, y1, x2, y2] = getElementAbsoluteCoords(element, elementsMap);
     const [x, y, width, height] = getLinkHandleFromCoords(
       [x1, y1, x2, y2],
@@ -24858,7 +24923,7 @@ var parseFileContents = async (blob) => {
   let contents;
   if (blob.type === MIME_TYPES.png) {
     try {
-      return await (await import("./data/image-2NY7M55D.js")).decodePngMetadata(blob);
+      return await (await import("./data/image-HCFADRSQ.js")).decodePngMetadata(blob);
     } catch (error) {
       if (error.message === "INVALID") {
         throw new ImageSceneDataError(
@@ -25309,16 +25374,11 @@ var decodePngMetadata = async (blob) => {
 };
 
 export {
-  MAX_CUSTOM_COLORS_USED_IN_CANVAS,
   COLORS_PER_ROW,
-  DEFAULT_ELEMENT_STROKE_COLOR_INDEX,
-  DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX,
   COLOR_PALETTE,
-  DEFAULT_ELEMENT_STROKE_PICKS,
-  DEFAULT_ELEMENT_BACKGROUND_PICKS,
-  DEFAULT_CANVAS_BACKGROUND_PICKS,
   DEFAULT_ELEMENT_STROKE_COLOR_PALETTE,
   DEFAULT_ELEMENT_BACKGROUND_COLOR_PALETTE,
+  DEFAULT_CANVAS_BACKGROUND_COLOR_PALETTE,
   rgbToHex,
   isDarwin,
   isWindows,
@@ -25594,8 +25654,6 @@ export {
   FillCrossHatchIcon,
   FillSolidIcon,
   StrokeWidthBaseIcon,
-  StrokeWidthBoldIcon,
-  StrokeWidthExtraBoldIcon,
   StrokeStyleDashedIcon,
   StrokeStyleDottedIcon,
   SloppinessArchitectIcon,
@@ -25637,7 +25695,6 @@ export {
   helpIcon,
   tablerCheckIcon,
   alertTriangleIcon,
-  eyeDropperIcon,
   extraToolsIcon,
   frameToolIcon,
   mermaidLogoIcon,
@@ -25844,6 +25901,7 @@ export {
   renderElement,
   getFreeDrawSvgPath,
   hasBackground,
+  isFillableShape,
   hasStrokeColor,
   hasStrokeWidth,
   hasStrokeStyle,
@@ -25932,7 +25990,8 @@ export {
   calculateScrollCenter,
   getNormalizedZoom,
   getNormalizedGridStep,
+  getNormalizedGridType,
   getNormalizedGridColor,
   getNormalizedGridOpacity
 };
-//# sourceMappingURL=chunk-6D7D2EC3.js.map
+//# sourceMappingURL=chunk-RQOIQTG7.js.map
